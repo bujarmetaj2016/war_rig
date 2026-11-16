@@ -1,1 +1,34 @@
 /.idea/
+.venv/
+keys/
+wheelhouse/
+reference/v2_snapshot/
+reference/v2_outcomes/
+reference/v2_predictions/
+reference/history/
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Coverage artefacts
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# macOS
+.DS_Store
