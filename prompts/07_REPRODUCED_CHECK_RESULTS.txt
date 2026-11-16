@@ -1,0 +1,63 @@
+PASS  I.1 00_READ_ME_FIRST.md equals the author's SHA256SUMS.json entry
+PASS  I.1 01_SINGLE_IDE_IMPLEMENTATION_PROMPT_R2_13_EDITS_EXACT.md equals the author's SHA256SUMS.json entry
+PASS  I.1 01_SINGLE_IDE_IMPLEMENTATION_PROMPT_R2_AUTHORITY_HARDENED_FOR_REVIEW.md equals the author's SHA256SUMS.json entry
+PASS  I.1 02_R2_PREIMPLEMENTATION_PROMPT_REVIEW.md equals the author's SHA256SUMS.json entry
+PASS  I.1 03_R2_POST_IMPLEMENTATION_CODE_REVIEW.md equals the author's SHA256SUMS.json entry
+PASS  I.1 04_R2_TARGETED_AUTHORITY_REVIEW.md equals the author's SHA256SUMS.json entry
+PASS  I.1 05_EXACT_DELTA_R2_P01_ONLY.diff equals the author's SHA256SUMS.json entry
+PASS  I.2 hardened candidate equals the base hash recorded in the delta
+PASS  I.3 the author's 13-edit file equals my published preview (byte for byte) and the recorded 210f... hash
+PASS  I.4 02_R2_PREIMPLEMENTATION_PROMPT_REVIEW.md is the same bytes as in the original pack (hash 43629a9d.../b8dd9fa2...)
+PASS  I.4 03_R2_POST_IMPLEMENTATION_CODE_REVIEW.md is the same bytes as in the original pack (hash 43629a9d.../b8dd9fa2...)
+PASS  D.1 the hardened file differs from my 13-edit file in exactly two hunks (author's claim): [(43, 44, 43, 44), (51, 51, 51, 55)]
+PASS  D.2 both hunks lie inside Section 1A (lines 37-56), before Section 1B
+PASS  D.3 every line outside those hunks is identical (architecture, tools, tests, coverage, MS-B, IG, V2, scope unchanged)
+PASS  A.1 the delta applies cleanly to the hardened candidate
+PASS  A.2 each new text occurs exactly once in the result
+PASS  A.3 reversing every edit restores the hardened candidate byte for byte (nothing else changed)
+PASS  A.4 against my 13-edit file the result still differs only inside Section 1A
+PASS  A.5 a second application gives the same bytes
+PASS  S.1 every safeguard phrase checked is present in the hardened candidate (the checker invents nothing)
+PASS  S.2 every safeguard phrase checked survives in the result (19 phrases)
+PASS  S.3 no edit has fewer prohibition words in its new text than in the text it replaces
+PASS  S.4 every 'section N' reference names a real numbered heading
+PASS  S.5 the twelve non-authority R2 edits (P-02 to P-13) are all still present in the result
+PASS  V.1 SIGNATURE_AUTHENTICITY takes only the three defined values: ['ATTESTED_BY_INDEPENDENT_HUMAN_RECORD', 'UNVERIFIED', 'VERIFIED_CRYPTOGRAPHIC']
+PASS  V.2 the retired value OWNER_ATTESTED_BY_HEADER and the bare value VERIFIED no longer appear
+PASS  V.3 the header block still lists its seven fields once each
+PASS  G.1 member 10 step 1: reviewer/custody/signature procedures are completed BEFORE the final presentation (basis of Q-1)
+PASS  G.2 member 10 step 2: the unsigned owner forms are inside the sealed group; presentation time comes from a trusted clock (basis of the proposal-versus-executed split)
+PASS  G.3 member 10 step 3: a change to any member voids the interval (basis of 'never fill or replace members 12/13')
+PASS  G.4 member 10 step 4: both records are signed at one sitting, as two distinct records, after the wait
+PASS  G.5 member 13: G1-R has a field for the executed G0-R SHA-256 and timestamp, and 'G0-R must have been signed first' (basis of Q-5, Q-6)
+PASS  G.6 members 12 and 13 are blank templates with a blank root field and a blank owner identity/signature line
+PASS  G.7 pinned Group 1 record: CAR-01 (acceptance contract and signature scheme) is NOT_APPROVED_NOT_PERFORMED, so no signature scheme is adopted
+PASS  G.8 member 15 item 5: only the owner can settle independence/K1/H13/witness/custody, once, by one of three routes
+PASS  G.9 member 15 item 8: V5 is not the final group; changes after presenting restart the wait
+PASS  G.10 member 14 is a NOT_STARTED template (no root, no presentation time, both records UNSIGNED, no implementation permission)
+PASS  G.11 no V5 member states a group-root rule (it is only named: [('10', 22), ('12', 5), ('13', 5), ('23', 2), ('23', 3), ('23', 4), ('23', 5), ('23', 6), ('23', 7), ('23', 8), ('23', 9), ('23', 10), ('23', 11), ('23', 12), ('23', 13), ('23', 14), ('23', 15), ('24', 3), ('24', 97), ('24', 141)]) -> V5 cannot pass the root check as it stands (basis of Q-3)
+PASS  T.1 scenario 1 (Missing header): enforcing text present in the result
+PASS  T.2 scenario 2 (Matching hashes for unsigned, self-written G0/G1): enforcing text present in the result
+PASS  T.3 scenario 3 (Typed owner name and UTC, no trusted signature or custody record): enforcing text present in the result
+PASS  T.4 scenario 4 (After-hold 'completed' member 12/13 changes manifest or root): enforcing text present in the result
+PASS  T.5 scenario 5 (Valid signed post-hold G0 and G1, separate from the group): enforcing text present in the result
+PASS  T.6 scenario 6 (Two typed timestamps 48h apart, no trusted receipt): enforcing text present in the result
+PASS  T.7 scenario 7 (Receipt covers only part of the group): enforcing text present in the result
+PASS  T.8 scenario 8 (A member changed after the last presentation): enforcing text present in the result
+PASS  T.9 scenario 9 (Genuine records, but signer/quorum/custody does not satisfy the controlling source): enforcing text present in the result
+PASS  T.10 scenario 10 (G1 record earlier than G0, or signatures before the wait ends): enforcing text present in the result
+PASS  T.11 scenario 11 (Root rule not fixed before presentation, or in conflict): enforcing text present in the result
+PASS  T.12 scenario 12 (All authority valid but environment packet missing or mismatched): enforcing text present in the result
+PASS  T.13 scenario 13 (Header fabricated by the agent): enforcing text present in the result
+PASS  T.x the wording behind T.5 is new in this delta (absent from the hardened candidate)
+PASS  T.x the wording behind T.7 is new in this delta (absent from the hardened candidate)
+PASS  T.x the wording behind T.10 is new in this delta (absent from the hardened candidate)
+PASS  T.x the wording behind T.11 is new in this delta (absent from the hardened candidate)
+PASS  T.x the wording behind T.3 is new in this delta (absent from the hardened candidate)
+PASS  K.1 a changed old text makes the applier stop and write nothing
+PASS  K.2 a different base (hash differs) makes the applier stop
+PASS  K.3 an old text occurring twice makes the applier stop
+PASS  K.4 applying the delta to its own result stops (it cannot be applied twice)
+TOTAL 60 checks: 60 PASS, 0 FAIL
+hardened base sha256   19169d10c9a7bcd04dce9a1d072c13210ef5e6afa44a1fdf18a021b8b6f2e2b2
+concurred result sha256 ac3344db248c3391327f8e59df8cc8e5c8bc7c208bc2e162e2549bd86120697f
