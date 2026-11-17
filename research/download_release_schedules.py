@@ -22,6 +22,7 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urldefrag, urljoin, urlsplit
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
+from zoneinfo import ZoneInfo
 
 MAX_PAGE_BYTES = 12 * 1024 * 1024
 MAX_PAGES = 100
@@ -32,6 +33,7 @@ OUTPUT_FIELDS = (
     "scheduled_date_text",
     "scheduled_time",
     "time_zone",
+    "scheduled_at_utc",
     "source_url",
     "page_updated_date",
     "downloaded_at_utc",
@@ -132,8 +134,8 @@ DATE_PATTERNS = (
     ),
 )
 UPDATED_PATTERN = re.compile(
-    r"\b(?:last\s+updated|updated|published|publication\s+date|date\s+published)"
-    r"\s*(?:on|:)?\s*([^\n|;]{0,80})",
+    r"\b(?:last\s+(?:updated|update|modified\s+date)|published\s+on|publication\s+date|date\s+published)"
+    r"\s*(?:on\s+|:\s*)?((?:[A-Za-z]+\s+\d|\d)[^\n|;]{0,40})",
     re.IGNORECASE,
 )
 TIME_PATTERN = re.compile(
@@ -165,53 +167,40 @@ class SafeRedirect(HTTPRedirectHandler):
 class PageParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
-        self.rows: list[str] = []
+        self.rows: list[tuple[str, str]] = []
         self.links: list[tuple[str, str]] = []
         self.page_text: list[str] = []
-        self._row_depth = 0
-        self._row_parts: list[str] = []
-        self._in_row = False
+        self._rows: list[tuple[str, list[str]]] = []
         self._anchor_index: int | None = None
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attributes = dict(attrs)
         if tag.lower() == "tr":
-            self._row_depth += 1
-            if self._row_depth == 1:
-                self._in_row = True
-                self._row_parts = []
+            self._rows.append((attributes.get("class") or "", []))
         elif tag.lower() == "a" and attributes.get("href"):
             self.links.append((attributes["href"] or "", ""))
             self._anchor_index = len(self.links) - 1
-        if self._in_row:
-            for name in ("datetime", "data-date", "title"):
-                value = attributes.get(name)
-                if value:
-                    self._row_parts.append(value)
         if tag.lower() == "meta":
             name = (attributes.get("name") or attributes.get("property") or "").lower()
             content = attributes.get("content") or ""
-            if name in {"last-modified", "last_updated", "last-updated"} and content:
+            if name in {"last-modified", "last_updated", "last-updated", "article:published_time"} and content:
                 self.page_text.append(f"Last updated: {content}")
 
     def handle_endtag(self, tag: str) -> None:
         if tag.lower() == "a":
             self._anchor_index = None
-        if tag.lower() == "tr" and self._row_depth:
-            self._row_depth -= 1
-            if self._row_depth == 0:
-                value = normalize_text(" ".join(self._row_parts))
-                if value:
-                    self.rows.append(value)
-                self._in_row = False
+        if tag.lower() == "tr" and self._rows:
+            css_class, parts = self._rows.pop()
+            if parts:
+                self.rows.append((css_class, normalize_text(" ".join(parts))))
 
     def handle_data(self, data: str) -> None:
         text = normalize_text(data)
         if not text:
             return
         self.page_text.append(text)
-        if self._in_row:
-            self._row_parts.append(text)
+        if self._rows:
+            self._rows[-1][1].append(text)
         if self._anchor_index is not None:
             href, label = self.links[self._anchor_index]
             self.links[self._anchor_index] = (href, normalize_text(f"{label} {text}"))
@@ -298,9 +287,79 @@ def parse_time(value: str) -> tuple[str | None, str | None]:
     return time_value, zone
 
 
-def is_relevant(row: str, source: Source) -> bool:
-    lowered = row.lower()
-    return any(term in lowered for term in source.terms)
+BLS_ZONE = "America/New_York"
+
+
+def event_candidates(source: Source, url: str, page: PageParser, contents: bytes):
+    """Yield the date, labeled release text, time, and zone from target markup."""
+    if source.key.startswith("bls_"):
+        # The annual compilation repeats monthly footers; use the individual
+        # list pages so each release is tied to the correct update date.
+        if not re.fullmatch(r"/schedule/20\d{2}/\d{2}_sched_list\.htm", urlsplit(url).path):
+            return
+        label = ("Consumer Price Index" if source.key == "bls_cpi" else "Employment Situation")
+        target = re.compile(
+            rf"(?P<slot>.+?)\s+{label}\s+(?:for\s+|/\s*)"
+            rf"(?:{MONTH_PATTERN})\s+20\d{{2}}$", re.IGNORECASE,
+        )
+        eastern = "All times on calendar are Eastern Time" in " ".join(page.page_text)
+        for classes, row in page.rows:
+            if not set(classes.split()) & {"release-list-odd-row", "release-list-even-row"}:
+                continue
+            match = target.fullmatch(row)
+            if not match:
+                continue
+            slot = match["slot"]
+            parsed = parse_date(slot)
+            time_value, _ = parse_time(slot)
+            if parsed:
+                yield (*parsed, row, time_value, BLS_ZONE if eastern and time_value else None)
+    elif source.key == "fomc":
+        markup = contents.decode("utf-8-sig", errors="replace")
+        tokens = re.compile(
+            r"(?P<year>20\d{2}) FOMC Meetings</a>"
+            r'|fomc-meeting__month[^>]*><strong>(?P<month>[^<]+)</strong>'
+            r'|fomc-meeting__date[^>]*>(?P<days>[^<]+)</div>',
+        )
+        year = month = None
+        for token in tokens.finditer(markup):
+            if token["year"]:
+                year, month = int(token["year"]), None
+            elif token["month"]:
+                month = token["month"].strip()
+            elif year and month:
+                days = re.fullmatch(r"(\d{1,2})(?:\s*[-–]\s*(\d{1,2}))?\*?", token["days"].strip())
+                last_month = MONTHS.get(month.lower().split("/")[-1].strip())
+                if last_month and days:
+                    scheduled = date(year, last_month, int(days[2] or days[1]))
+                    text = f"{month} {token['days'].strip()}, {year}"
+                    yield scheduled, text, f"FOMC meeting: {text} (final day)", None, None
+                month = None
+    elif source.key == "ecb":
+        markup = contents.decode("utf-8-sig", errors="replace")
+        for match in re.finditer(r"<dt>\s*(\d{2}/\d{2}/20\d{2})\s*</dt>\s*<dd>(.*?)</dd>",
+                                 markup, re.DOTALL):
+            label = normalize_text(re.sub(r"<[^>]+>", " ", match[2]))
+            if re.fullmatch(r"Governing Council of the ECB: monetary policy meeting .*"
+                            r"\(Day 2\), followed by press conference", label):
+                scheduled = datetime.strptime(match[1], "%d/%m/%Y").date()
+                yield scheduled, match[1], label, None, None
+    elif source.key == "boe":
+        markup = contents.decode("utf-8-sig", errors="replace")
+        for year, table in re.findall(
+            r"<h2>\s*(20\d{2}) confirmed dates\s*</h2>\s*(<table\b.*?</table>)",
+            markup, re.DOTALL,
+        ):
+            for _, row in parse_page(table.encode()).rows:
+                match = re.fullmatch(
+                    rf"(?P<day>\w+ \d{{1,2}} (?:{MONTH_PATTERN})) "
+                    r"(?:[A-Za-z]+ )?MPC Summary and minutes"
+                    r"(?: and [A-Za-z]+ Monetary Policy Report)?", row, re.IGNORECASE,
+                )
+                if match:
+                    parsed = parse_date(f"{match['day']} {year}")
+                    if parsed:
+                        yield (*parsed, row, None, None)
 
 
 def extract_events(
@@ -319,16 +378,16 @@ def extract_events(
         " ".join(page.page_text)
     )
     events = []
-    for row in page.rows:
-        if not is_relevant(row, source):
-            continue
-        parsed = parse_date(row)
-        if not parsed:
-            continue
-        scheduled, date_text = parsed
+    for scheduled, date_text, row, time_value, zone in event_candidates(source, url, page, contents):
         if not start <= scheduled <= end:
             continue
-        time_value, zone = parse_time(row)
+        scheduled_at_utc = None
+        if time_value and zone:
+            local = datetime.strptime(
+                f"{scheduled.isoformat()} {time_value.upper().replace('.', '')}", "%Y-%m-%d %I:%M %p",
+            )
+            scheduled_at_utc = local.replace(tzinfo=ZoneInfo(zone)).astimezone(timezone.utc).isoformat()
+            time_value = local.time().isoformat()
         events.append(
             {
                 "event_type": source.event_type,
@@ -336,6 +395,7 @@ def extract_events(
                 "scheduled_date_text": date_text,
                 "scheduled_time": time_value,
                 "time_zone": zone,
+                "scheduled_at_utc": scheduled_at_utc,
                 "source_url": url,
                 "page_updated_date": updated.isoformat() if updated else None,
                 "downloaded_at_utc": downloaded_at,

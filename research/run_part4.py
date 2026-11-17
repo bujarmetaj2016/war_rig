@@ -114,6 +114,9 @@ def verify_schedule_delivery(
     raw = path.read_bytes()
     manifest = json.loads(raw)
     pins = {path.name: hashlib.sha256(raw).hexdigest()}
+    from research.reparse_release_schedules import OWNER_MANIFEST_SHA256
+    if pins[path.name] == OWNER_MANIFEST_SHA256:
+        raise ValueError("Defective owner CSV is not analytical input; use the verified offline re-parse.")
 
     def pinned(item: dict, filename: str) -> bytes:
         if filename != item["file"]:
@@ -193,22 +196,65 @@ def verify_schedule_delivery(
     ), pins, audit
 
 
+def partial_event_reading(rows: list[dict], entry: datetime) -> engine.Reading:
+    for row in rows:
+        if not (row["scheduled_at_utc"] and row["page_updated_date"]):
+            continue
+        if date.fromisoformat(row["page_updated_date"]) >= entry.date():
+            continue
+        delta = datetime.fromisoformat(row["scheduled_at_utc"]) - entry
+        if timedelta(0) < delta <= timedelta(hours=24):
+            return engine.Reading("EVENT_WINDOW")
+    return engine.Reading.unknown(
+        "No verified pre-entry event match and no complete as-known coverage to establish NO_EVENT."
+    )
+
+
 def run_event_refresh(
-    schedule_root: Path, contents: bytes, prior: dict,
+    schedule_root: Path, derivative: Path, contents: bytes, prior: dict,
 ) -> tuple[dict, dict[str, str]]:
-    calendar, pins, audit = verify_schedule_delivery(schedule_root)
-    if not pins:
-        raise ValueError("Missing owner-delivered release schedule manifest.")
+    from research.reparse_release_schedules import REPARSED_EVENTS, REPARSE_MANIFEST, reparse
+    from research.download_release_schedules import SOURCES
+
+    events, manifest = reparse(schedule_root)
+    if ((derivative / REPARSED_EVENTS).read_bytes() != events
+            or (derivative / REPARSE_MANIFEST).read_bytes() != manifest):
+        raise ValueError("Offline schedule derivation does not match verified source pages.")
+    provenance = json.loads(manifest)
+    pins = {
+        "release_schedule_manifest.json": provenance["owner_manifest_sha256"],
+        **provenance["source_page_sha256"],
+        provenance["original_events_file_not_used_for_classification"]["file"]:
+            provenance["original_events_file_not_used_for_classification"]["sha256"],
+    }
+    rows = list(csv.DictReader(io.StringIO(events.decode())))
+    event_dates = {}
+    for row in rows:
+        event_dates.setdefault(row["event_type"], []).append(row["scheduled_date"])
+    audit = {
+        "manifest_sha256": provenance["owner_manifest_sha256"],
+        "reparse_manifest_sha256": hashlib.sha256(manifest).hexdigest(),
+        "downloaded_at_utc": provenance["owner_downloaded_at_utc"],
+        "schedule_coverage": provenance["acquisition_bounds_not_as_known_coverage"],
+        "source_pages": len(provenance["source_page_sha256"]),
+        "event_rows": len(rows),
+        "event_summary": {
+            source.event_type: {
+                "count": len(days), "first": min(days, default=None), "last": max(days, default=None),
+            }
+            for source in SOURCES for days in [event_dates.get(source.event_type, [])]
+        },
+        "rows_missing_time_zone": sum(not row["time_zone"] for row in rows),
+        "rows_missing_page_update_date": sum(not row["page_updated_date"] for row in rows),
+        "availability_reason": "No complete as-known coverage for all five official event types.",
+    }
     trades = load_trades(contents)
     updated = {}
     for spec in engine.ALL_TESTS:
         if spec.kind != "event":
             continue
         readings = {
-            trade.trade_id: (
-                engine.event_reading(calendar, trade.entry_time_utc) if calendar is not None
-                else engine.Reading.unknown(audit["availability_reason"])
-            )
+            trade.trade_id: partial_event_reading(rows, trade.entry_time_utc)
             for trade in trades if trade.instrument == spec.instrument
         }
         row = asdict(engine.run_test(spec.test_id, trades, readings, seed=prior["bootstrap_seed"]))
@@ -223,7 +269,7 @@ def run_event_refresh(
         **prior,
         "status": "FINAL_REPORT",
         "latest_run_scope": sorted(updated),
-        "schedule_verified_for_classification": calendar is not None,
+        "schedule_verified_for_classification": False,
         "schedule_delivery": audit,
         "matrix": [updated.get(row["test_id"], row) for row in prior["matrix"]],
     }, pins

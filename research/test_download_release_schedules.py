@@ -10,17 +10,29 @@ from unittest.mock import Mock, patch
 from urllib.error import HTTPError
 
 from research import download_release_schedules as downloader
+from research.reparse_release_schedules import reparse
 
 
 FIXTURES = Path(__file__).parent / "fixtures" / "release_schedules"
 WORKSPACE = Path(__file__).parent / ".release_schedule_test_output"
-SAMPLE_PAGES = {
-    "fomc": "fomc.html",
-    "ecb": "ecb.html",
-    "boe": "boe.html",
-    "bls_cpi": "bls_cpi.html",
-    "bls_empsit": "bls_empsit.html",
+OWNER = Path(__file__).resolve().parents[1] / "reference/history/macro-schedules-retry"
+OWNER_SAMPLES = {
+    "fomc": ("fomc_fomccalendars.htm_fe3255ea54.html",
+             "3af1a8595bde89728f0f14a34636f9848ea93031994da3bee7b8911d94a5b6a2"),
+    "ecb": ("ecb_index.en.html_25ee05e583.html",
+            "970599715c97bc5fe95a89f9d9daed724ad64bb96a9d5797ca37b27f2f238ecc"),
+    "boe": ("boe_upcoming-mpc-dates_cd798dc790.html",
+            "117a44c10955e83593e91161498418459614f37328218216eb205198b9e60449"),
+    "05": ("bls_cpi_05_sched_list.htm_67cfe62dbc.html",
+           "b2b28325808b60a1d1f10136adbeda4a7db4b7c1cc3a9e5daef353d6d79e8f3d"),
+    "06": ("bls_cpi_06_sched_list.htm_572eaac9d4.html",
+           "64aa79e6ea4f46f86bc35e49a4f4a1a1aa5b0a5c86375153fdf2d70f511f6b49"),
 }
+
+
+def saved_page(key):
+    filename, digest = OWNER_SAMPLES[key]
+    return filename, digest, (OWNER / "sources" / filename).read_bytes()
 
 
 class ReleaseScheduleTests(unittest.TestCase):
@@ -47,63 +59,53 @@ class ReleaseScheduleTests(unittest.TestCase):
             ),
         )
 
-    def test_parse_official_page_samples_and_keep_missing_provenance_unknown(self):
-        expected = {
-            "fomc": ("2024-01-30", "2024-01-08"),
-            "ecb": ("2024-01-25", "2024-01-15"),
-            "boe": ("2024-03-21", "2024-02-01"),
-            "bls_cpi": ("2024-01-11", "2024-01-04"),
-            "bls_empsit": ("2024-01-05", None),
-        }
-        for source in downloader.SOURCES:
-            with self.subTest(source=source.key):
-                contents = (FIXTURES / SAMPLE_PAGES[source.key]).read_bytes()
-                parsed = downloader.parse_page(contents)
-                updated = downloader.page_updated_date(" ".join(parsed.page_text))
-                events = downloader.extract_events(
-                    source,
-                    source.url,
-                    contents,
-                    updated,
-                    "2026-11-17T22:00:00+00:00",
-                    f"sources/{SAMPLE_PAGES[source.key]}",
-                    hashlib.sha256(contents).hexdigest(),
-                    date(2024, 1, 1),
-                    date(2025, 12, 31),
-                )
-                self.assertGreaterEqual(len(events), 1)
-                self.assertEqual(events[0]["scheduled_date"], expected[source.key][0])
-                self.assertEqual(events[0]["page_updated_date"], expected[source.key][1])
-                self.assertEqual(events[0]["source_url"], source.url)
-                self.assertEqual(
-                    events[0]["source_sha256"], hashlib.sha256(contents).hexdigest()
-                )
-                self.assertIsNone(
-                    downloader.schedule_known_by_entry(
-                        updated, date(2024, 1, 1)
-                    )
-                )
+    def parse_saved(self, key, sample, url=None):
+        source = next(source for source in downloader.SOURCES if source.key == key)
+        name, digest, body = saved_page(sample)
+        self.assertEqual(hashlib.sha256(body).hexdigest(), digest)
+        return downloader.extract_events(
+            source, url or source.url, body, None, "2026-11-17T23:08:41+00:00",
+            f"sources/{name}", digest, date(2026, 5, 6), date(2027, 2, 5),
+        )
 
-    def test_extracts_only_explicit_time_and_zone(self):
-        cpi_source = next(source for source in downloader.SOURCES if source.key == "bls_cpi")
-        cpi_bytes = (FIXTURES / "bls_cpi.html").read_bytes()
-        cpi = downloader.extract_events(
-            cpi_source, cpi_source.url, cpi_bytes, None, "downloaded",
-            "source.html", "sha", date(2024, 1, 1), date(2025, 12, 31),
-        )
-        self.assertEqual((cpi[0]["scheduled_time"], cpi[0]["time_zone"]), ("8:30 a.m.", "ET"))
-        self.assertEqual((cpi[1]["scheduled_time"], cpi[1]["time_zone"]), (None, None))
+    def test_saved_bls_releases_exclude_other_rows_and_use_eastern_time(self):
+        for key, month, day, updated in (
+            ("bls_cpi", "05", "2026-05-12", "2026-05-06"),
+            ("bls_cpi", "06", "2026-06-10", "2026-06-10"),
+            ("bls_empsit", "05", "2026-05-08", "2026-05-06"),
+            ("bls_empsit", "06", "2026-06-05", "2026-06-10"),
+        ):
+            with self.subTest(key=key, month=month):
+                row, = self.parse_saved(
+                    key, month, f"https://www.bls.gov/schedule/2026/{month}_sched_list.htm"
+                )
+                self.assertEqual(row["scheduled_date"], day)
+                self.assertEqual(row["scheduled_time"], "08:30:00")
+                self.assertEqual(row["time_zone"], "America/New_York")
+                self.assertEqual(row["scheduled_at_utc"], f"{day}T12:30:00+00:00")
+                self.assertEqual(row["page_updated_date"], updated)
 
-        employment_source = next(
-            source for source in downloader.SOURCES if source.key == "bls_empsit"
-        )
-        employment_bytes = (FIXTURES / "bls_empsit.html").read_bytes()
-        employment = downloader.extract_events(
-            employment_source, employment_source.url, employment_bytes, None, "downloaded",
-            "source.html", "sha", date(2024, 1, 1), date(2025, 12, 31),
-        )
-        self.assertEqual(employment[0]["scheduled_time"], "8:30 a.m.")
-        self.assertIsNone(employment[0]["time_zone"])
+    def test_saved_central_bank_decision_dates_without_inventing_times(self):
+        for key, expected, updated in (
+            ("fomc", ["2026-06-17", "2026-07-29", "2026-09-16", "2026-10-28", "2026-12-09", "2027-01-27"],
+             "2026-11-12"),
+            ("ecb", ["2026-12-17", "2027-02-04"], "2026-11-16"),
+            ("boe", ["2026-06-18", "2026-07-30", "2026-09-17", "2026-11-05", "2026-12-17", "2027-02-04"],
+             "2026-09-21"),
+        ):
+            with self.subTest(key=key):
+                rows = self.parse_saved(key, key)
+                self.assertEqual([row["scheduled_date"] for row in rows], expected)
+                self.assertTrue(all(not row["scheduled_at_utc"] and not row["time_zone"] for row in rows))
+                self.assertTrue(all(row["page_updated_date"] == updated for row in rows))
+
+    def test_offline_reparse_fingerprints_and_winter_conversion(self):
+        payload, manifest = reparse(OWNER)
+        provenance = json.loads(manifest)
+        self.assertEqual(len(provenance["source_page_sha256"]), 55)
+        self.assertEqual(provenance["event_count"], 22)
+        self.assertEqual(provenance["reparsed_events_file"]["sha256"], hashlib.sha256(payload).hexdigest())
+        self.assertIn(b"2026-11-10T13:30:00+00:00", payload)
 
     def test_schedule_asof_eligibility_requires_prior_dated_page(self):
         self.assertTrue(downloader.schedule_known_by_entry(date(2024, 1, 4), date(2024, 1, 5)))
@@ -133,29 +135,38 @@ class ReleaseScheduleTests(unittest.TestCase):
         out = WORKSPACE / "output"
         manifest_path = FIXTURES / "fred_manifest_mock.json"
 
-        def fake_fetch(_opener, source, _url):
-            return (FIXTURES / SAMPLE_PAGES[source.key]).read_bytes()
+        monthly = "https://www.bls.gov/schedule/2026/05_sched_list.htm"
+
+        def fake_fetch(_opener, source, url):
+            return saved_page("05" if url == monthly or source.key.startswith("bls_") else source.key)[2]
 
         with patch.object(downloader, "fetch_page", side_effect=fake_fetch), patch.object(
-            downloader, "archive_links", return_value=[]
+            downloader, "archive_links",
+            side_effect=lambda source, _page, _start, _end, url: (
+                [monthly] if source.key.startswith("bls_") and url == source.url else []
+            ),
+        ), patch.object(
+            downloader, "read_schedule_bounds", return_value=downloader.ScheduleBounds(
+                date(2026, 5, 6), date(2026, 11, 9), date(2026, 11, 10), date(2026, 11, 11),
+            ),
         ):
             downloader.download(manifest_path, out)
 
         manifest = json.loads((out / "release_schedule_manifest.json").read_text())
         self.assertEqual(
             manifest["fred_realtime_bounds"],
-            {"start": "2024-01-01", "end": "2025-12-30"},
+            {"start": "2026-05-06", "end": "2026-11-09"},
         )
         self.assertEqual(
             manifest["schedule_coverage"],
             {
-                "start": "2024-01-01",
-                "end": "2026-01-01",
-                "latest_trade_date": "2025-12-31",
+                "start": "2026-05-06",
+                "end": "2026-11-11",
+                "latest_trade_date": "2026-11-10",
                 "forward_event_horizon_calendar_days": 1,
             },
         )
-        self.assertEqual(len(manifest["source_pages"]), 5)
+        self.assertEqual(len(manifest["source_pages"]), 7)
         self.assertEqual(manifest["event_count"], 10)
         for source_record in manifest["source_pages"]:
             contents = (out / source_record["file"]).read_bytes()

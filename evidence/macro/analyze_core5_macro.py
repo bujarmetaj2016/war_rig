@@ -375,7 +375,7 @@ def write_trade_test(
     lines = [
         "# Core-5 macro trade test",
         "",
-        ("**Final REV4 report — 17 classified comparisons; five event comparisons UNKNOWN.**"
+        ("**Final REV4 report — 17 non-event comparisons and five event comparisons with incomplete historical coverage.**"
          if result and result.get("status") == "FINAL_REPORT" and not result["schedule_verified_for_classification"]
          else "**Final REV4 report — checksum-verified inputs only.**"
          if result and result.get("status") == "FINAL_REPORT" else
@@ -479,8 +479,8 @@ def write_trade_test(
              else "- ALFRED artifacts are absent; vintages are `UNKNOWN`."),
             ("- Official schedule pages passed the as-known intake checks."
              if result and result["schedule_verified_for_classification"] else
-             "- Fed, ECB, BoE and BLS schedules: `UNKNOWN` until official as-known "
-             "coverage is verified."),
+             "- Without complete historical schedule coverage, only proven pre-entry "
+             "event matches are classified; non-matches stay `UNKNOWN`."),
             "- No future or unpublished values were substituted.",
             "- US–German/US–UK 2-year spreads remain "
             "`NOT_TESTED_DATA_UNAVAILABLE`; other candidate drivers without a fixed "
@@ -514,16 +514,30 @@ def write_trade_test(
                 "## Event schedule delivery",
                 "",
                 f"The owner-run manifest records completion at `{delivery['downloaded_at_utc']}`. "
-                f"All {delivery['source_pages']} source pages and the extracted CSV matched their SHA-256 pins. "
-                "The failed delivery and assistant smoke-test output were not used.",
+                f"All {delivery['source_pages']} source-page fingerprints are unchanged. "
+                "Only the [offline re-parse](RELEASE_SCHEDULE_EVENTS_REPARSED.csv) was analyzed; "
+                "the defective original CSV was checked for integrity only. The failed delivery "
+                "and assistant smoke-test output were not used.",
                 "",
-                f"The CSV contains {delivery['event_rows']} extracted rows, only BLS CPI and employment. "
-                f"{delivery['rows_missing_time_zone']} lack a normalized time zone and "
-                f"{delivery['rows_missing_page_update_date']} lack extracted publication/update dates. "
-                "Some raw pages contain local time or update labels the parser did not extract; "
-                "those do not establish complete point-in-time coverage across all five event types. "
-                "No reviewed as-known coverage was supplied. No observation was treated as NO_EVENT "
-                "merely because a matching release was absent from the extraction.",
+                f"[Re-parse provenance](RELEASE_SCHEDULE_REPARSE.json) SHA-256: "
+                f"`{delivery['reparse_manifest_sha256']}`. "
+                f"The new CSV contains {delivery['event_rows']} unique events in the acquisition window "
+                "2026-05-06 through 2026-11-11:",
+                "",
+                "| Schedule | Events | First date | Last date |",
+                "|---|---:|---|---|",
+            ])
+            for kind, stats in delivery["event_summary"].items():
+                lines.append(f"| {kind} | {stats['count']} | {stats['first'] or '—'} | {stats['last'] or '—'} |")
+            lines.extend([
+                "",
+                f"{delivery['rows_missing_time_zone']} central-bank rows are date-only; "
+                "the saved ECB calendar starts after the trade window. BLS monthly list pages "
+                "supply Eastern Time and Last Modified Date; the aggregate page is not used as "
+                "publication evidence. Only a timestamped release from a page dated strictly "
+                "before the UTC entry day can establish `EVENT_WINDOW`. Missing or later evidence "
+                "cannot establish `NO_EVENT`. With no verified `NO_EVENT` cohort, none of "
+                "the five event comparisons supports a gate.",
                 "",
             ])
         lines.extend([
@@ -556,8 +570,8 @@ def write_trade_test(
                 elif row["gate_recommended"]:
                     kind = "primary" if "_USD_BASKET_EX_" in row["test_id"] else "exploratory"
                     gate = f"{kind}, unconfirmed"
-                elif row["test_id"] == "EURUSD_DGS2" and len(scope) == 9:
-                    gate = "exploratory; superseded by USD basket"
+                elif row["test_id"] == "EURUSD_DGS2" and (len(scope) == 9 or delivery):
+                    gate = "exploratory, unconfirmed; superseded by USD basket"
                 else:
                     gate = "no"
                 lines.append(f"| {row['test_id']} | {row['unknown_n']} | "
@@ -613,7 +627,9 @@ def write_reproducibility(
             result.get("schedule_delivery") or len(result.get("latest_run_scope", [])) == 9)
            else "reference/history/macro")
         + " --trades reference/v2_outcomes/trade_results.csv",
-        "python3 evidence/macro/analyze_core5_macro.py --events-only"
+        "python3 -B -m research.reparse_release_schedules --owner-delivery "
+        "reference/history/macro-schedules-retry --out evidence/macro\n"
+        "python3 -B evidence/macro/analyze_core5_macro.py --events-only"
         if result and result.get("schedule_delivery") else
         "python3 evidence/macro/analyze_core5_macro.py --remaining-non-event"
         if result and len(result.get("latest_run_scope", [])) == 9 else
@@ -625,6 +641,9 @@ def write_reproducibility(
         "The final command checks all pinned filesystem inputs and generated outputs; "
         "the manifest excludes itself because a checksum manifest cannot hash its own "
         "final bytes.",
+        ("The offline suite passed 48 tests, including the fingerprint-pinned BLS, Fed, "
+         "ECB and BoE parser regressions and the partial-coverage classification checks."
+         if result and result.get("schedule_delivery") else ""),
         "",
         "## FRED/ALFRED download (isolated research job only)",
         "",
@@ -679,7 +698,9 @@ def write_reproducibility(
         "`start` and `end` dates, the `download_manifest_sha256`, and "
         "`complete_official_page_by_event_type` (a map from each event type to its "
         "verified source-page file). Include the full 24-hour forward horizon. "
-        "Without that review or usable metadata, event comparisons remain UNKNOWN.",
+        "Without that review, unmatched entries remain UNKNOWN. The offline re-parse "
+        "validates the parent manifest, all 55 source fingerprints and the original CSV hash "
+        "(integrity only). It does not use the bad CSV for analysis or contact any source.",
         "The corrected ECB path is `/press/calendars/mgcgc/html/index.en.html`. "
         "All five official roots and a disposable isolated acquisition run succeeded; "
         "the smoke-test output was not used for trade classification.",
@@ -695,7 +716,7 @@ def write_reproducibility(
         "`/inputs/fred_download_manifest.json`, both read-only, and wrote to `/tmp/schedules` "
         "inside the container. No FRED key was passed; the container was removed and its "
         "output was excluded. The final event evaluation used only the separately "
-        "owner-delivered `reference/history/macro-schedules-retry/`.",
+        "owner-delivered pages in `reference/history/macro-schedules-retry/`, re-parsed offline.",
         "",
         "The optional `reference/history/macro/price_manifest.json` has a `series` array "
         "with `name`, `file`, `source_url`, `downloaded_at_utc`, `close_convention`, "
@@ -754,6 +775,9 @@ def write_manifest(
     output_paths += [relative(path) for path in sorted((ROOT / "research/fixtures").rglob("*")) if path.is_file()]
     if history_pins:
         output_paths.append("evidence/macro/CORE5_MACRO_TRADE_RESULTS.json")
+    if schedule_pins:
+        from research.reparse_release_schedules import REPARSED_EVENTS, REPARSE_MANIFEST
+        output_paths.extend(f"evidence/macro/{name}" for name in (REPARSED_EVENTS, REPARSE_MANIFEST))
     output_entries = {path: sha256(ROOT / path) for path in output_paths}
 
     lines = [
@@ -822,7 +846,7 @@ def main() -> None:
                 != {name: digest for name, digest in history_pins.items() if name.endswith(".csv")}):
             raise ValueError("Existing non-event evidence does not match the verified ALFRED delivery.")
         result, schedule_pins = run_event_refresh(
-            ROOT / "reference/history/macro-schedules-retry", contents, prior,
+            ROOT / "reference/history/macro-schedules-retry", OUT, contents, prior,
         )
         results_path.write_text(json.dumps(result, indent=2) + "\n")
     elif (history / "fred_download_manifest.json").is_file():
