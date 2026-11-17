@@ -7,7 +7,7 @@
 - Predefined instrument × macro tests: **19**; executed: **0**; statistical recommendations: **0**.
 - `reference/history/macro/` is absent/empty. The allowed separate research container/job was not provisioned or attested, so no public downloads were made.
 - The verified V2 exports provide 204 trade-result rows: 199 strict WIN/LOSS labels (128 WIN, 71 LOSS) and 5 SCRATCH outcomes. SCRATCH records are not recast as WIN or LOSS.
-- Analysis script commit: `5d83be9a206bca7cf9b9150e78d3fec70645b9b1`.
+- Analysis script commit: `1e97d5b2912456ac9bc3431f9017040312492cbd`.
 - Trade-results input: `reference/v2_outcomes/trade_results.csv` SHA-256 `ecd3e98ceda9806d86ddf35ac1dba5f50d9e790d7ad7b1223199ea163676bd7c`.
 - V2 reference manifest SHA-256 `a06ac2de31fcce5436d9c975ea7b0cf872a050a6b7d475e2e4b2f09fdff1a38b`.
 - Verified prediction exports (integrity inputs only; not used for trade counts or tests):
@@ -59,7 +59,7 @@ The GBPUSD (n=19), GOLD (n=18), and SP500 (n=17) totals are already below the fi
 
 ## Frozen rules and unavailable observations
 
-No rule was changed after reviewing outcomes. If data are later provisioned in the permitted isolated job, apply REV4 exactly: `S` is the sum of ten daily log returns for price/FX/USD/oil series, or latest minus ten observations earlier in percentage points for yields/spreads; `sigma` is the standard deviation of that S over the trailing 250 observations. Fewer than 250 valid observations, missing timestamps, or unavailable as-published FRED/ALFRED vintages means UNKNOWN. USD_UP/DOWN requires S > +0.5 sigma / S < -0.5 sigma; risk-off is VIX/VIX3M > 1 or VIX > 1.25 times its trailing 20-day median. All remaining signs, headwinds, weekly bootstrap, and decision thresholds are those in the controlling REV4 prompt.
+No rule was changed after reviewing outcomes. If data are later provisioned in the permitted isolated job, apply REV4 exactly: `S` is the sum of ten daily log returns for price/FX/USD/oil series, or latest minus ten observations earlier in percentage points for yields/spreads; `sigma` is the standard deviation of that S over the trailing 250 observations. Fewer than 250 valid observations, missing timestamps, or unavailable as-published FRED/ALFRED vintages means UNKNOWN. Use the vintage in force on the UTC day before entry; a vintage first dated on the entry date is unavailable, and an observation with no eligible earlier vintage is UNKNOWN. USD_UP/DOWN requires S > +0.5 sigma / S < -0.5 sigma; risk-off is VIX/VIX3M > 1 or VIX > 1.25 times its trailing 20-day median. All remaining signs, headwinds, weekly bootstrap, and decision thresholds are those in the controlling REV4 prompt.
 
 - Every trade–macro pair is currently `UNKNOWN`; no WITH/AGAINST/NEUTRAL bucket, win rate, mean/total R, weekly bootstrap CI, removal fraction, or driver-agreement statistic can be calculated.
 - Price-series daily close conventions and UTC close timestamps: `UNKNOWN` (no series downloaded).
