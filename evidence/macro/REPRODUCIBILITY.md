@@ -1,8 +1,8 @@
 # Macro research reproducibility
 
 - Analysis script: `evidence/macro/analyze_core5_macro.py`
-- Script commit: `ef73c3db900aaccd8f2854721db181c0f3352c91`
-- Script SHA-256: `2c1b6067cd1baa69013ee4c13ba729b40ab4eddd615112d2678b8583a55845b3`
+- Script commit: `7d01d08e50eb58b3a3dfa4e1a25db61d7acd8d0d`
+- Script SHA-256: `64f1a3e06e63713cdb90c725d8e6e617b064ddfdcbfb98d9199151402e51cbbd`
 - Verified prompt/hypothesis checksum entries: 8
 - Verified V2 reference manifest entries: 374
 - Verified V2 trade-result rows: 204
@@ -19,11 +19,13 @@ shasum -a 256 -c SHA256SUMS.txt
 shasum -a 256 -c reference/MANIFEST.sha256
 python3 -B -m unittest discover -s research -p 'test_*.py'
 python3 -B -m research.verify_alfred --history reference/history/macro-fred-next --trades reference/v2_outcomes/trade_results.csv
-python3 evidence/macro/analyze_core5_macro.py --events-only
+python3 -B -m research.reparse_release_schedules --owner-delivery reference/history/macro-schedules-retry --out evidence/macro
+python3 -B evidence/macro/analyze_core5_macro.py --events-only
 shasum -a 256 -c evidence/macro/MANIFEST.sha256
 ```
 
 The final command checks all pinned filesystem inputs and generated outputs; the manifest excludes itself because a checksum manifest cannot hash its own final bytes.
+The offline suite passed 48 tests, including the fingerprint-pinned BLS, Fed, ECB and BoE parser regressions and the partial-coverage classification checks.
 
 ## FRED/ALFRED download (isolated research job only)
 
@@ -51,12 +53,12 @@ Download official schedules only in the isolated job, with the verified ALFRED m
 python3 download_release_schedules.py --manifest /inputs/fred_download_manifest.json --out /out
 ```
 
-Place the schedule output under `reference/history/macro/schedules/`. A schedule download alone does not prove that today's page was available before entry. After reviewing completeness and publication evidence, an `as_known_coverage.json` in that directory may identify inclusive UTC entry `start` and `end` dates, the `download_manifest_sha256`, and `complete_official_page_by_event_type` (a map from each event type to its verified source-page file). Include the full 24-hour forward horizon. Without that review or usable metadata, event comparisons remain UNKNOWN.
+Place the schedule output under `reference/history/macro/schedules/`. A schedule download alone does not prove that today's page was available before entry. After reviewing completeness and publication evidence, an `as_known_coverage.json` in that directory may identify inclusive UTC entry `start` and `end` dates, the `download_manifest_sha256`, and `complete_official_page_by_event_type` (a map from each event type to its verified source-page file). Include the full 24-hour forward horizon. Without that review, unmatched entries remain UNKNOWN. The offline re-parse validates the parent manifest, all 55 source fingerprints and the original CSV hash (integrity only). It does not use the bad CSV for analysis or contact any source.
 The corrected ECB path is `/press/calendars/mgcgc/html/index.en.html`. All five official roots and a disposable isolated acquisition run succeeded; the smoke-test output was not used for trade classification.
 
 ### Process deviation
 
-The assistant's earlier live URL probes and acquisition smoke test made network requests from this agent's local macOS environment, not the owner-run research job. They were launched through the Bash tool from `/Users/bujarmetaj/IdeaProjects/war_rig_macro_research` using the local Docker daemon and disposable `python:3.12-slim` containers. The acquisition smoke test mounted `research/` at `/research` and the expanded FRED manifest at `/inputs/fred_download_manifest.json`, both read-only, and wrote to `/tmp/schedules` inside the container. No FRED key was passed; the container was removed and its output was excluded. The final event evaluation used only the separately owner-delivered `reference/history/macro-schedules-retry/`.
+The assistant's earlier live URL probes and acquisition smoke test made network requests from this agent's local macOS environment, not the owner-run research job. They were launched through the Bash tool from `/Users/bujarmetaj/IdeaProjects/war_rig_macro_research` using the local Docker daemon and disposable `python:3.12-slim` containers. The acquisition smoke test mounted `research/` at `/research` and the expanded FRED manifest at `/inputs/fred_download_manifest.json`, both read-only, and wrote to `/tmp/schedules` inside the container. No FRED key was passed; the container was removed and its output was excluded. The final event evaluation used only the separately owner-delivered pages in `reference/history/macro-schedules-retry/`, re-parsed offline.
 
 The optional `reference/history/macro/price_manifest.json` has a `series` array with `name`, `file`, `source_url`, `downloaded_at_utc`, `close_convention`, `sha256` and `expected_dates` (sorted UTC close dates). The named, hash-pinned CSV uses `close_time_utc,close,complete`, with explicit true/false completion. Use only allow-listed Yahoo sources and verified close times, not midnight inferred from daily labels. Missing series remain UNKNOWN.
 For FRED-sourced Brent, VIX, VIX3M and FX, eligible numeric ALFRED vintages are completed observations without a separate session calendar. For the optional `BRENT_FRONT_MONTH` fallback, the price manifest must supply `roll_dates`, `roll_date_documentation`, and `roll_dates_complete: true`; each documented roll-day return is excluded. No futures fallback was needed for the Brent rerun.

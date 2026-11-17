@@ -374,7 +374,7 @@
     },
     {
       "test_id": "EURUSD_SCHEDULED_EVENT",
-      "status": "UNKNOWN",
+      "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
           "n": 0,
@@ -385,12 +385,15 @@
           "mean_r_ci95": null
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 8,
+          "wins": 3,
+          "win_rate": 0.375,
+          "mean_r": -0.3706875,
+          "total_r": -2.9654999999999996,
+          "mean_r_ci95": [
+            -0.7545666666666667,
+            -0.13616666666666666
+          ]
         },
         "NEUTRAL": {
           "n": 0,
@@ -401,16 +404,16 @@
           "mean_r_ci95": null
         }
       },
-      "unknown_n": 101,
+      "unknown_n": 93,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 1.0,
+      "removed_total_r_fraction": 1.0,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "No verified as-known coverage for all five official event types.": 101
+        "No verified pre-entry event match and no complete as-known coverage to establish NO_EVENT.": 93
       }
     },
     {
@@ -604,7 +607,7 @@
     },
     {
       "test_id": "GBPUSD_SCHEDULED_EVENT",
-      "status": "UNKNOWN",
+      "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
           "n": 0,
@@ -615,12 +618,15 @@
           "mean_r_ci95": null
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 1,
+          "wins": 1,
+          "win_rate": 1.0,
+          "mean_r": 1.4446,
+          "total_r": 1.4446,
+          "mean_r_ci95": [
+            1.4446,
+            1.4446
+          ]
         },
         "NEUTRAL": {
           "n": 0,
@@ -631,16 +637,16 @@
           "mean_r_ci95": null
         }
       },
-      "unknown_n": 19,
+      "unknown_n": 18,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 1.0,
+      "removed_total_r_fraction": 1.0,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "No verified as-known coverage for all five official event types.": 19
+        "No verified pre-entry event match and no complete as-known coverage to establish NO_EVENT.": 18
       }
     },
     {
@@ -1074,7 +1080,7 @@
     },
     {
       "test_id": "GOLD_SCHEDULED_EVENT",
-      "status": "UNKNOWN",
+      "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
           "n": 0,
@@ -1085,12 +1091,15 @@
           "mean_r_ci95": null
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 1,
+          "wins": 1,
+          "win_rate": 1.0,
+          "mean_r": 0.7576,
+          "total_r": 0.7576,
+          "mean_r_ci95": [
+            0.7576,
+            0.7576
+          ]
         },
         "NEUTRAL": {
           "n": 0,
@@ -1101,16 +1110,16 @@
           "mean_r_ci95": null
         }
       },
-      "unknown_n": 18,
+      "unknown_n": 17,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 1.0,
+      "removed_total_r_fraction": 1.0,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "No verified as-known coverage for all five official event types.": 18
+        "No verified pre-entry event match and no complete as-known coverage to establish NO_EVENT.": 17
       }
     },
     {
@@ -1151,12 +1160,12 @@
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "No verified as-known coverage for all five official event types.": 17
+        "No verified pre-entry event match and no complete as-known coverage to establish NO_EVENT.": 17
       }
     },
     {
       "test_id": "DAX_SCHEDULED_EVENT",
-      "status": "UNKNOWN",
+      "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
           "n": 0,
@@ -1167,12 +1176,15 @@
           "mean_r_ci95": null
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 3,
+          "wins": 3,
+          "win_rate": 1.0,
+          "mean_r": 0.7618666666666667,
+          "total_r": 2.2856,
+          "mean_r_ci95": [
+            0.5626,
+            0.9545
+          ]
         },
         "NEUTRAL": {
           "n": 0,
@@ -1183,16 +1195,16 @@
           "mean_r_ci95": null
         }
       },
-      "unknown_n": 44,
+      "unknown_n": 41,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 1.0,
+      "removed_total_r_fraction": 1.0,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "No verified as-known coverage for all five official event types.": 44
+        "No verified pre-entry event match and no complete as-known coverage to establish NO_EVENT.": 41
       }
     }
   ],
@@ -1410,21 +1422,45 @@
   },
   "schedule_delivery": {
     "manifest_sha256": "74de937f1cd121b6c056408d28a464428a2ddffa4671fb16d7c407059ddb6b7b",
+    "reparse_manifest_sha256": "e87f249781fbab1bd88535e3a201f0ffa1f300f25942cf4f0516ac8446127d16",
     "downloaded_at_utc": "2026-11-17T23:08:41.434136+00:00",
     "schedule_coverage": {
-      "start": "2026-05-06",
       "end": "2026-11-11",
+      "forward_event_horizon_calendar_days": 1,
       "latest_trade_date": "2026-11-10",
-      "forward_event_horizon_calendar_days": 1
+      "start": "2026-05-06"
     },
     "source_pages": 55,
-    "event_rows": 24,
-    "event_rows_by_type": {
-      "BLS Consumer Price Index release": 12,
-      "BLS Employment Situation release": 12
+    "event_rows": 22,
+    "event_summary": {
+      "Federal Reserve FOMC meeting": {
+        "count": 4,
+        "first": "2026-06-17",
+        "last": "2026-10-28"
+      },
+      "ECB monetary policy meeting": {
+        "count": 0,
+        "first": null,
+        "last": null
+      },
+      "Bank of England MPC decision": {
+        "count": 4,
+        "first": "2026-06-18",
+        "last": "2026-11-05"
+      },
+      "BLS Consumer Price Index release": {
+        "count": 7,
+        "first": "2026-05-12",
+        "last": "2026-11-10"
+      },
+      "BLS Employment Situation release": {
+        "count": 7,
+        "first": "2026-05-08",
+        "last": "2026-11-06"
+      }
     },
-    "rows_missing_time_zone": 24,
-    "rows_missing_page_update_date": 24,
-    "availability_reason": "No verified as-known coverage for all five official event types."
+    "rows_missing_time_zone": 8,
+    "rows_missing_page_update_date": 0,
+    "availability_reason": "No complete as-known coverage for all five official event types."
   }
 }

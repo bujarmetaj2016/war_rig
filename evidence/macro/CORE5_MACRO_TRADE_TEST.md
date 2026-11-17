@@ -1,14 +1,14 @@
 # Core-5 macro trade test
 
-**Final REV4 report — 17 classified comparisons; five event comparisons UNKNOWN.**
+**Final REV4 report — 17 non-event comparisons and five event comparisons with incomplete historical coverage.**
 
 **Sample limit up front:** EURUSD 101, DAX 44, GBPUSD 19, GOLD 18, SP500 17 strict closed WIN/LOSS outcomes. With 20 required in each comparison bucket, GBPUSD, GOLD and SP500 cannot support gate recommendations; report descriptive results where data permit. EURUSD and DAX are not guaranteed sufficient buckets.
 
 ## Availability and execution status
 
-- REV4 comparisons: **22**; fully or partially classified: **17**. Unclassifiable rows are reported as UNKNOWN, not as evidence of no event.
+- REV4 comparisons: **22**; fully or partially classified: **21**. Unclassifiable rows are reported as UNKNOWN, not as evidence of no event.
 - The verified V2 exports provide 204 trade-result rows: 199 strict WIN/LOSS labels (128 WIN, 71 LOSS) and 5 SCRATCH outcomes. SCRATCH records are not recast as WIN or LOSS.
-- Analysis script commit: `ef73c3db900aaccd8f2854721db181c0f3352c91`.
+- Analysis script commit: `7d01d08e50eb58b3a3dfa4e1a25db61d7acd8d0d`.
 - Trade-results input: `reference/v2_outcomes/trade_results.csv` SHA-256 `ecd3e98ceda9806d86ddf35ac1dba5f50d9e790d7ad7b1223199ea163676bd7c`.
 - V2 reference manifest SHA-256 `a06ac2de31fcce5436d9c975ea7b0cf872a050a6b7d475e2e4b2f09fdff1a38b`.
 - Verified prediction exports (integrity inputs only; not used for trade counts or tests):
@@ -50,11 +50,11 @@ The GBPUSD (n=19), GOLD (n=18), and SP500 (n=17) totals are already below the fi
 | EURUSD | VIX risk-off | `EVALUATED` | 2 |
 | EURUSD | Brent spot oil | `EVALUATED` | 0 |
 | EURUSD | US 2-year yield (DGS2) | `EVALUATED` | 0 |
-| EURUSD | Scheduled-event proximity | `UNKNOWN` | 101 |
+| EURUSD | Scheduled-event proximity | `INSUFFICIENT_SAMPLE` | 93 |
 | GBPUSD | VIX risk-off | `INSUFFICIENT_SAMPLE` | 0 |
 | GBPUSD | Brent spot oil | `INSUFFICIENT_SAMPLE` | 0 |
 | GBPUSD | US 2-year yield (DGS2) | `INSUFFICIENT_SAMPLE` | 0 |
-| GBPUSD | Scheduled-event proximity | `UNKNOWN` | 19 |
+| GBPUSD | Scheduled-event proximity | `INSUFFICIENT_SAMPLE` | 18 |
 | GOLD | US 10-year real yield (DFII10) | `INSUFFICIENT_SAMPLE` | 0 |
 | GOLD | USD strength basket | `INSUFFICIENT_SAMPLE` | 0 |
 | GOLD | VIX risk-off | `INSUFFICIENT_SAMPLE` | 1 |
@@ -64,9 +64,9 @@ The GBPUSD (n=19), GOLD (n=18), and SP500 (n=17) totals are already below the fi
 | DAX | VIX risk-off | `INSUFFICIENT_SAMPLE` | 1 |
 | DAX | EURUSD 10-day change | `INSUFFICIENT_SAMPLE` | 0 |
 | DAX | Brent spot oil | `INSUFFICIENT_SAMPLE` | 0 |
-| GOLD | Scheduled-event proximity | `UNKNOWN` | 18 |
+| GOLD | Scheduled-event proximity | `INSUFFICIENT_SAMPLE` | 17 |
 | SP500 | Scheduled-event proximity | `UNKNOWN` | 17 |
-| DAX | Scheduled-event proximity | `UNKNOWN` | 44 |
+| DAX | Scheduled-event proximity | `INSUFFICIENT_SAMPLE` | 41 |
 
 
 ## Frozen rules and unavailable observations
@@ -76,7 +76,7 @@ No rule was changed after reviewing outcomes. If data are later provisioned in t
 - Unverified trade–macro observations are `UNKNOWN` and excluded from statistics.
 - Price-series daily close conventions and UTC close timestamps: `UNKNOWN` (no verified price history delivered).
 - Verified ALFRED vintages are recorded in the results below. Publication is date-granular; same-day releases are not assumed available.
-- Fed, ECB, BoE and BLS schedules: `UNKNOWN` until official as-known coverage is verified.
+- Without complete historical schedule coverage, only proven pre-entry event matches are classified; non-matches stay `UNKNOWN`.
 - No future or unpublished values were substituted.
 - US–German/US–UK 2-year spreads remain `NOT_TESTED_DATA_UNAVAILABLE`; other candidate drivers without a fixed REV4 rule remain `NOT_TESTED`.
 
@@ -88,9 +88,19 @@ Ran the five event comparisons only; all 17 prior non-event results were preserv
 
 ## Event schedule delivery
 
-The owner-run manifest records completion at `2026-11-17T23:08:41.434136+00:00`. All 55 source pages and the extracted CSV matched their SHA-256 pins. The failed delivery and assistant smoke-test output were not used.
+The owner-run manifest records completion at `2026-11-17T23:08:41.434136+00:00`. All 55 source-page fingerprints are unchanged. Only the [offline re-parse](RELEASE_SCHEDULE_EVENTS_REPARSED.csv) was analyzed; the defective original CSV was checked for integrity only. The failed delivery and assistant smoke-test output were not used.
 
-The CSV contains 24 extracted rows, only BLS CPI and employment. 24 lack a normalized time zone and 24 lack extracted publication/update dates. Some raw pages contain local time or update labels the parser did not extract; those do not establish complete point-in-time coverage across all five event types. No reviewed as-known coverage was supplied. No observation was treated as NO_EVENT merely because a matching release was absent from the extraction.
+[Re-parse provenance](RELEASE_SCHEDULE_REPARSE.json) SHA-256: `e87f249781fbab1bd88535e3a201f0ffa1f300f25942cf4f0516ac8446127d16`. The new CSV contains 22 unique events in the acquisition window 2026-05-06 through 2026-11-11:
+
+| Schedule | Events | First date | Last date |
+|---|---:|---|---|
+| Federal Reserve FOMC meeting | 4 | 2026-06-17 | 2026-10-28 |
+| ECB monetary policy meeting | 0 | — | — |
+| Bank of England MPC decision | 4 | 2026-06-18 | 2026-11-05 |
+| BLS Consumer Price Index release | 7 | 2026-05-12 | 2026-11-10 |
+| BLS Employment Situation release | 7 | 2026-05-08 | 2026-11-06 |
+
+8 central-bank rows are date-only; the saved ECB calendar starts after the trade window. BLS monthly list pages supply Eastern Time and Last Modified Date; the aggregate page is not used as publication evidence. Only a timestamped release from a page dated strictly before the UTC entry day can establish `EVENT_WINDOW`. Missing or later evidence cannot establish `NO_EVENT`. With no verified `NO_EVENT` cohort, none of the five event comparisons supports a gate. Removal fractions below use classified observations only: 1.000 in an event row is a consequence of having only positive matches, not a fraction of all V2 trades or total V2 R.
 
 ## Comparisons with verified inputs
 
@@ -110,6 +120,9 @@ Full precision, UTC source timestamps, CSV hashes, URLs, family agreement and DA
 | EURUSD_DGS2 | WITH | 22 | 0.636 | 0.149 | 3.272 | [-0.218, 0.450] |
 | EURUSD_DGS2 | AGAINST | 53 | 0.491 | -0.130 | -6.914 | [-0.425, 0.229] |
 | EURUSD_DGS2 | NEUTRAL | 26 | 0.885 | 0.586 | 15.223 | [0.357, 0.799] |
+| EURUSD_SCHEDULED_EVENT | WITH | 0 | — | — | 0.000 | — |
+| EURUSD_SCHEDULED_EVENT | AGAINST | 8 | 0.375 | -0.371 | -2.965 | [-0.755, -0.136] |
+| EURUSD_SCHEDULED_EVENT | NEUTRAL | 0 | — | — | 0.000 | — |
 | GBPUSD_USD_BASKET_EX_GBP | WITH | 7 | 0.286 | -0.437 | -3.060 | [-0.982, 0.221] |
 | GBPUSD_USD_BASKET_EX_GBP | AGAINST | 4 | 0.250 | -0.572 | -2.288 | [-0.980, 0.639] |
 | GBPUSD_USD_BASKET_EX_GBP | NEUTRAL | 8 | 0.625 | 0.333 | 2.665 | [-0.174, 0.951] |
@@ -122,6 +135,9 @@ Full precision, UTC source timestamps, CSV hashes, URLs, family agreement and DA
 | GBPUSD_DGS2 | WITH | 5 | 0.600 | 0.068 | 0.340 | [-0.625, 0.745] |
 | GBPUSD_DGS2 | AGAINST | 4 | 0.250 | -0.380 | -1.519 | [-0.990, 0.837] |
 | GBPUSD_DGS2 | NEUTRAL | 10 | 0.400 | -0.151 | -1.505 | [-0.760, 0.441] |
+| GBPUSD_SCHEDULED_EVENT | WITH | 0 | — | — | 0.000 | — |
+| GBPUSD_SCHEDULED_EVENT | AGAINST | 1 | 1.000 | 1.445 | 1.445 | [1.445, 1.445] |
+| GBPUSD_SCHEDULED_EVENT | NEUTRAL | 0 | — | — | 0.000 | — |
 | GOLD_DFII10 | WITH | 5 | 0.400 | -0.199 | -0.997 | [-0.996, 0.983] |
 | GOLD_DFII10 | AGAINST | 5 | 1.000 | 0.491 | 2.457 | [0.411, 0.670] |
 | GOLD_DFII10 | NEUTRAL | 8 | 0.625 | 0.321 | 2.570 | [-0.555, 0.818] |
@@ -149,17 +165,25 @@ Full precision, UTC source timestamps, CSV hashes, URLs, family agreement and DA
 | DAX_BRENT_SPOT | WITH | 21 | 0.714 | 0.290 | 6.082 | [-0.131, 0.699] |
 | DAX_BRENT_SPOT | AGAINST | 16 | 0.750 | 0.305 | 4.883 | [-0.082, 0.631] |
 | DAX_BRENT_SPOT | NEUTRAL | 7 | 0.857 | 0.328 | 2.298 | [0.073, 0.702] |
+| GOLD_SCHEDULED_EVENT | WITH | 0 | — | — | 0.000 | — |
+| GOLD_SCHEDULED_EVENT | AGAINST | 1 | 1.000 | 0.758 | 0.758 | [0.758, 0.758] |
+| GOLD_SCHEDULED_EVENT | NEUTRAL | 0 | — | — | 0.000 | — |
+| DAX_SCHEDULED_EVENT | WITH | 0 | — | — | 0.000 | — |
+| DAX_SCHEDULED_EVENT | AGAINST | 3 | 1.000 | 0.762 | 2.286 | [0.563, 0.955] |
+| DAX_SCHEDULED_EVENT | NEUTRAL | 0 | — | — | 0.000 | — |
 
 | Test | Unknown n | Removed trade fraction | Removed R fraction | Gate |
 |---|---:|---:|---:|---|
 | EURUSD_USD_BASKET_EX_EUR | 0 | 0.446 | -0.385 | primary, unconfirmed |
 | EURUSD_VIX_RISK_OFF | 2 | 0.374 | 1.276 | no |
 | EURUSD_BRENT_SPOT | 0 | 0.436 | -0.051 | exploratory, unconfirmed |
-| EURUSD_DGS2 | 0 | 0.525 | -0.597 | no |
+| EURUSD_DGS2 | 0 | 0.525 | -0.597 | exploratory, unconfirmed; superseded by USD basket |
+| EURUSD_SCHEDULED_EVENT | 93 | 1.000 | 1.000 | no |
 | GBPUSD_USD_BASKET_EX_GBP | 0 | 0.211 | 0.853 | no |
 | GBPUSD_VIX_RISK_OFF | 0 | 0.316 | 0.906 | no |
 | GBPUSD_BRENT_SPOT | 0 | 0.421 | 0.368 | no |
 | GBPUSD_DGS2 | 0 | 0.211 | 0.566 | no |
+| GBPUSD_SCHEDULED_EVENT | 18 | 1.000 | 1.000 | no |
 | GOLD_DFII10 | 0 | 0.278 | 0.610 | no |
 | GOLD_USD_BASKET | 0 | 0.222 | 0.297 | no |
 | GOLD_VIX_RISK_OFF | 1 | 0.412 | 0.761 | no |
@@ -169,5 +193,7 @@ Full precision, UTC source timestamps, CSV hashes, URLs, family agreement and DA
 | DAX_VIX_RISK_OFF | 1 | 0.419 | 0.453 | no |
 | DAX_EURUSD_10D | 0 | 0.205 | 0.237 | no |
 | DAX_BRENT_SPOT | 0 | 0.364 | 0.368 | no |
+| GOLD_SCHEDULED_EVENT | 17 | 1.000 | 1.000 | no |
+| DAX_SCHEDULED_EVENT | 41 | 1.000 | 1.000 | no |
 
 An unconfirmed candidate passed the historical comparison among eligible tested family members; it is not confirmed or authorized policy. USD/rates agreement and the strongest eligible family member are recorded in the results JSON. Brent spot uses numeric ALFRED observations in force on the UTC day before entry; no separate session or futures roll calendar is required.

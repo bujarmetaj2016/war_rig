@@ -1,6 +1,6 @@
 # Core-5 macro findings
 
-**Status:** `SOURCE_TRACE_VERIFIED / TRADE_TEST_NOT_VERIFIED`
+**Status:** `SOURCE_TRACE_VERIFIED`. See the separate [final trade report](CORE5_MACRO_TRADE_TEST.md) for all 22 comparisons and their coverage limits.
 **Scope:** Read-only inspection of the owner-supplied V2 snapshot. No V2 code was
 imported or executed. These findings describe source behavior, not adopted V3
 policy.

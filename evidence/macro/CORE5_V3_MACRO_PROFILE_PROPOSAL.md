@@ -56,8 +56,10 @@ input above remains a candidate for an owner-selected profile and frozen
 forward/DEMO validation. If adopted later, it must use completed observations,
 as-published FRED/ALFRED vintages, explicit source close conventions and
 per-instrument freshness policies. Unknown or late data must not silently
-become a neutral pass. The event window is a calendar/timing observation, not a
-directional signal.
+become a neutral pass. The corrected schedule re-parse can prove some event-window
+matches, but it does not establish a `NO_EVENT` cohort. Keep event proximity
+`LOG_ONLY` for all five instruments; the timing evidence does not justify an
+entry exclusion or a directional signal.
 
 V2's climate HALF value did not scale actual FX stake in Governor. V3 must not
 inherit that label as a `SIZE_MODIFIER` without an explicit owner decision and
