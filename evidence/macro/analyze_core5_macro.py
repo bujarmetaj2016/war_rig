@@ -375,7 +375,11 @@ def write_trade_test(
     lines = [
         "# Core-5 macro trade test",
         "",
-        ("**Status: `PARTIAL_TRADE_TEST` — checksum-verified inputs only.**"
+        ("**Final REV4 report — 17 classified comparisons; five event comparisons UNKNOWN.**"
+         if result and result.get("status") == "FINAL_REPORT" and not result["schedule_verified_for_classification"]
+         else "**Final REV4 report — checksum-verified inputs only.**"
+         if result and result.get("status") == "FINAL_REPORT" else
+         "**Status: `PARTIAL_TRADE_TEST` — checksum-verified inputs only.**"
          if result else "**Status: `TRADE_TEST_NOT_VERIFIED` — ALFRED delivery not verified.**"),
         "",
         "**Sample limit up front:** EURUSD 101, DAX 44, GBPUSD 19, GOLD 18, SP500 17 "
@@ -387,7 +391,7 @@ def write_trade_test(
         "",
         f"- REV4 comparisons: **{len(TESTS)}**; fully or partially classified: "
         f"**{sum(any(b['n'] for b in r['buckets'].values()) for r in result['matrix']) if result else 0}**. "
-        "The remaining rows have no verified input.",
+        "Unclassifiable rows are reported as UNKNOWN, not as evidence of no event.",
         "- The verified V2 exports provide 204 trade-result rows: "
         f"{strict_total} strict WIN/LOSS labels ({labels['WIN']} WIN, {labels['LOSS']} "
         f"LOSS) and {labels['SCRATCH']} SCRATCH outcomes. SCRATCH records are not "
@@ -431,14 +435,20 @@ def write_trade_test(
             "",
             "## Fixed test matrix (22 comparisons)",
             "",
-            "| Instrument | Macro | Preregistered status | Result |",
-            "|---|---|---|---|",
         ]
     )
-    for index, (instrument, macro, kind) in enumerate(TESTS):
-        row = result["matrix"][index] if result else None
-        status = row["status"] if row and any(b["n"] for b in row["buckets"].values()) else "UNKNOWN"
-        lines.append(f"| {instrument} | {macro} | {kind} | `{status}` |")
+    for kind in ("PRIMARY", "EXPLORATORY"):
+        lines.extend([f"### {kind.title()} comparisons", "",
+                      "| Instrument | Macro | Result | Unknown n |",
+                      "|---|---|---|---:|"])
+        for index, (instrument, macro, tag) in enumerate(TESTS):
+            if tag != kind:
+                continue
+            row = result["matrix"][index] if result else None
+            status = row["status"] if row and any(b["n"] for b in row["buckets"].values()) else "UNKNOWN"
+            unknown = row["unknown_n"] if row else "—"
+            lines.append(f"| {instrument} | {macro} | `{status}` | {unknown} |")
+        lines.append("")
     lines.extend(
         [
             "",
@@ -487,9 +497,11 @@ def write_trade_test(
     )
     if result:
         scope = result.get("latest_run_scope", [])
+        delivery = result.get("schedule_delivery")
         if scope:
             scope_text = (
-                "Ran the nine remaining non-event comparisons. Prior statistics were "
+                "Ran the five event comparisons only; all 17 prior non-event results were preserved."
+                if delivery else "Ran the nine remaining non-event comparisons. Prior statistics were "
                 "preserved; USD/rates family agreement and eligibility were refreshed. "
                 "The failed schedule delivery was not used."
                 if len(scope) == 9 else
@@ -497,6 +509,23 @@ def write_trade_test(
             )
             lines.extend(["## Latest run scope", "",
                           scope_text, ""])
+        if delivery:
+            lines.extend([
+                "## Event schedule delivery",
+                "",
+                f"The owner-run manifest records completion at `{delivery['downloaded_at_utc']}`. "
+                f"All {delivery['source_pages']} source pages and the extracted CSV matched their SHA-256 pins. "
+                "The failed delivery and assistant smoke-test output were not used.",
+                "",
+                f"The CSV contains {delivery['event_rows']} extracted rows, only BLS CPI and employment. "
+                f"{delivery['rows_missing_time_zone']} lack a normalized time zone and "
+                f"{delivery['rows_missing_page_update_date']} lack extracted publication/update dates. "
+                "Some raw pages contain local time or update labels the parser did not extract; "
+                "those do not establish complete point-in-time coverage across all five event types. "
+                "No reviewed as-known coverage was supplied. No observation was treated as NO_EVENT "
+                "merely because a matching release was absent from the extraction.",
+                "",
+            ])
         lines.extend([
             "## Comparisons with verified inputs",
             "",
@@ -580,9 +609,12 @@ def write_reproducibility(
         "shasum -a 256 -c reference/MANIFEST.sha256",
         "python3 -B -m unittest discover -s research -p 'test_*.py'",
         "python3 -B -m research.verify_alfred --history "
-        + ("reference/history/macro-fred-next" if result and len(result.get("latest_run_scope", [])) == 9
+        + ("reference/history/macro-fred-next" if result and (
+            result.get("schedule_delivery") or len(result.get("latest_run_scope", [])) == 9)
            else "reference/history/macro")
         + " --trades reference/v2_outcomes/trade_results.csv",
+        "python3 evidence/macro/analyze_core5_macro.py --events-only"
+        if result and result.get("schedule_delivery") else
         "python3 evidence/macro/analyze_core5_macro.py --remaining-non-event"
         if result and len(result.get("latest_run_scope", [])) == 9 else
         ("python3 evidence/macro/analyze_core5_macro.py --brent-only"
@@ -652,6 +684,19 @@ def write_reproducibility(
         "All five official roots and a disposable isolated acquisition run succeeded; "
         "the smoke-test output was not used for trade classification.",
         "",
+        "### Process deviation",
+        "",
+        "The assistant's earlier live URL probes and acquisition smoke test made network "
+        "requests from this agent's local macOS environment, not the owner-run research job. "
+        "They were launched through the Bash tool from "
+        "`/Users/bujarmetaj/IdeaProjects/war_rig_macro_research` using the local Docker "
+        "daemon and disposable `python:3.12-slim` containers. The acquisition smoke test "
+        "mounted `research/` at `/research` and the expanded FRED manifest at "
+        "`/inputs/fred_download_manifest.json`, both read-only, and wrote to `/tmp/schedules` "
+        "inside the container. No FRED key was passed; the container was removed and its "
+        "output was excluded. The final event evaluation used only the separately "
+        "owner-delivered `reference/history/macro-schedules-retry/`.",
+        "",
         "The optional `reference/history/macro/price_manifest.json` has a `series` array "
         "with `name`, `file`, `source_url`, `downloaded_at_utc`, `close_convention`, "
         "`sha256` and `expected_dates` (sorted UTC close dates). The named, hash-pinned "
@@ -674,6 +719,7 @@ def write_manifest(
     commit: str,
     history_pins: dict[str, str],
     history: Path,
+    schedule_pins: dict[str, str],
 ) -> None:
     script_path = relative(Path(__file__))
     design_path = ROOT / DESIGN_ZIP
@@ -692,6 +738,8 @@ def write_manifest(
     )
     entries[DESIGN_ZIP] = sha256(design_path)
     entries.update({relative(history / name): digest for name, digest in history_pins.items()})
+    entries.update({f"reference/history/macro-schedules-retry/{name}": digest
+                    for name, digest in schedule_pins.items()})
 
     output_paths = [
         "evidence/macro/CORE5_MACRO_INVENTORY.csv",
@@ -727,6 +775,8 @@ def main() -> None:
                         help="Refresh Brent using the existing ALFRED-only evidence; preserve other results.")
     scope.add_argument("--remaining-non-event", action="store_true",
                        help="Refresh the nine added ALFRED comparisons; do not read schedules.")
+    scope.add_argument("--events-only", action="store_true",
+                       help="Verify owner-delivered schedules and refresh only the five event comparisons.")
     args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     prompt_entries = verify_checksum_list(ROOT / "SHA256SUMS.txt")
@@ -756,10 +806,26 @@ def main() -> None:
     ]
     result = None
     history_pins = {}
-    history = ROOT / ("reference/history/macro-fred-next" if args.remaining_non_event
+    schedule_pins = {}
+    history = ROOT / ("reference/history/macro-fred-next" if args.remaining_non_event or args.events_only
                       else "reference/history/macro")
     results_path = OUT / "CORE5_MACRO_TRADE_RESULTS.json"
-    if (history / "fred_download_manifest.json").is_file():
+    if args.events_only:
+        from research.run_part4 import run_event_refresh
+        from research.verify_alfred import verified_vintages
+
+        contents = (ROOT / TRADE_FILE).read_bytes()
+        _, history_pins = verified_vintages(history, contents)
+        prior = json.loads(results_path.read_bytes())
+        if ([row["test_id"] for row in prior["matrix"]] != [spec.test_id for spec in ALL_TESTS]
+                or {item["file"]: item["sha256"] for item in prior["alfred_sources"]}
+                != {name: digest for name, digest in history_pins.items() if name.endswith(".csv")}):
+            raise ValueError("Existing non-event evidence does not match the verified ALFRED delivery.")
+        result, schedule_pins = run_event_refresh(
+            ROOT / "reference/history/macro-schedules-retry", contents, prior,
+        )
+        results_path.write_text(json.dumps(result, indent=2) + "\n")
+    elif (history / "fred_download_manifest.json").is_file():
         from research.run_part4 import analyze
 
         prior = json.loads(results_path.read_bytes()) if args.brent_only or args.remaining_non_event else None
@@ -773,7 +839,7 @@ def main() -> None:
     write_inventory(rows)
     write_trade_test(labels, per_instrument, commit, prediction_entries, result)
     write_reproducibility(prompt_entries, reference_entries, rows, labels, commit, result)
-    write_manifest(prompt_entries, reference_entries, commit, history_pins, history)
+    write_manifest(prompt_entries, reference_entries, commit, history_pins, history, schedule_pins)
     print(
         f"OK: {len(prompt_entries)} prompt pins, {len(reference_entries)} reference "
         f"pins, {len(trades)} trade rows, {len(rows)} inventory rows, "

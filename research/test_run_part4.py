@@ -5,7 +5,8 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
-from research.run_part4 import load_calendar, load_prices
+from research.part4_engine import ALL_TESTS
+from research.run_part4 import load_calendar, load_prices, run_event_refresh
 
 
 class IntakeTests(unittest.TestCase):
@@ -54,3 +55,20 @@ class IntakeTests(unittest.TestCase):
             calendar, pins = load_calendar(root)
             self.assertIsNone(calendar)
             self.assertIn("schedules/release_schedule_events.csv", pins)
+
+            prior = {"bootstrap_seed": 0, "matrix": [
+                {"test_id": spec.test_id, "status": "preserve"} for spec in ALL_TESTS
+            ]}
+            contents = (
+                b"id,instrument,direction,fill_time,final_outcome_label,exit_r\n"
+                b"1,EURUSD,BULLISH,2026-05-10 10:00:00 UTC,WIN,1\n"
+            )
+            result, _ = run_event_refresh(schedule, contents, prior)
+            self.assertEqual(len(result["latest_run_scope"]), 5)
+            row = next(row for row in result["matrix"] if row["test_id"] == "EURUSD_SCHEDULED_EVENT")
+            self.assertEqual((row["status"], row["unknown_n"], row["buckets"]["WITH"]["n"]),
+                             ("UNKNOWN", 1, 0))
+            self.assertEqual(result["matrix"][0], prior["matrix"][0])
+            (schedule / "release_schedule_events.csv").write_bytes(events + b"bad")
+            with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+                run_event_refresh(schedule, contents, prior)

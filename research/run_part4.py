@@ -100,14 +100,20 @@ def load_prices(history: Path) -> tuple[dict[str, engine.PriceSeries], dict[str,
 
 
 def load_calendar(history: Path) -> tuple[engine.OfficialCalendar | None, dict[str, str]]:
+    calendar, pins, _ = verify_schedule_delivery(history / "schedules")
+    return calendar, {f"schedules/{name}": digest for name, digest in pins.items()}
+
+
+def verify_schedule_delivery(
+    root: Path,
+) -> tuple[engine.OfficialCalendar | None, dict[str, str], dict]:
     """Verify downloaded bytes; require reviewed as-known coverage before use."""
-    root = history / "schedules"
     path = root / "release_schedule_manifest.json"
     if not path.is_file():
-        return None, {}
+        return None, {}, {}
     raw = path.read_bytes()
     manifest = json.loads(raw)
-    pins = {f"schedules/{path.name}": hashlib.sha256(raw).hexdigest()}
+    pins = {path.name: hashlib.sha256(raw).hexdigest()}
 
     def pinned(item: dict, filename: str) -> bytes:
         if filename != item["file"]:
@@ -116,7 +122,7 @@ def load_calendar(history: Path) -> tuple[engine.OfficialCalendar | None, dict[s
         digest = hashlib.sha256(data).hexdigest()
         if digest != item["sha256"]:
             raise ValueError("Schedule artifact SHA-256 mismatch.")
-        pins[f"schedules/{filename}"] = digest
+        pins[filename] = digest
         return data
 
     pages = {}
@@ -130,20 +136,34 @@ def load_calendar(history: Path) -> tuple[engine.OfficialCalendar | None, dict[s
     rows = list(csv.DictReader(io.StringIO(data.decode("utf-8-sig"))))
     if len(rows) != manifest["event_count"]:
         raise ValueError("Schedule event count mismatch.")
+    event_counts = Counter(row["event_type"] for row in rows)
+    audit = {
+        "manifest_sha256": pins[path.name],
+        "downloaded_at_utc": manifest.get("downloaded_at_utc"),
+        "schedule_coverage": manifest.get("schedule_coverage"),
+        "source_pages": len(pages),
+        "event_rows": len(rows),
+        "event_rows_by_type": dict(sorted(event_counts.items())),
+        "rows_missing_time_zone": sum(not row.get("time_zone") for row in rows),
+        "rows_missing_page_update_date": sum(not row.get("page_updated_date") for row in rows),
+    }
     review_path = root / "as_known_coverage.json"
     if not review_path.is_file():
-        return None, pins
+        audit["availability_reason"] = "No verified as-known coverage for all five official event types."
+        return None, pins, audit
     review_raw = review_path.read_bytes()
-    pins[f"schedules/{review_path.name}"] = hashlib.sha256(review_raw).hexdigest()
+    pins[review_path.name] = hashlib.sha256(review_raw).hexdigest()
     review = json.loads(review_raw)
-    if review["download_manifest_sha256"] != pins[f"schedules/{path.name}"]:
+    if review["download_manifest_sha256"] != pins[path.name]:
         raise ValueError("As-known schedule review does not match download manifest.")
     verified_sources = {}
     events = set()
     for event_type in engine.EVENT_TYPES:
         filename = review["complete_official_page_by_event_type"][event_type]
         item = pages[filename]
-        if item["event_type"] != event_type:
+        if item["source_key"] != {
+            "FOMC": "fomc", "ECB": "ecb", "BOE": "boe", "US_CPI": "bls_cpi", "US_NFP": "bls_empsit",
+        }[event_type]:
             raise ValueError("Reviewed event type is not supported by its source page.")
         updated = item["page_updated_date"]
         verified_sources[event_type] = engine.ScheduleProvenance(
@@ -153,11 +173,12 @@ def load_calendar(history: Path) -> tuple[engine.OfficialCalendar | None, dict[s
         for row in rows:
             if row["source_file"] != filename:
                 continue
-            if (row["event_type"] != event_type or row["source_sha256"] != item["sha256"]
+            if (row["event_type"] != item["event_type"] or row["source_sha256"] != item["sha256"]
                     or row["source_url"] != item["source_url"]):
                 raise ValueError("Event disagrees with its reviewed source.")
             if not row["scheduled_time"] or not row["time_zone"]:
-                return None, pins
+                audit["availability_reason"] = "A reviewed event lacks a time or time zone."
+                return None, pins, audit
             events.add((event_type, row["scheduled_date"], row["scheduled_time"], row["time_zone"]))
     start = date.fromisoformat(review["start"])
     end = date.fromisoformat(review["end"])
@@ -169,7 +190,43 @@ def load_calendar(history: Path) -> tuple[engine.OfficialCalendar | None, dict[s
         tuple(engine.ScheduledEvent(kind, date.fromisoformat(day), time.fromisoformat(hour), zone)
               for kind, day, hour, zone in sorted(events)),
         verified_sources, start, end,
-    ), pins
+    ), pins, audit
+
+
+def run_event_refresh(
+    schedule_root: Path, contents: bytes, prior: dict,
+) -> tuple[dict, dict[str, str]]:
+    calendar, pins, audit = verify_schedule_delivery(schedule_root)
+    if not pins:
+        raise ValueError("Missing owner-delivered release schedule manifest.")
+    trades = load_trades(contents)
+    updated = {}
+    for spec in engine.ALL_TESTS:
+        if spec.kind != "event":
+            continue
+        readings = {
+            trade.trade_id: (
+                engine.event_reading(calendar, trade.entry_time_utc) if calendar is not None
+                else engine.Reading.unknown(audit["availability_reason"])
+            )
+            for trade in trades if trade.instrument == spec.instrument
+        }
+        row = asdict(engine.run_test(spec.test_id, trades, readings, seed=prior["bootstrap_seed"]))
+        row["unknown_reasons"] = dict(sorted(Counter(
+            reading.reason or "unspecified" for reading in readings.values()
+            if reading.code == "UNKNOWN"
+        ).items()))
+        if row["unknown_n"] and not any(bucket["n"] for bucket in row["buckets"].values()):
+            row["status"] = "UNKNOWN"
+        updated[spec.test_id] = row
+    return {
+        **prior,
+        "status": "FINAL_REPORT",
+        "latest_run_scope": sorted(updated),
+        "schedule_verified_for_classification": calendar is not None,
+        "schedule_delivery": audit,
+        "matrix": [updated.get(row["test_id"], row) for row in prior["matrix"]],
+    }, pins
 
 
 def load_trades(contents: bytes) -> list[engine.Trade]:
