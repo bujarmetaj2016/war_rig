@@ -1,8 +1,8 @@
 # Macro research reproducibility
 
 - Analysis script: `evidence/macro/analyze_core5_macro.py`
-- Script commit: `1e97d5b2912456ac9bc3431f9017040312492cbd`
-- Script SHA-256: `8755beb77b0946c2fd86e0bce711627ada6ba3ccce05a1fd644ee3581df25b4a`
+- Script commit: `f6dbf1045650c2d296d58baecf0c37248fa0ea29`
+- Script SHA-256: `7a8e6afe3d90d40a4b30b4afd7a52ac8b84975d3339bba5a84b0dac9e441690a`
 - Verified prompt/hypothesis checksum entries: 8
 - Verified V2 reference manifest entries: 374
 - Verified V2 trade-result rows: 204
@@ -25,13 +25,13 @@ The final command checks all pinned filesystem inputs and generated outputs; the
 
 ## FRED/ALFRED download (isolated research job only)
 
-Stage `research/download_macro.py` in the separate REV4 research job, inject the dedicated research key as `FRED_API_KEY` through that job's secret configuration, and mount a fresh writable `/out`. No pip step is needed:
+Stage `research/download_macro.py` and the pinned redacted `reference/v2_outcomes/trade_results.csv` (as `trade_results.csv`) in the separate REV4 research job, inject the dedicated research key as `FRED_API_KEY` through that job's secret configuration, and mount a fresh writable `/out`. No pip step is needed:
 
 ```sh
 python3 download_macro.py --out /out
 ```
 
-This downloads vintages for DGS2, DFII10, BAMLH0A0HYM2 and DCOILBRENTEU. `fred_download_manifest.json` records the series, download times, credential-free source URLs, row counts and CSV hashes. After validating them in the research job, stage the artifacts under `reference/history/macro/`. This downloader does not fetch Yahoo Finance prices or release calendars.
+This downloads vintages for DGS2, DFII10, BAMLH0A0HYM2 and DCOILBRENTEU. For the pinned trade export, the inclusive real-time range is 2026-05-06 through 2026-11-09 (the UTC days before the first and last entries). The observation range starts 2024-11-03, 550 calendar days before the first entry to allow 260 observations plus non-trading days and missing values; it ends 2026-11-09. The baseline must still be checked per series. The downloader pages vintage dates first, then requests and merges consecutive windows of at most 1,500 vintage dates. `fred_download_manifest.json` records the series, download times, bounds and derivation, credential-free source URLs, row counts and CSV hashes. After validating them in the research job, stage the artifacts under `reference/history/macro/`. This downloader does not fetch Yahoo Finance prices or release calendars.
 
 Use the vintage in force on the UTC day before entry. An observation first published on the entry date is `UNKNOWN`; an older vintage remains eligible even if a revision was first dated on the entry date. Missing values are not backfilled with subsequent releases.
 
@@ -41,4 +41,4 @@ Offline checks from the repo root (mocked HTTP, no key needed):
 python3 -B -m unittest research.test_download_macro
 ```
 
-Five offline downloader tests passed; live API behavior was not verified.
+Nine offline downloader tests passed; live API behavior was not verified.

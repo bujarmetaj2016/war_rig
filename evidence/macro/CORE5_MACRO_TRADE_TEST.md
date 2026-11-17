@@ -7,7 +7,7 @@
 - Predefined instrument × macro tests: **19**; executed: **0**; statistical recommendations: **0**.
 - `reference/history/macro/` is absent/empty. The allowed separate research container/job was not provisioned or attested, so no public downloads were made.
 - The verified V2 exports provide 204 trade-result rows: 199 strict WIN/LOSS labels (128 WIN, 71 LOSS) and 5 SCRATCH outcomes. SCRATCH records are not recast as WIN or LOSS.
-- Analysis script commit: `1e97d5b2912456ac9bc3431f9017040312492cbd`.
+- Analysis script commit: `f6dbf1045650c2d296d58baecf0c37248fa0ea29`.
 - Trade-results input: `reference/v2_outcomes/trade_results.csv` SHA-256 `ecd3e98ceda9806d86ddf35ac1dba5f50d9e790d7ad7b1223199ea163676bd7c`.
 - V2 reference manifest SHA-256 `a06ac2de31fcce5436d9c975ea7b0cf872a050a6b7d475e2e4b2f09fdff1a38b`.
 - Verified prediction exports (integrity inputs only; not used for trade counts or tests):
