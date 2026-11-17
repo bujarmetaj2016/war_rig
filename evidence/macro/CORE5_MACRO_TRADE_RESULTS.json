@@ -138,44 +138,51 @@
     },
     {
       "test_id": "EURUSD_BRENT_SPOT",
-      "status": "INSUFFICIENT_SAMPLE",
+      "status": "EVALUATED",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 30,
+          "wins": 18,
+          "win_rate": 0.6,
+          "mean_r": 0.14464333333333332,
+          "total_r": 4.3393,
+          "mean_r_ci95": [
+            -0.26687490546218484,
+            0.560688886363636
+          ]
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 44,
+          "wins": 25,
+          "win_rate": 0.5681818181818182,
+          "mean_r": -0.013518181818181806,
+          "total_r": -0.5948000000000013,
+          "mean_r_ci95": [
+            -0.313545963559322,
+            0.3457197478991589
+          ]
         },
         "NEUTRAL": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 27,
+          "wins": 20,
+          "win_rate": 0.7407407407407407,
+          "mean_r": 0.290237037037037,
+          "total_r": 7.8364,
+          "mean_r_ci95": [
+            0.018277980769230776,
+            0.6065203
+          ]
         }
       },
-      "unknown_n": 101,
+      "unknown_n": 0,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
-      "gate_recommended": false,
+      "removed_trade_fraction": 0.43564356435643564,
+      "removed_total_r_fraction": -0.051360429672996144,
+      "gate_recommended": true,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
-      "unknown_reasons": {
-        "DCOILBRENTEU: verified trading-session calendar is required": 101
-      }
+      "unknown_reasons": {}
     },
     {
       "test_id": "EURUSD_DGS2",
@@ -353,41 +360,48 @@
       "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 8,
+          "wins": 4,
+          "win_rate": 0.5,
+          "mean_r": -0.06851249999999998,
+          "total_r": -0.5480999999999998,
+          "mean_r_ci95": [
+            -0.7562875,
+            0.6886957142857143
+          ]
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 8,
+          "wins": 3,
+          "win_rate": 0.375,
+          "mean_r": -0.12345000000000002,
+          "total_r": -0.9876000000000005,
+          "mean_r_ci95": [
+            -0.79151075,
+            0.8451857142857143
+          ]
         },
         "NEUTRAL": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 3,
+          "wins": 1,
+          "win_rate": 0.3333333333333333,
+          "mean_r": -0.38266666666666665,
+          "total_r": -1.148,
+          "mean_r_ci95": [
+            -0.9861,
+            -0.08094999999999997
+          ]
         }
       },
-      "unknown_n": 19,
+      "unknown_n": 0,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 0.42105263157894735,
+      "removed_total_r_fraction": 0.36799940380817553,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
-      "unknown_reasons": {
-        "DCOILBRENTEU: verified trading-session calendar is required": 19
-      }
+      "unknown_reasons": {}
     },
     {
       "test_id": "GBPUSD_DGS2",
@@ -832,41 +846,48 @@
       "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 21,
+          "wins": 15,
+          "win_rate": 0.7142857142857143,
+          "mean_r": 0.2896190476190476,
+          "total_r": 6.081999999999999,
+          "mean_r_ci95": [
+            -0.13096904166666665,
+            0.6987736590909092
+          ]
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 16,
+          "wins": 12,
+          "win_rate": 0.75,
+          "mean_r": 0.30519375000000004,
+          "total_r": 4.883100000000001,
+          "mean_r_ci95": [
+            -0.08160812499999998,
+            0.6311274285714283
+          ]
         },
         "NEUTRAL": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 7,
+          "wins": 6,
+          "win_rate": 0.8571428571428571,
+          "mean_r": 0.3282857142857143,
+          "total_r": 2.298,
+          "mean_r_ci95": [
+            0.07332727272727275,
+            0.70222
+          ]
         }
       },
-      "unknown_n": 44,
+      "unknown_n": 0,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 0.36363636363636365,
+      "removed_total_r_fraction": 0.3681718451945625,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
-      "unknown_reasons": {
-        "DCOILBRENTEU: verified trading-session calendar is required": 44
-      }
+      "unknown_reasons": {}
     },
     {
       "test_id": "GOLD_SCHEDULED_EVENT",
@@ -1191,5 +1212,10 @@
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null
     }
-  }
+  },
+  "latest_run_scope": [
+    "DAX_BRENT_SPOT",
+    "EURUSD_BRENT_SPOT",
+    "GBPUSD_BRENT_SPOT"
+  ]
 }

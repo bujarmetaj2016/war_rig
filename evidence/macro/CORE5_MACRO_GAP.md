@@ -28,6 +28,6 @@ roles remain owner proposals; nothing in this comparison authorizes an
 executable V3 gate.
 
 **Continuation:** verified ALFRED inputs now support partial descriptive results
-and one unconfirmed exploratory EURUSD DGS2 candidate. Here `MISSING` still
+and two unconfirmed exploratory EURUSD candidates (DGS2 and Brent spot). Here `MISSING` still
 describes the V2 or V3 profile, not delivery of a historical research series.
 See the [trade-test report](CORE5_MACRO_TRADE_TEST.md).

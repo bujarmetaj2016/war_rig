@@ -6,9 +6,9 @@
 
 ## Availability and execution status
 
-- Original matrix comparisons: **19**; fully or partially classified: **5**. The remaining rows have no verified input.
+- REV4 comparisons: **22**; fully or partially classified: **8**. The remaining rows have no verified input.
 - The verified V2 exports provide 204 trade-result rows: 199 strict WIN/LOSS labels (128 WIN, 71 LOSS) and 5 SCRATCH outcomes. SCRATCH records are not recast as WIN or LOSS.
-- Analysis script commit: `cbf610c8e68883c62935e1c342e1713ad8a7da5b`.
+- Analysis script commit: `63ead5fb721595a4173f815ea2daf0ce4da5a9cc`.
 - Trade-results input: `reference/v2_outcomes/trade_results.csv` SHA-256 `ecd3e98ceda9806d86ddf35ac1dba5f50d9e790d7ad7b1223199ea163676bd7c`.
 - V2 reference manifest SHA-256 `a06ac2de31fcce5436d9c975ea7b0cf872a050a6b7d475e2e4b2f09fdff1a38b`.
 - Verified prediction exports (integrity inputs only; not used for trade counts or tests):
@@ -34,18 +34,18 @@
 
 The GBPUSD (n=19), GOLD (n=18), and SP500 (n=17) totals are already below the fixed 20-trade bucket threshold before any WITH/AGAINST split. EURUSD and DAX still require at least 20 usable trades in both buckets.
 
-## Fixed test matrix (19 originally listed)
+## Fixed test matrix (22 comparisons)
 
 | Instrument | Macro | Preregistered status | Result |
 |---|---|---|---|
 | EURUSD | USD strength basket excluding EUR | PRIMARY | `UNKNOWN` |
 | EURUSD | VIX risk-off | EXPLORATORY | `UNKNOWN` |
-| EURUSD | Brent spot oil | EXPLORATORY | `UNKNOWN` |
+| EURUSD | Brent spot oil | EXPLORATORY | `EVALUATED` |
 | EURUSD | US 2-year yield (DGS2) | EXPLORATORY | `EVALUATED` |
 | EURUSD | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
 | GBPUSD | USD strength basket excluding GBP | PRIMARY | `UNKNOWN` |
 | GBPUSD | VIX risk-off | EXPLORATORY | `UNKNOWN` |
-| GBPUSD | Brent spot oil | EXPLORATORY | `UNKNOWN` |
+| GBPUSD | Brent spot oil | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
 | GBPUSD | US 2-year yield (DGS2) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
 | GBPUSD | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
 | GOLD | US 10-year real yield (DFII10) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
@@ -56,12 +56,7 @@ The GBPUSD (n=19), GOLD (n=18), and SP500 (n=17) totals are already below the fi
 | SP500 | High-yield spread (BAMLH0A0HYM2) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
 | DAX | VIX risk-off | EXPLORATORY | `UNKNOWN` |
 | DAX | EURUSD 10-day change | EXPLORATORY | `UNKNOWN` |
-| DAX | Brent spot oil | EXPLORATORY | `UNKNOWN` |
-
-REV4 explicitly specifies event proximity for all five instruments. The original 19-row matrix listed it only for FX. The three omitted exploratory rows are shown separately to preserve the original count and avoid silently dropping a fixed rule. All five event tests are UNKNOWN pending verified, point-in-time official schedules.
-
-| Instrument | Additional REV4 event test | Preregistered status | Result |
-|---|---|---|---|
+| DAX | Brent spot oil | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
 | GOLD | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
 | SP500 | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
 | DAX | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
@@ -77,7 +72,11 @@ No rule was changed after reviewing outcomes. If data are later provisioned in t
 - No future or unpublished values were substituted.
 - US–German/US–UK 2-year spreads remain `NOT_TESTED_DATA_UNAVAILABLE`; other candidate drivers without a fixed REV4 rule remain `NOT_TESTED`.
 
-There are 19 original matrix rows plus 3 omitted REV4 event comparisons; with multiple comparisons, some differences can occur by chance even if all drivers had no effect. V2's verified closed-trade sample is small, and historical removal of losing trades would only be a partial counterfactual, not a measured future gain. No macro gate is executable V3 policy without explicit owner adoption and forward DEMO validation.
+There are 22 REV4 comparisons, including five event comparisons; with 22 comparisons, some differences can occur by chance even if all drivers had no effect. V2's verified closed-trade sample is small, and historical removal of losing trades would only be a partial counterfactual, not a measured future gain. No macro gate is executable V3 policy without explicit owner adoption and forward DEMO validation.
+
+## Latest run scope
+
+Only the three Brent comparisons were rerun; the other 19 rows retain their previous results or UNKNOWN status.
 
 ## Comparisons with verified inputs
 
@@ -85,9 +84,15 @@ Full precision, UTC source timestamps, CSV hashes, URLs, family agreement and DA
 
 | Test | Bucket | n | Win rate | Mean R | Total R | Weekly 95% CI |
 |---|---|---:|---:|---:|---:|---|
+| EURUSD_BRENT_SPOT | WITH | 30 | 0.600 | 0.145 | 4.339 | [-0.267, 0.561] |
+| EURUSD_BRENT_SPOT | AGAINST | 44 | 0.568 | -0.014 | -0.595 | [-0.314, 0.346] |
+| EURUSD_BRENT_SPOT | NEUTRAL | 27 | 0.741 | 0.290 | 7.836 | [0.018, 0.607] |
 | EURUSD_DGS2 | WITH | 22 | 0.636 | 0.149 | 3.272 | [-0.218, 0.450] |
 | EURUSD_DGS2 | AGAINST | 53 | 0.491 | -0.130 | -6.914 | [-0.425, 0.229] |
 | EURUSD_DGS2 | NEUTRAL | 26 | 0.885 | 0.586 | 15.223 | [0.357, 0.799] |
+| GBPUSD_BRENT_SPOT | WITH | 8 | 0.500 | -0.069 | -0.548 | [-0.756, 0.689] |
+| GBPUSD_BRENT_SPOT | AGAINST | 8 | 0.375 | -0.123 | -0.988 | [-0.792, 0.845] |
+| GBPUSD_BRENT_SPOT | NEUTRAL | 3 | 0.333 | -0.383 | -1.148 | [-0.986, -0.081] |
 | GBPUSD_DGS2 | WITH | 5 | 0.600 | 0.068 | 0.340 | [-0.625, 0.745] |
 | GBPUSD_DGS2 | AGAINST | 4 | 0.250 | -0.380 | -1.519 | [-0.990, 0.837] |
 | GBPUSD_DGS2 | NEUTRAL | 10 | 0.400 | -0.151 | -1.505 | [-0.760, 0.441] |
@@ -100,13 +105,19 @@ Full precision, UTC source timestamps, CSV hashes, URLs, family agreement and DA
 | SP500_HY_SPREAD | WITH | 4 | 0.750 | 0.272 | 1.088 | [-0.559, 0.792] |
 | SP500_HY_SPREAD | AGAINST | 6 | 0.833 | 0.286 | 1.715 | [-0.369, 0.566] |
 | SP500_HY_SPREAD | NEUTRAL | 7 | 0.571 | -0.062 | -0.434 | [-0.593, 0.438] |
+| DAX_BRENT_SPOT | WITH | 21 | 0.714 | 0.290 | 6.082 | [-0.131, 0.699] |
+| DAX_BRENT_SPOT | AGAINST | 16 | 0.750 | 0.305 | 4.883 | [-0.082, 0.631] |
+| DAX_BRENT_SPOT | NEUTRAL | 7 | 0.857 | 0.328 | 2.298 | [0.073, 0.702] |
 
 | Test | Unknown n | Removed trade fraction | Removed R fraction | Gate |
 |---|---:|---:|---:|---|
-| EURUSD_DGS2 | 0 | 0.525 | -0.597 | recommended |
+| EURUSD_BRENT_SPOT | 0 | 0.436 | -0.051 | exploratory, unconfirmed |
+| EURUSD_DGS2 | 0 | 0.525 | -0.597 | exploratory, unconfirmed |
+| GBPUSD_BRENT_SPOT | 0 | 0.421 | 0.368 | no |
 | GBPUSD_DGS2 | 0 | 0.211 | 0.566 | no |
 | GOLD_DFII10 | 0 | 0.278 | 0.610 | no |
 | GOLD_DGS2 | 0 | 0.444 | 1.043 | no |
 | SP500_HY_SPREAD | 0 | 0.353 | 0.724 | no |
+| DAX_BRENT_SPOT | 0 | 0.364 | 0.368 | no |
 
-`recommended` means the fixed historical comparison passed among eligible tested family members; it is not confirmed or authorized policy. When the primary USD basket is unavailable, the USD/rates family comparison is incomplete. Brent remains UNKNOWN without documented trading sessions or an eligible, roll-adjusted futures input.
+`exploratory, unconfirmed` means the historical comparison passed among eligible tested family members; it is not confirmed or authorized policy. When the primary USD basket is unavailable, the USD/rates family comparison is incomplete. Brent spot uses numeric ALFRED observations in force on the UTC day before entry; no separate session or futures roll calendar is required.
