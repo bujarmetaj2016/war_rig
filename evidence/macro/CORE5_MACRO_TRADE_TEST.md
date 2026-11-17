@@ -1,14 +1,14 @@
 # Core-5 macro trade test
 
-**Status: `PARTIAL_TRADE_TEST` — checksum-verified inputs only.**
+**Final REV4 report — 17 classified comparisons; five event comparisons UNKNOWN.**
 
 **Sample limit up front:** EURUSD 101, DAX 44, GBPUSD 19, GOLD 18, SP500 17 strict closed WIN/LOSS outcomes. With 20 required in each comparison bucket, GBPUSD, GOLD and SP500 cannot support gate recommendations; report descriptive results where data permit. EURUSD and DAX are not guaranteed sufficient buckets.
 
 ## Availability and execution status
 
-- REV4 comparisons: **22**; fully or partially classified: **17**. The remaining rows have no verified input.
+- REV4 comparisons: **22**; fully or partially classified: **17**. Unclassifiable rows are reported as UNKNOWN, not as evidence of no event.
 - The verified V2 exports provide 204 trade-result rows: 199 strict WIN/LOSS labels (128 WIN, 71 LOSS) and 5 SCRATCH outcomes. SCRATCH records are not recast as WIN or LOSS.
-- Analysis script commit: `a82c7cc4d713ea78a416e43b859f0437c20b5d56`.
+- Analysis script commit: `ef73c3db900aaccd8f2854721db181c0f3352c91`.
 - Trade-results input: `reference/v2_outcomes/trade_results.csv` SHA-256 `ecd3e98ceda9806d86ddf35ac1dba5f50d9e790d7ad7b1223199ea163676bd7c`.
 - V2 reference manifest SHA-256 `a06ac2de31fcce5436d9c975ea7b0cf872a050a6b7d475e2e4b2f09fdff1a38b`.
 - Verified prediction exports (integrity inputs only; not used for trade counts or tests):
@@ -36,30 +36,38 @@ The GBPUSD (n=19), GOLD (n=18), and SP500 (n=17) totals are already below the fi
 
 ## Fixed test matrix (22 comparisons)
 
-| Instrument | Macro | Preregistered status | Result |
-|---|---|---|---|
-| EURUSD | USD strength basket excluding EUR | PRIMARY | `EVALUATED` |
-| EURUSD | VIX risk-off | EXPLORATORY | `EVALUATED` |
-| EURUSD | Brent spot oil | EXPLORATORY | `EVALUATED` |
-| EURUSD | US 2-year yield (DGS2) | EXPLORATORY | `EVALUATED` |
-| EURUSD | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
-| GBPUSD | USD strength basket excluding GBP | PRIMARY | `INSUFFICIENT_SAMPLE` |
-| GBPUSD | VIX risk-off | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| GBPUSD | Brent spot oil | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| GBPUSD | US 2-year yield (DGS2) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| GBPUSD | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
-| GOLD | US 10-year real yield (DFII10) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| GOLD | USD strength basket | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| GOLD | VIX risk-off | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| GOLD | US 2-year yield (DGS2) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| SP500 | VIX / VIX3M risk-off | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| SP500 | High-yield spread (BAMLH0A0HYM2) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| DAX | VIX risk-off | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| DAX | EURUSD 10-day change | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| DAX | Brent spot oil | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| GOLD | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
-| SP500 | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
-| DAX | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
+### Primary comparisons
+
+| Instrument | Macro | Result | Unknown n |
+|---|---|---|---:|
+| EURUSD | USD strength basket excluding EUR | `EVALUATED` | 0 |
+| GBPUSD | USD strength basket excluding GBP | `INSUFFICIENT_SAMPLE` | 0 |
+
+### Exploratory comparisons
+
+| Instrument | Macro | Result | Unknown n |
+|---|---|---|---:|
+| EURUSD | VIX risk-off | `EVALUATED` | 2 |
+| EURUSD | Brent spot oil | `EVALUATED` | 0 |
+| EURUSD | US 2-year yield (DGS2) | `EVALUATED` | 0 |
+| EURUSD | Scheduled-event proximity | `UNKNOWN` | 101 |
+| GBPUSD | VIX risk-off | `INSUFFICIENT_SAMPLE` | 0 |
+| GBPUSD | Brent spot oil | `INSUFFICIENT_SAMPLE` | 0 |
+| GBPUSD | US 2-year yield (DGS2) | `INSUFFICIENT_SAMPLE` | 0 |
+| GBPUSD | Scheduled-event proximity | `UNKNOWN` | 19 |
+| GOLD | US 10-year real yield (DFII10) | `INSUFFICIENT_SAMPLE` | 0 |
+| GOLD | USD strength basket | `INSUFFICIENT_SAMPLE` | 0 |
+| GOLD | VIX risk-off | `INSUFFICIENT_SAMPLE` | 1 |
+| GOLD | US 2-year yield (DGS2) | `INSUFFICIENT_SAMPLE` | 0 |
+| SP500 | VIX / VIX3M risk-off | `INSUFFICIENT_SAMPLE` | 1 |
+| SP500 | High-yield spread (BAMLH0A0HYM2) | `INSUFFICIENT_SAMPLE` | 0 |
+| DAX | VIX risk-off | `INSUFFICIENT_SAMPLE` | 1 |
+| DAX | EURUSD 10-day change | `INSUFFICIENT_SAMPLE` | 0 |
+| DAX | Brent spot oil | `INSUFFICIENT_SAMPLE` | 0 |
+| GOLD | Scheduled-event proximity | `UNKNOWN` | 18 |
+| SP500 | Scheduled-event proximity | `UNKNOWN` | 17 |
+| DAX | Scheduled-event proximity | `UNKNOWN` | 44 |
+
 
 ## Frozen rules and unavailable observations
 
@@ -76,7 +84,13 @@ There are 22 REV4 comparisons, including five event comparisons; with 22 compari
 
 ## Latest run scope
 
-Ran the nine remaining non-event comparisons. Prior statistics were preserved; USD/rates family agreement and eligibility were refreshed. The failed schedule delivery was not used.
+Ran the five event comparisons only; all 17 prior non-event results were preserved.
+
+## Event schedule delivery
+
+The owner-run manifest records completion at `2026-11-17T23:08:41.434136+00:00`. All 55 source pages and the extracted CSV matched their SHA-256 pins. The failed delivery and assistant smoke-test output were not used.
+
+The CSV contains 24 extracted rows, only BLS CPI and employment. 24 lack a normalized time zone and 24 lack extracted publication/update dates. Some raw pages contain local time or update labels the parser did not extract; those do not establish complete point-in-time coverage across all five event types. No reviewed as-known coverage was supplied. No observation was treated as NO_EVENT merely because a matching release was absent from the extraction.
 
 ## Comparisons with verified inputs
 
@@ -141,7 +155,7 @@ Full precision, UTC source timestamps, CSV hashes, URLs, family agreement and DA
 | EURUSD_USD_BASKET_EX_EUR | 0 | 0.446 | -0.385 | primary, unconfirmed |
 | EURUSD_VIX_RISK_OFF | 2 | 0.374 | 1.276 | no |
 | EURUSD_BRENT_SPOT | 0 | 0.436 | -0.051 | exploratory, unconfirmed |
-| EURUSD_DGS2 | 0 | 0.525 | -0.597 | exploratory; superseded by USD basket |
+| EURUSD_DGS2 | 0 | 0.525 | -0.597 | no |
 | GBPUSD_USD_BASKET_EX_GBP | 0 | 0.211 | 0.853 | no |
 | GBPUSD_VIX_RISK_OFF | 0 | 0.316 | 0.906 | no |
 | GBPUSD_BRENT_SPOT | 0 | 0.421 | 0.368 | no |

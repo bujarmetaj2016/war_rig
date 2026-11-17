@@ -1,15 +1,11 @@
 {
-  "status": "PARTIAL_TRADE_TEST",
+  "status": "FINAL_REPORT",
   "latest_run_scope": [
-    "DAX_EURUSD_10D",
-    "DAX_VIX_RISK_OFF",
-    "EURUSD_USD_BASKET_EX_EUR",
-    "EURUSD_VIX_RISK_OFF",
-    "GBPUSD_USD_BASKET_EX_GBP",
-    "GBPUSD_VIX_RISK_OFF",
-    "GOLD_USD_BASKET",
-    "GOLD_VIX_RISK_OFF",
-    "SP500_VIX_TERM_RISK_OFF"
+    "DAX_SCHEDULED_EVENT",
+    "EURUSD_SCHEDULED_EVENT",
+    "GBPUSD_SCHEDULED_EVENT",
+    "GOLD_SCHEDULED_EVENT",
+    "SP500_SCHEDULED_EVENT"
   ],
   "alfred_sources": [
     {
@@ -378,7 +374,7 @@
     },
     {
       "test_id": "EURUSD_SCHEDULED_EVENT",
-      "status": "INSUFFICIENT_SAMPLE",
+      "status": "UNKNOWN",
       "buckets": {
         "WITH": {
           "n": 0,
@@ -414,7 +410,7 @@
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "missing or invalid Scheduled-event proximity input: 'calendar'": 101
+        "No verified as-known coverage for all five official event types.": 101
       }
     },
     {
@@ -608,7 +604,7 @@
     },
     {
       "test_id": "GBPUSD_SCHEDULED_EVENT",
-      "status": "INSUFFICIENT_SAMPLE",
+      "status": "UNKNOWN",
       "buckets": {
         "WITH": {
           "n": 0,
@@ -644,7 +640,7 @@
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "missing or invalid Scheduled-event proximity input: 'calendar'": 19
+        "No verified as-known coverage for all five official event types.": 19
       }
     },
     {
@@ -1078,7 +1074,7 @@
     },
     {
       "test_id": "GOLD_SCHEDULED_EVENT",
-      "status": "INSUFFICIENT_SAMPLE",
+      "status": "UNKNOWN",
       "buckets": {
         "WITH": {
           "n": 0,
@@ -1114,12 +1110,12 @@
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "missing or invalid Scheduled-event proximity input: 'calendar'": 18
+        "No verified as-known coverage for all five official event types.": 18
       }
     },
     {
       "test_id": "SP500_SCHEDULED_EVENT",
-      "status": "INSUFFICIENT_SAMPLE",
+      "status": "UNKNOWN",
       "buckets": {
         "WITH": {
           "n": 0,
@@ -1155,12 +1151,12 @@
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "missing or invalid Scheduled-event proximity input: 'calendar'": 17
+        "No verified as-known coverage for all five official event types.": 17
       }
     },
     {
       "test_id": "DAX_SCHEDULED_EVENT",
-      "status": "INSUFFICIENT_SAMPLE",
+      "status": "UNKNOWN",
       "buckets": {
         "WITH": {
           "n": 0,
@@ -1196,7 +1192,7 @@
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "missing or invalid Scheduled-event proximity input: 'calendar'": 44
+        "No verified as-known coverage for all five official event types.": 44
       }
     }
   ],
@@ -1411,5 +1407,24 @@
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null
     }
+  },
+  "schedule_delivery": {
+    "manifest_sha256": "74de937f1cd121b6c056408d28a464428a2ddffa4671fb16d7c407059ddb6b7b",
+    "downloaded_at_utc": "2026-11-17T23:08:41.434136+00:00",
+    "schedule_coverage": {
+      "start": "2026-05-06",
+      "end": "2026-11-11",
+      "latest_trade_date": "2026-11-10",
+      "forward_event_horizon_calendar_days": 1
+    },
+    "source_pages": 55,
+    "event_rows": 24,
+    "event_rows_by_type": {
+      "BLS Consumer Price Index release": 12,
+      "BLS Employment Situation release": 12
+    },
+    "rows_missing_time_zone": 24,
+    "rows_missing_page_update_date": 24,
+    "availability_reason": "No verified as-known coverage for all five official event types."
   }
 }
