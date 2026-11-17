@@ -513,7 +513,9 @@ def write_reproducibility(
         "",
         "## FRED/ALFRED download (isolated research job only)",
         "",
-        "Stage `research/download_macro.py` in the separate REV4 research job, inject "
+        "Stage `research/download_macro.py` and the pinned redacted "
+        "`reference/v2_outcomes/trade_results.csv` (as `trade_results.csv`) in the "
+        "separate REV4 research job, inject "
         "the dedicated research key as `FRED_API_KEY` through that job's secret "
         "configuration, and mount a fresh writable `/out`. No pip step is needed:",
         "",
@@ -522,8 +524,15 @@ def write_reproducibility(
         "```",
         "",
         "This downloads vintages for DGS2, DFII10, BAMLH0A0HYM2 and DCOILBRENTEU. "
+        "For the pinned trade export, the inclusive real-time range is "
+        "2026-05-06 through 2026-11-09 (the UTC days before the first and last "
+        "entries). The observation range starts 2024-11-03, 550 calendar days "
+        "before the first entry to allow 260 observations plus non-trading days "
+        "and missing values; it ends 2026-11-09. The baseline must still be "
+        "checked per series. The downloader pages vintage dates first, then "
+        "requests and merges consecutive windows of at most 1,500 vintage dates. "
         "`fred_download_manifest.json` records the series, download times, "
-        "credential-free source URLs, row counts and CSV hashes. After validating "
+        "bounds and derivation, credential-free source URLs, row counts and CSV hashes. After validating "
         "them in the research job, stage the artifacts under `reference/history/macro/`. "
         "This downloader does not fetch Yahoo Finance prices or release calendars.",
         "",
@@ -538,7 +547,7 @@ def write_reproducibility(
         "python3 -B -m unittest research.test_download_macro",
         "```",
         "",
-        "Five offline downloader tests passed; live API behavior was not verified.",
+        "Nine offline downloader tests passed; live API behavior was not verified.",
         "",
     ]
     (OUT / "REPRODUCIBILITY.md").write_text("\n".join(content))
