@@ -435,7 +435,10 @@ def write_trade_test(
             "observations earlier in percentage points for yields/spreads; `sigma` is "
             "the standard deviation of that S over the trailing 250 observations. "
             "Fewer than 250 valid observations, missing timestamps, or unavailable "
-            "as-published FRED/ALFRED vintages means UNKNOWN. USD_UP/DOWN requires "
+            "as-published FRED/ALFRED vintages means UNKNOWN. Use the vintage in force "
+            "on the UTC day before entry; a vintage first dated on the entry date "
+            "is unavailable, and an observation with no eligible earlier vintage is "
+            "UNKNOWN. USD_UP/DOWN requires "
             "S > +0.5 sigma / S < -0.5 sigma; risk-off is VIX/VIX3M > 1 or VIX > "
             "1.25 times its trailing 20-day median. All remaining signs, headwinds, "
             "weekly bootstrap, and decision thresholds are those in the controlling "
@@ -508,6 +511,35 @@ def write_reproducibility(
         "the manifest excludes itself because a checksum manifest cannot hash its own "
         "final bytes.",
         "",
+        "## FRED/ALFRED download (isolated research job only)",
+        "",
+        "Stage `research/download_macro.py` in the separate REV4 research job, inject "
+        "the dedicated research key as `FRED_API_KEY` through that job's secret "
+        "configuration, and mount a fresh writable `/out`. No pip step is needed:",
+        "",
+        "```sh",
+        "python3 download_macro.py --out /out",
+        "```",
+        "",
+        "This downloads vintages for DGS2, DFII10, BAMLH0A0HYM2 and DCOILBRENTEU. "
+        "`fred_download_manifest.json` records the series, download times, "
+        "credential-free source URLs, row counts and CSV hashes. After validating "
+        "them in the research job, stage the artifacts under `reference/history/macro/`. "
+        "This downloader does not fetch Yahoo Finance prices or release calendars.",
+        "",
+        "Use the vintage in force on the UTC day before entry. An observation first "
+        "published on the entry date is `UNKNOWN`; an older vintage remains eligible "
+        "even if a revision was first dated on the entry date. Missing values are "
+        "not backfilled with subsequent releases.",
+        "",
+        "Offline checks from the repo root (mocked HTTP, no key needed):",
+        "",
+        "```sh",
+        "python3 -B -m unittest research.test_download_macro",
+        "```",
+        "",
+        "Five offline downloader tests passed; live API behavior was not verified.",
+        "",
     ]
     (OUT / "REPRODUCIBILITY.md").write_text("\n".join(content))
 
@@ -539,6 +571,8 @@ def write_manifest(
         "evidence/macro/CORE5_MACRO_TRADE_TEST.md",
         "evidence/macro/CORE5_V3_MACRO_PROFILE_PROPOSAL.md",
         "evidence/macro/REPRODUCIBILITY.md",
+        "research/download_macro.py",
+        "research/test_download_macro.py",
         script_path,
     ]
     output_entries = {path: sha256(ROOT / path) for path in output_paths}
