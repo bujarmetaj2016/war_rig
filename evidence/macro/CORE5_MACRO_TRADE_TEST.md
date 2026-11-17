@@ -6,9 +6,9 @@
 
 ## Availability and execution status
 
-- REV4 comparisons: **22**; fully or partially classified: **8**. The remaining rows have no verified input.
+- REV4 comparisons: **22**; fully or partially classified: **17**. The remaining rows have no verified input.
 - The verified V2 exports provide 204 trade-result rows: 199 strict WIN/LOSS labels (128 WIN, 71 LOSS) and 5 SCRATCH outcomes. SCRATCH records are not recast as WIN or LOSS.
-- Analysis script commit: `63ead5fb721595a4173f815ea2daf0ce4da5a9cc`.
+- Analysis script commit: `a82c7cc4d713ea78a416e43b859f0437c20b5d56`.
 - Trade-results input: `reference/v2_outcomes/trade_results.csv` SHA-256 `ecd3e98ceda9806d86ddf35ac1dba5f50d9e790d7ad7b1223199ea163676bd7c`.
 - V2 reference manifest SHA-256 `a06ac2de31fcce5436d9c975ea7b0cf872a050a6b7d475e2e4b2f09fdff1a38b`.
 - Verified prediction exports (integrity inputs only; not used for trade counts or tests):
@@ -38,24 +38,24 @@ The GBPUSD (n=19), GOLD (n=18), and SP500 (n=17) totals are already below the fi
 
 | Instrument | Macro | Preregistered status | Result |
 |---|---|---|---|
-| EURUSD | USD strength basket excluding EUR | PRIMARY | `UNKNOWN` |
-| EURUSD | VIX risk-off | EXPLORATORY | `UNKNOWN` |
+| EURUSD | USD strength basket excluding EUR | PRIMARY | `EVALUATED` |
+| EURUSD | VIX risk-off | EXPLORATORY | `EVALUATED` |
 | EURUSD | Brent spot oil | EXPLORATORY | `EVALUATED` |
 | EURUSD | US 2-year yield (DGS2) | EXPLORATORY | `EVALUATED` |
 | EURUSD | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
-| GBPUSD | USD strength basket excluding GBP | PRIMARY | `UNKNOWN` |
-| GBPUSD | VIX risk-off | EXPLORATORY | `UNKNOWN` |
+| GBPUSD | USD strength basket excluding GBP | PRIMARY | `INSUFFICIENT_SAMPLE` |
+| GBPUSD | VIX risk-off | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
 | GBPUSD | Brent spot oil | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
 | GBPUSD | US 2-year yield (DGS2) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
 | GBPUSD | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
 | GOLD | US 10-year real yield (DFII10) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| GOLD | USD strength basket | EXPLORATORY | `UNKNOWN` |
-| GOLD | VIX risk-off | EXPLORATORY | `UNKNOWN` |
+| GOLD | USD strength basket | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
+| GOLD | VIX risk-off | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
 | GOLD | US 2-year yield (DGS2) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| SP500 | VIX / VIX3M risk-off | EXPLORATORY | `UNKNOWN` |
+| SP500 | VIX / VIX3M risk-off | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
 | SP500 | High-yield spread (BAMLH0A0HYM2) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
-| DAX | VIX risk-off | EXPLORATORY | `UNKNOWN` |
-| DAX | EURUSD 10-day change | EXPLORATORY | `UNKNOWN` |
+| DAX | VIX risk-off | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
+| DAX | EURUSD 10-day change | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
 | DAX | Brent spot oil | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
 | GOLD | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
 | SP500 | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
@@ -76,7 +76,7 @@ There are 22 REV4 comparisons, including five event comparisons; with 22 compari
 
 ## Latest run scope
 
-Only the three Brent comparisons were rerun; the other 19 rows retain their previous results or UNKNOWN status.
+Ran the nine remaining non-event comparisons. Prior statistics were preserved; USD/rates family agreement and eligibility were refreshed. The failed schedule delivery was not used.
 
 ## Comparisons with verified inputs
 
@@ -84,12 +84,24 @@ Full precision, UTC source timestamps, CSV hashes, URLs, family agreement and DA
 
 | Test | Bucket | n | Win rate | Mean R | Total R | Weekly 95% CI |
 |---|---|---:|---:|---:|---:|---|
+| EURUSD_USD_BASKET_EX_EUR | WITH | 29 | 0.759 | 0.390 | 11.296 | [0.162, 0.624] |
+| EURUSD_USD_BASKET_EX_EUR | AGAINST | 45 | 0.511 | -0.099 | -4.455 | [-0.419, 0.342] |
+| EURUSD_USD_BASKET_EX_EUR | NEUTRAL | 27 | 0.667 | 0.176 | 4.740 | [-0.147, 0.510] |
+| EURUSD_VIX_RISK_OFF | WITH | 62 | 0.532 | -0.045 | -2.763 | [-0.318, 0.303] |
+| EURUSD_VIX_RISK_OFF | AGAINST | 37 | 0.757 | 0.345 | 12.766 | [0.128, 0.592] |
+| EURUSD_VIX_RISK_OFF | NEUTRAL | 0 | — | — | 0.000 | — |
 | EURUSD_BRENT_SPOT | WITH | 30 | 0.600 | 0.145 | 4.339 | [-0.267, 0.561] |
 | EURUSD_BRENT_SPOT | AGAINST | 44 | 0.568 | -0.014 | -0.595 | [-0.314, 0.346] |
 | EURUSD_BRENT_SPOT | NEUTRAL | 27 | 0.741 | 0.290 | 7.836 | [0.018, 0.607] |
 | EURUSD_DGS2 | WITH | 22 | 0.636 | 0.149 | 3.272 | [-0.218, 0.450] |
 | EURUSD_DGS2 | AGAINST | 53 | 0.491 | -0.130 | -6.914 | [-0.425, 0.229] |
 | EURUSD_DGS2 | NEUTRAL | 26 | 0.885 | 0.586 | 15.223 | [0.357, 0.799] |
+| GBPUSD_USD_BASKET_EX_GBP | WITH | 7 | 0.286 | -0.437 | -3.060 | [-0.982, 0.221] |
+| GBPUSD_USD_BASKET_EX_GBP | AGAINST | 4 | 0.250 | -0.572 | -2.288 | [-0.980, 0.639] |
+| GBPUSD_USD_BASKET_EX_GBP | NEUTRAL | 8 | 0.625 | 0.333 | 2.665 | [-0.174, 0.951] |
+| GBPUSD_VIX_RISK_OFF | WITH | 13 | 0.462 | -0.019 | -0.253 | [-0.537, 0.516] |
+| GBPUSD_VIX_RISK_OFF | AGAINST | 6 | 0.333 | -0.405 | -2.431 | [-0.981, 0.511] |
+| GBPUSD_VIX_RISK_OFF | NEUTRAL | 0 | — | — | 0.000 | — |
 | GBPUSD_BRENT_SPOT | WITH | 8 | 0.500 | -0.069 | -0.548 | [-0.756, 0.689] |
 | GBPUSD_BRENT_SPOT | AGAINST | 8 | 0.375 | -0.123 | -0.988 | [-0.792, 0.845] |
 | GBPUSD_BRENT_SPOT | NEUTRAL | 3 | 0.333 | -0.383 | -1.148 | [-0.986, -0.081] |
@@ -99,25 +111,49 @@ Full precision, UTC source timestamps, CSV hashes, URLs, family agreement and DA
 | GOLD_DFII10 | WITH | 5 | 0.400 | -0.199 | -0.997 | [-0.996, 0.983] |
 | GOLD_DFII10 | AGAINST | 5 | 1.000 | 0.491 | 2.457 | [0.411, 0.670] |
 | GOLD_DFII10 | NEUTRAL | 8 | 0.625 | 0.321 | 2.570 | [-0.555, 0.818] |
+| GOLD_USD_BASKET | WITH | 11 | 0.545 | 0.114 | 1.249 | [-0.419, 0.661] |
+| GOLD_USD_BASKET | AGAINST | 4 | 0.750 | 0.300 | 1.199 | [-0.646, 1.093] |
+| GOLD_USD_BASKET | NEUTRAL | 3 | 1.000 | 0.528 | 1.583 | [0.413, 0.758] |
+| GOLD_VIX_RISK_OFF | WITH | 10 | 0.500 | 0.088 | 0.877 | [-0.653, 0.741] |
+| GOLD_VIX_RISK_OFF | AGAINST | 7 | 0.857 | 0.400 | 2.798 | [-0.136, 0.859] |
+| GOLD_VIX_RISK_OFF | NEUTRAL | 0 | — | — | 0.000 | — |
 | GOLD_DGS2 | WITH | 5 | 0.400 | -0.289 | -1.448 | [-0.989, 0.177] |
 | GOLD_DGS2 | AGAINST | 8 | 0.875 | 0.525 | 4.202 | [0.419, 0.617] |
 | GOLD_DGS2 | NEUTRAL | 5 | 0.600 | 0.255 | 1.276 | [-1.004, 1.643] |
+| SP500_VIX_TERM_RISK_OFF | WITH | 7 | 0.571 | -0.104 | -0.725 | [-0.728, 0.365] |
+| SP500_VIX_TERM_RISK_OFF | AGAINST | 9 | 0.778 | 0.259 | 2.333 | [-0.252, 0.649] |
+| SP500_VIX_TERM_RISK_OFF | NEUTRAL | 0 | — | — | 0.000 | — |
 | SP500_HY_SPREAD | WITH | 4 | 0.750 | 0.272 | 1.088 | [-0.559, 0.792] |
 | SP500_HY_SPREAD | AGAINST | 6 | 0.833 | 0.286 | 1.715 | [-0.369, 0.566] |
 | SP500_HY_SPREAD | NEUTRAL | 7 | 0.571 | -0.062 | -0.434 | [-0.593, 0.438] |
+| DAX_VIX_RISK_OFF | WITH | 25 | 0.720 | 0.282 | 7.059 | [-0.049, 0.617] |
+| DAX_VIX_RISK_OFF | AGAINST | 18 | 0.778 | 0.325 | 5.851 | [-0.075, 0.649] |
+| DAX_VIX_RISK_OFF | NEUTRAL | 0 | — | — | 0.000 | — |
+| DAX_EURUSD_10D | WITH | 18 | 0.722 | 0.107 | 1.933 | [-0.293, 0.399] |
+| DAX_EURUSD_10D | AGAINST | 9 | 0.778 | 0.349 | 3.144 | [0.009, 0.705] |
+| DAX_EURUSD_10D | NEUTRAL | 17 | 0.765 | 0.482 | 8.186 | [0.005, 0.845] |
 | DAX_BRENT_SPOT | WITH | 21 | 0.714 | 0.290 | 6.082 | [-0.131, 0.699] |
 | DAX_BRENT_SPOT | AGAINST | 16 | 0.750 | 0.305 | 4.883 | [-0.082, 0.631] |
 | DAX_BRENT_SPOT | NEUTRAL | 7 | 0.857 | 0.328 | 2.298 | [0.073, 0.702] |
 
 | Test | Unknown n | Removed trade fraction | Removed R fraction | Gate |
 |---|---:|---:|---:|---|
+| EURUSD_USD_BASKET_EX_EUR | 0 | 0.446 | -0.385 | primary, unconfirmed |
+| EURUSD_VIX_RISK_OFF | 2 | 0.374 | 1.276 | no |
 | EURUSD_BRENT_SPOT | 0 | 0.436 | -0.051 | exploratory, unconfirmed |
-| EURUSD_DGS2 | 0 | 0.525 | -0.597 | exploratory, unconfirmed |
+| EURUSD_DGS2 | 0 | 0.525 | -0.597 | exploratory; superseded by USD basket |
+| GBPUSD_USD_BASKET_EX_GBP | 0 | 0.211 | 0.853 | no |
+| GBPUSD_VIX_RISK_OFF | 0 | 0.316 | 0.906 | no |
 | GBPUSD_BRENT_SPOT | 0 | 0.421 | 0.368 | no |
 | GBPUSD_DGS2 | 0 | 0.211 | 0.566 | no |
 | GOLD_DFII10 | 0 | 0.278 | 0.610 | no |
+| GOLD_USD_BASKET | 0 | 0.222 | 0.297 | no |
+| GOLD_VIX_RISK_OFF | 1 | 0.412 | 0.761 | no |
 | GOLD_DGS2 | 0 | 0.444 | 1.043 | no |
+| SP500_VIX_TERM_RISK_OFF | 1 | 0.562 | 1.450 | no |
 | SP500_HY_SPREAD | 0 | 0.353 | 0.724 | no |
+| DAX_VIX_RISK_OFF | 1 | 0.419 | 0.453 | no |
+| DAX_EURUSD_10D | 0 | 0.205 | 0.237 | no |
 | DAX_BRENT_SPOT | 0 | 0.364 | 0.368 | no |
 
-`exploratory, unconfirmed` means the historical comparison passed among eligible tested family members; it is not confirmed or authorized policy. When the primary USD basket is unavailable, the USD/rates family comparison is incomplete. Brent spot uses numeric ALFRED observations in force on the UTC day before entry; no separate session or futures roll calendar is required.
+An unconfirmed candidate passed the historical comparison among eligible tested family members; it is not confirmed or authorized policy. USD/rates agreement and the strongest eligible family member are recorded in the results JSON. Brent spot uses numeric ALFRED observations in force on the UTC day before entry; no separate session or futures roll calendar is required.

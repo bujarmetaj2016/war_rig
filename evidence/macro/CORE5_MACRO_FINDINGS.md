@@ -15,10 +15,10 @@ listed files pass its checks. Prompt and hypothesis hashes are also repeated in
 modified.
 
 Owner-provided V2 source, trade-result, and prediction exports are present and
-hash-pinned. The owner-delivered ALFRED manifest and its four CSVs are verified
-in `reference/history/macro/`. Historical price and release-calendar inputs
-are still missing. See [trade tests](CORE5_MACRO_TRADE_TEST.md) for the
-partial analysis and unavailable comparisons.
+hash-pinned. The expanded ALFRED manifest and its 12 CSVs are verified in
+`reference/history/macro-fred-next/`. All 17 non-event comparisons have results;
+release calendars are not yet verified as known before entry. See
+[trade tests](CORE5_MACRO_TRADE_TEST.md).
 
 ## 1. USD direction and EURUSD/GBPUSD entries
 

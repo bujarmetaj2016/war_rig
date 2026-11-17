@@ -1,5 +1,16 @@
 {
   "status": "PARTIAL_TRADE_TEST",
+  "latest_run_scope": [
+    "DAX_EURUSD_10D",
+    "DAX_VIX_RISK_OFF",
+    "EURUSD_USD_BASKET_EX_EUR",
+    "EURUSD_VIX_RISK_OFF",
+    "GBPUSD_USD_BASKET_EX_GBP",
+    "GBPUSD_VIX_RISK_OFF",
+    "GOLD_USD_BASKET",
+    "GOLD_VIX_RISK_OFF",
+    "SP500_VIX_TERM_RISK_OFF"
+  ],
   "alfred_sources": [
     {
       "series_id": "DGS2",
@@ -8,7 +19,7 @@
         "https://api.stlouisfed.org/fred/series/observations?series_id=DGS2&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
       ],
       "vintage_dates": 129,
-      "downloaded_at_utc": "2026-11-17T22:31:43.111957+00:00",
+      "downloaded_at_utc": "2026-11-17T22:52:19.789937+00:00",
       "file": "DGS2.csv",
       "sha256": "e41f34feb4c8e6dd826d3d071520781f123b6b5b2b3f3d08dabf68d43077e03f",
       "vintage_rows": 525
@@ -20,7 +31,7 @@
         "https://api.stlouisfed.org/fred/series/observations?series_id=DFII10&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
       ],
       "vintage_dates": 129,
-      "downloaded_at_utc": "2026-11-17T22:31:43.911193+00:00",
+      "downloaded_at_utc": "2026-11-17T22:52:20.923625+00:00",
       "file": "DFII10.csv",
       "sha256": "d5262a35ee0ccd6ff6d076e7a534ef1cc8c2bb4865e4d04eed5a17da9d52f4e0",
       "vintage_rows": 525
@@ -32,7 +43,7 @@
         "https://api.stlouisfed.org/fred/series/observations?series_id=BAMLH0A0HYM2&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
       ],
       "vintage_dates": 135,
-      "downloaded_at_utc": "2026-11-17T22:31:44.764423+00:00",
+      "downloaded_at_utc": "2026-11-17T22:52:21.641135+00:00",
       "file": "BAMLH0A0HYM2.csv",
       "sha256": "2f19abd78761900dca2990d2057dce229399542391c830b4916d7f203ede24b0",
       "vintage_rows": 533
@@ -44,10 +55,130 @@
         "https://api.stlouisfed.org/fred/series/observations?series_id=DCOILBRENTEU&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
       ],
       "vintage_dates": 27,
-      "downloaded_at_utc": "2026-11-17T22:31:45.891784+00:00",
+      "downloaded_at_utc": "2026-11-17T22:52:22.325739+00:00",
       "file": "DCOILBRENTEU.csv",
       "sha256": "593cd5e5e9a08833ffc4f02beafaf2c638c601b26c2b417a69a523376aee2301",
       "vintage_rows": 522
+    },
+    {
+      "series_id": "VIXCLS",
+      "vintage_dates_url": "https://api.stlouisfed.org/fred/series/vintagedates?series_id=VIXCLS&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=1000",
+      "observation_urls": [
+        "https://api.stlouisfed.org/fred/series/observations?series_id=VIXCLS&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
+      ],
+      "vintage_dates": 127,
+      "downloaded_at_utc": "2026-11-17T22:52:23.175997+00:00",
+      "file": "VIXCLS.csv",
+      "sha256": "6b55b7e0ed6a6a1bd731ec9a8040269a6e4a6e88c7d01568753717f8a1ef2100",
+      "vintage_rows": 526
+    },
+    {
+      "series_id": "VXVCLS",
+      "vintage_dates_url": "https://api.stlouisfed.org/fred/series/vintagedates?series_id=VXVCLS&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=1000",
+      "observation_urls": [
+        "https://api.stlouisfed.org/fred/series/observations?series_id=VXVCLS&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
+      ],
+      "vintage_dates": 127,
+      "downloaded_at_utc": "2026-11-17T22:52:23.949164+00:00",
+      "file": "VXVCLS.csv",
+      "sha256": "174dc0ef91d89c5b3b9970f7cc8a80d29dec97f0c26f43fcc3c0ec7dea7742ef",
+      "vintage_rows": 526
+    },
+    {
+      "series_id": "DEXUSEU",
+      "quote_direction": {
+        "base": "EUR",
+        "quote": "USD"
+      },
+      "vintage_dates_url": "https://api.stlouisfed.org/fred/series/vintagedates?series_id=DEXUSEU&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=1000",
+      "observation_urls": [
+        "https://api.stlouisfed.org/fred/series/observations?series_id=DEXUSEU&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
+      ],
+      "vintage_dates": 27,
+      "downloaded_at_utc": "2026-11-17T22:52:24.801774+00:00",
+      "file": "DEXUSEU.csv",
+      "sha256": "651c7599bc89397e8f25c8d22c53fd79a4c7d3b8a20e0fc4aa218f7545a78a83",
+      "vintage_rows": 526
+    },
+    {
+      "series_id": "DEXJPUS",
+      "quote_direction": {
+        "base": "USD",
+        "quote": "JPY"
+      },
+      "vintage_dates_url": "https://api.stlouisfed.org/fred/series/vintagedates?series_id=DEXJPUS&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=1000",
+      "observation_urls": [
+        "https://api.stlouisfed.org/fred/series/observations?series_id=DEXJPUS&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
+      ],
+      "vintage_dates": 27,
+      "downloaded_at_utc": "2026-11-17T22:52:25.836759+00:00",
+      "file": "DEXJPUS.csv",
+      "sha256": "c3e921dba3d39d1b486535847999b1df580a6c3b5a58c85dc7c720878408316a",
+      "vintage_rows": 526
+    },
+    {
+      "series_id": "DEXUSUK",
+      "quote_direction": {
+        "base": "GBP",
+        "quote": "USD"
+      },
+      "vintage_dates_url": "https://api.stlouisfed.org/fred/series/vintagedates?series_id=DEXUSUK&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=1000",
+      "observation_urls": [
+        "https://api.stlouisfed.org/fred/series/observations?series_id=DEXUSUK&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
+      ],
+      "vintage_dates": 27,
+      "downloaded_at_utc": "2026-11-17T22:52:26.575907+00:00",
+      "file": "DEXUSUK.csv",
+      "sha256": "2b45070f5d071d18674df4e4601c3232cf3e0f9f6d6f35ea9e8887fff3b129ec",
+      "vintage_rows": 526
+    },
+    {
+      "series_id": "DEXCAUS",
+      "quote_direction": {
+        "base": "USD",
+        "quote": "CAD"
+      },
+      "vintage_dates_url": "https://api.stlouisfed.org/fred/series/vintagedates?series_id=DEXCAUS&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=1000",
+      "observation_urls": [
+        "https://api.stlouisfed.org/fred/series/observations?series_id=DEXCAUS&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
+      ],
+      "vintage_dates": 27,
+      "downloaded_at_utc": "2026-11-17T22:52:27.273841+00:00",
+      "file": "DEXCAUS.csv",
+      "sha256": "d2d48586eea0de4db089f0ac0cf57367e1451dd2e394d19d4d83290f0ca62c0e",
+      "vintage_rows": 526
+    },
+    {
+      "series_id": "DEXSZUS",
+      "quote_direction": {
+        "base": "USD",
+        "quote": "CHF"
+      },
+      "vintage_dates_url": "https://api.stlouisfed.org/fred/series/vintagedates?series_id=DEXSZUS&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=1000",
+      "observation_urls": [
+        "https://api.stlouisfed.org/fred/series/observations?series_id=DEXSZUS&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
+      ],
+      "vintage_dates": 27,
+      "downloaded_at_utc": "2026-11-17T22:52:27.990640+00:00",
+      "file": "DEXSZUS.csv",
+      "sha256": "f74c9f7243595bc90b1af70b765131d9988a9362b493d76e9ebfdffaf385f4c7",
+      "vintage_rows": 526
+    },
+    {
+      "series_id": "DEXUSAL",
+      "quote_direction": {
+        "base": "AUD",
+        "quote": "USD"
+      },
+      "vintage_dates_url": "https://api.stlouisfed.org/fred/series/vintagedates?series_id=DEXUSAL&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=1000",
+      "observation_urls": [
+        "https://api.stlouisfed.org/fred/series/observations?series_id=DEXUSAL&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
+      ],
+      "vintage_dates": 27,
+      "downloaded_at_utc": "2026-11-17T22:52:28.767446+00:00",
+      "file": "DEXUSAL.csv",
+      "sha256": "72e065a58b3f2ad7dc0d18ccb7dd376228acfc8b2e0c46b115237bfc5dcf11ac",
+      "vintage_rows": 526
     }
   ],
   "price_sources": {},
@@ -56,64 +187,77 @@
   "matrix": [
     {
       "test_id": "EURUSD_USD_BASKET_EX_EUR",
-      "status": "INSUFFICIENT_SAMPLE",
+      "status": "EVALUATED",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 29,
+          "wins": 22,
+          "win_rate": 0.7586206896551724,
+          "mean_r": 0.3895137931034483,
+          "total_r": 11.295900000000001,
+          "mean_r_ci95": [
+            0.16183614035087718,
+            0.6236311525974024
+          ]
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 45,
+          "wins": 23,
+          "win_rate": 0.5111111111111111,
+          "mean_r": -0.09899777777777778,
+          "total_r": -4.454899999999999,
+          "mean_r_ci95": [
+            -0.4187059152231845,
+            0.34189601562499955
+          ]
         },
         "NEUTRAL": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 27,
+          "wins": 18,
+          "win_rate": 0.6666666666666666,
+          "mean_r": 0.17555185185185185,
+          "total_r": 4.739899999999999,
+          "mean_r_ci95": [
+            -0.1466230769230769,
+            0.5098317708333329
+          ]
         }
       },
-      "unknown_n": 101,
+      "unknown_n": 0,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
-      "gate_recommended": false,
+      "removed_trade_fraction": 0.44554455445544555,
+      "removed_total_r_fraction": -0.38467649319137526,
+      "gate_recommended": true,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": "USD_AND_RATES",
-      "unknown_reasons": {
-        "USD basket missing USDJPY": 101
-      }
+      "unknown_reasons": {}
     },
     {
       "test_id": "EURUSD_VIX_RISK_OFF",
-      "status": "INSUFFICIENT_SAMPLE",
+      "status": "EVALUATED",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 62,
+          "wins": 33,
+          "win_rate": 0.532258064516129,
+          "mean_r": -0.044561290322580646,
+          "total_r": -2.7627999999999995,
+          "mean_r_ci95": [
+            -0.31757938028169014,
+            0.30309565476190464
+          ]
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 37,
+          "wins": 28,
+          "win_rate": 0.7567567567567568,
+          "mean_r": 0.3450351351351351,
+          "total_r": 12.766300000000001,
+          "mean_r_ci95": [
+            0.12805151849217639,
+            0.5920651478494623
+          ]
         },
         "NEUTRAL": {
           "n": 0,
@@ -124,16 +268,16 @@
           "mean_r_ci95": null
         }
       },
-      "unknown_n": 101,
+      "unknown_n": 2,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 0.37373737373737376,
+      "removed_total_r_fraction": 1.2761833358324572,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "verified VIX history is missing": 101
+        "VIX/VIX3M ratio unavailable and median rule is not triggered": 2
       }
     },
     {
@@ -226,7 +370,7 @@
       "not_tested_n": 0,
       "removed_trade_fraction": 0.5247524752475248,
       "removed_total_r_fraction": -0.5970606774948402,
-      "gate_recommended": true,
+      "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": "USD_AND_RATES",
@@ -278,61 +422,74 @@
       "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 7,
+          "wins": 2,
+          "win_rate": 0.2857142857142857,
+          "mean_r": -0.4371857142857143,
+          "total_r": -3.0603,
+          "mean_r_ci95": [
+            -0.9815333333333334,
+            0.22127999999999992
+          ]
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 4,
+          "wins": 1,
+          "win_rate": 0.25,
+          "mean_r": -0.571975,
+          "total_r": -2.2879,
+          "mean_r_ci95": [
+            -0.9798,
+            0.6389
+          ]
         },
         "NEUTRAL": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 8,
+          "wins": 5,
+          "win_rate": 0.625,
+          "mean_r": 0.33306250000000004,
+          "total_r": 2.6645000000000008,
+          "mean_r_ci95": [
+            -0.17359955357142853,
+            0.9513833333333335
+          ]
         }
       },
-      "unknown_n": 19,
+      "unknown_n": 0,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 0.21052631578947367,
+      "removed_total_r_fraction": 0.8525170473599882,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": "USD_AND_RATES",
-      "unknown_reasons": {
-        "USD basket missing USDJPY": 19
-      }
+      "unknown_reasons": {}
     },
     {
       "test_id": "GBPUSD_VIX_RISK_OFF",
       "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 13,
+          "wins": 6,
+          "win_rate": 0.46153846153846156,
+          "mean_r": -0.01943076923076921,
+          "total_r": -0.2525999999999998,
+          "mean_r_ci95": [
+            -0.5374829166666666,
+            0.5163851515151514
+          ]
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 6,
+          "wins": 2,
+          "win_rate": 0.3333333333333333,
+          "mean_r": -0.40518333333333334,
+          "total_r": -2.4311000000000003,
+          "mean_r_ci95": [
+            -0.9811333333333334,
+            0.5106999999999999
+          ]
         },
         "NEUTRAL": {
           "n": 0,
@@ -343,17 +500,15 @@
           "mean_r_ci95": null
         }
       },
-      "unknown_n": 19,
+      "unknown_n": 0,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 0.3157894736842105,
+      "removed_total_r_fraction": 0.9058762156723928,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
-      "unknown_reasons": {
-        "verified VIX history is missing": 19
-      }
+      "unknown_reasons": {}
     },
     {
       "test_id": "GBPUSD_BRENT_SPOT",
@@ -545,61 +700,74 @@
       "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 11,
+          "wins": 6,
+          "win_rate": 0.5454545454545454,
+          "mean_r": 0.11353636363636364,
+          "total_r": 1.2489,
+          "mean_r_ci95": [
+            -0.41878461538461537,
+            0.6609363636363637
+          ]
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 4,
+          "wins": 3,
+          "win_rate": 0.75,
+          "mean_r": 0.2997,
+          "total_r": 1.1988000000000003,
+          "mean_r_ci95": [
+            -0.64635,
+            1.0929
+          ]
         },
         "NEUTRAL": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 3,
+          "wins": 3,
+          "win_rate": 1.0,
+          "mean_r": 0.5276333333333334,
+          "total_r": 1.5829,
+          "mean_r_ci95": [
+            0.41265,
+            0.7576
+          ]
         }
       },
-      "unknown_n": 18,
+      "unknown_n": 0,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 0.2222222222222222,
+      "removed_total_r_fraction": 0.29742470103706653,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": "USD_AND_RATES",
-      "unknown_reasons": {
-        "USD basket missing USDJPY": 18
-      }
+      "unknown_reasons": {}
     },
     {
       "test_id": "GOLD_VIX_RISK_OFF",
       "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 10,
+          "wins": 5,
+          "win_rate": 0.5,
+          "mean_r": 0.08768000000000002,
+          "total_r": 0.8768000000000001,
+          "mean_r_ci95": [
+            -0.6527099999999999,
+            0.74136
+          ]
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 7,
+          "wins": 6,
+          "win_rate": 0.8571428571428571,
+          "mean_r": 0.3997714285714286,
+          "total_r": 2.7984,
+          "mean_r_ci95": [
+            -0.13605714285714285,
+            0.8594714285714287
+          ]
         },
         "NEUTRAL": {
           "n": 0,
@@ -610,16 +778,16 @@
           "mean_r_ci95": null
         }
       },
-      "unknown_n": 18,
+      "unknown_n": 1,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 0.4117647058823529,
+      "removed_total_r_fraction": 0.7614279494993469,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "verified VIX history is missing": 18
+        "VIX/VIX3M ratio unavailable and median rule is not triggered": 1
       }
     },
     {
@@ -675,20 +843,26 @@
       "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 7,
+          "wins": 4,
+          "win_rate": 0.5714285714285714,
+          "mean_r": -0.10350000000000001,
+          "total_r": -0.7245000000000004,
+          "mean_r_ci95": [
+            -0.7283666666666666,
+            0.36515
+          ]
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 9,
+          "wins": 7,
+          "win_rate": 0.7777777777777778,
+          "mean_r": 0.2592777777777778,
+          "total_r": 2.3335,
+          "mean_r_ci95": [
+            -0.25153055555555554,
+            0.649154722222222
+          ]
         },
         "NEUTRAL": {
           "n": 0,
@@ -699,16 +873,16 @@
           "mean_r_ci95": null
         }
       },
-      "unknown_n": 17,
+      "unknown_n": 1,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 0.5625,
+      "removed_total_r_fraction": 1.4502796768178994,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "verified VIX history is missing": 17
+        "VIX/VIX3M ratio unavailable and median rule is not triggered": 1
       }
     },
     {
@@ -764,20 +938,26 @@
       "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 25,
+          "wins": 18,
+          "win_rate": 0.72,
+          "mean_r": 0.28238,
+          "total_r": 7.0595,
+          "mean_r_ci95": [
+            -0.049053597826086946,
+            0.6167303935185181
+          ]
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 18,
+          "wins": 14,
+          "win_rate": 0.7777777777777778,
+          "mean_r": 0.32508333333333334,
+          "total_r": 5.851499999999999,
+          "mean_r_ci95": [
+            -0.07544242105263156,
+            0.6486424999999999
+          ]
         },
         "NEUTRAL": {
           "n": 0,
@@ -788,16 +968,16 @@
           "mean_r_ci95": null
         }
       },
-      "unknown_n": 44,
+      "unknown_n": 1,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 0.4186046511627907,
+      "removed_total_r_fraction": 0.45321818604290903,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
       "unknown_reasons": {
-        "verified VIX history is missing": 44
+        "VIX/VIX3M ratio unavailable and median rule is not triggered": 1
       }
     },
     {
@@ -805,41 +985,48 @@
       "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 18,
+          "wins": 13,
+          "win_rate": 0.7222222222222222,
+          "mean_r": 0.1073777777777778,
+          "total_r": 1.9328000000000007,
+          "mean_r_ci95": [
+            -0.29315716666666664,
+            0.3989427380952379
+          ]
         },
         "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 9,
+          "wins": 7,
+          "win_rate": 0.7777777777777778,
+          "mean_r": 0.3493888888888889,
+          "total_r": 3.1445,
+          "mean_r_ci95": [
+            0.009250000000000013,
+            0.7049054910714283
+          ]
         },
         "NEUTRAL": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 17,
+          "wins": 13,
+          "win_rate": 0.7647058823529411,
+          "mean_r": 0.48151764705882355,
+          "total_r": 8.185799999999999,
+          "mean_r_ci95": [
+            0.005145678571428593,
+            0.8446021249999996
+          ]
         }
       },
-      "unknown_n": 44,
+      "unknown_n": 0,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 0.20454545454545456,
+      "removed_total_r_fraction": 0.23708635236106193,
       "gate_recommended": false,
       "gate_confirmed": false,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null,
-      "unknown_reasons": {
-        "missing or invalid EURUSD 10-day change input: 'signal'": 44
-      }
+      "unknown_reasons": {}
     },
     {
       "test_id": "DAX_BRENT_SPOT",
@@ -1029,13 +1216,13 @@
             "EURUSD_DGS2",
             "EURUSD_USD_BASKET_EX_EUR"
           ],
-          "n": 0,
-          "agree": 0,
-          "fraction": null
+          "n": 101,
+          "agree": 49,
+          "fraction": 0.48514851485148514
         }
       ],
       "strongest": [
-        "EURUSD_DGS2",
+        "EURUSD_USD_BASKET_EX_EUR",
         true
       ],
       "dxy": "NOT_TESTED: REV4 does not define a separate DXY classification/sign test"
@@ -1047,9 +1234,9 @@
             "GBPUSD_DGS2",
             "GBPUSD_USD_BASKET_EX_GBP"
           ],
-          "n": 0,
-          "agree": 0,
-          "fraction": null
+          "n": 19,
+          "agree": 7,
+          "fraction": 0.3684210526315789
         }
       ],
       "strongest": [
@@ -1074,18 +1261,18 @@
             "GOLD_DFII10",
             "GOLD_USD_BASKET"
           ],
-          "n": 0,
-          "agree": 0,
-          "fraction": null
+          "n": 18,
+          "agree": 6,
+          "fraction": 0.3333333333333333
         },
         {
           "drivers": [
             "GOLD_DGS2",
             "GOLD_USD_BASKET"
           ],
-          "n": 0,
-          "agree": 0,
-          "fraction": null
+          "n": 18,
+          "agree": 6,
+          "fraction": 0.3333333333333333
         }
       ],
       "strongest": [
@@ -1145,12 +1332,60 @@
       "status": "INSUFFICIENT_SAMPLE",
       "buckets": {
         "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
+          "n": 17,
+          "wins": 12,
+          "win_rate": 0.7058823529411765,
+          "mean_r": 0.09298235294117649,
+          "total_r": 1.5807000000000004,
+          "mean_r_ci95": [
+            -0.3687602083333333,
+            0.4009443297101449
+          ]
+        },
+        "AGAINST": {
+          "n": 9,
+          "wins": 7,
+          "win_rate": 0.7777777777777778,
+          "mean_r": 0.3493888888888889,
+          "total_r": 3.1445,
+          "mean_r_ci95": [
+            0.009250000000000013,
+            0.7049054910714283
+          ]
+        },
+        "NEUTRAL": {
+          "n": 17,
+          "wins": 13,
+          "win_rate": 0.7647058823529411,
+          "mean_r": 0.48151764705882355,
+          "total_r": 8.185799999999999,
+          "mean_r_ci95": [
+            0.005145678571428593,
+            0.8446021249999996
+          ]
+        }
+      },
+      "unknown_n": 0,
+      "not_tested_n": 0,
+      "removed_trade_fraction": 0.20930232558139536,
+      "removed_total_r_fraction": 0.24355200991402676,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null
+    },
+    "UNKNOWN": {
+      "test_id": "DAX_EURUSD_10D",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 1,
+          "wins": 1,
+          "win_rate": 1.0,
+          "mean_r": 0.3521,
+          "total_r": 0.3521,
+          "mean_r_ci95": [
+            0.3521,
+            0.3521
+          ]
         },
         "AGAINST": {
           "n": 0,
@@ -1171,51 +1406,10 @@
       },
       "unknown_n": 0,
       "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
-      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
-      "family": null
-    },
-    "UNKNOWN": {
-      "test_id": "DAX_EURUSD_10D",
-      "status": "INSUFFICIENT_SAMPLE",
-      "buckets": {
-        "WITH": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
-        },
-        "AGAINST": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
-        },
-        "NEUTRAL": {
-          "n": 0,
-          "wins": 0,
-          "win_rate": null,
-          "mean_r": null,
-          "total_r": 0.0,
-          "mean_r_ci95": null
-        }
-      },
-      "unknown_n": 44,
-      "not_tested_n": 0,
-      "removed_trade_fraction": null,
-      "removed_total_r_fraction": null,
+      "removed_trade_fraction": 0.0,
+      "removed_total_r_fraction": 0.0,
       "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
       "family": null
     }
-  },
-  "latest_run_scope": [
-    "DAX_BRENT_SPOT",
-    "EURUSD_BRENT_SPOT",
-    "GBPUSD_BRENT_SPOT"
-  ]
+  }
 }

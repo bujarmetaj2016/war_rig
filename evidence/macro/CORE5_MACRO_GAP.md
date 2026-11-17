@@ -23,11 +23,13 @@ lines 657-659); these are not acting runtime inputs.
 | GER40/DAX | `PRESENT_AND_ACTING`: VIX, DXY, DGS10 and DFII10 as model features; climate gate. `PRESENT_BUT_NOT_ACTING`: climate `size_mult` for actual stake. | `MISSING`: REV4 risk-off, EURUSD exporter-channel, and Brent tests. Bund 10-year and prior US500 session are candidate inputs but explicitly not tested by the fixed rules. | `PRESENT_BUT_NOT_ACTING`: `EQUITY_STRUCT` profile with VIX/DXY/US-yield references; freshness policy unselected. Bund, EURUSD, prior-US500 and Brent rules are not selected. |
 
 **Cross-cutting:** event proximity is a V3 calendar proposal, not a V2 macro
-input, and no official release schedule was downloaded. Candidate policy and
+input, and no historical release schedule was verified as known before entry. Candidate policy and
 roles remain owner proposals; nothing in this comparison authorizes an
 executable V3 gate.
 
-**Continuation:** verified ALFRED inputs now support partial descriptive results
-and two unconfirmed exploratory EURUSD candidates (DGS2 and Brent spot). Here `MISSING` still
+**Continuation:** verified ALFRED inputs support all 17 non-event comparisons.
+The primary EURUSD USD basket and exploratory EURUSD Brent spot are unconfirmed
+candidates. DGS2 remains exploratory and is superseded by the basket under the
+family rule. Here `MISSING` still
 describes the V2 or V3 profile, not delivery of a historical research series.
 See the [trade-test report](CORE5_MACRO_TRADE_TEST.md).
