@@ -252,7 +252,8 @@ def analyze(history: Path, trades_path: Path, *, prices=None, calendar=None,
     prior_rows = {}
     if remaining_prior is not None:
         prior_rows = {row["test_id"]: row for row in remaining_prior["matrix"]}
-        prior_sources = {row["series_id"]: row["sha256"] for row in remaining_prior["alfred_sources"]}
+        prior_sources = {row["series_id"]: row["sha256"] for row in remaining_prior["alfred_sources"]
+                         if row["series_id"] in ALFRED_TESTS.values()}
         if (len(REMAINING_NON_EVENT) != 9 or set(prior_rows) != set(engine.TESTS_BY_ID)
                 or set(prior_sources) != set(ALFRED_TESTS.values())
                 or any(pins.get(f"{name}.csv") != digest for name, digest in prior_sources.items())

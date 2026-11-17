@@ -522,14 +522,21 @@ def write_trade_test(
                       "|---|---:|---:|---:|---|"])
         for row in result["matrix"]:
             if any(b["n"] for b in row["buckets"].values()):
-                gate = ("confirmed" if row["gate_confirmed"] else "exploratory, unconfirmed"
-                        if row["gate_recommended"] else "no")
+                if row["gate_confirmed"]:
+                    gate = "confirmed"
+                elif row["gate_recommended"]:
+                    kind = "primary" if "_USD_BASKET_EX_" in row["test_id"] else "exploratory"
+                    gate = f"{kind}, unconfirmed"
+                elif row["test_id"] == "EURUSD_DGS2" and len(scope) == 9:
+                    gate = "exploratory; superseded by USD basket"
+                else:
+                    gate = "no"
                 lines.append(f"| {row['test_id']} | {row['unknown_n']} | "
                              f"{fmt(row['removed_trade_fraction'])} | "
                              f"{fmt(row['removed_total_r_fraction'])} | {gate} |")
         lines.extend([
             "",
-            "`exploratory, unconfirmed` means the historical comparison passed among eligible "
+            "An unconfirmed candidate passed the historical comparison among eligible "
             "tested family members; it is not confirmed or authorized policy. "
             "USD/rates agreement and the strongest eligible family member are recorded "
             "in the results JSON. Brent spot uses numeric ALFRED observations in force on the "
@@ -572,7 +579,10 @@ def write_reproducibility(
         "shasum -a 256 -c SHA256SUMS.txt",
         "shasum -a 256 -c reference/MANIFEST.sha256",
         "python3 -B -m unittest discover -s research -p 'test_*.py'",
-        "python3 -B -m research.verify_alfred --history reference/history/macro --trades reference/v2_outcomes/trade_results.csv",
+        "python3 -B -m research.verify_alfred --history "
+        + ("reference/history/macro-fred-next" if result and len(result.get("latest_run_scope", [])) == 9
+           else "reference/history/macro")
+        + " --trades reference/v2_outcomes/trade_results.csv",
         "python3 evidence/macro/analyze_core5_macro.py --remaining-non-event"
         if result and len(result.get("latest_run_scope", [])) == 9 else
         ("python3 evidence/macro/analyze_core5_macro.py --brent-only"
@@ -638,6 +648,9 @@ def write_reproducibility(
         "`complete_official_page_by_event_type` (a map from each event type to its "
         "verified source-page file). Include the full 24-hour forward horizon. "
         "Without that review or usable metadata, event comparisons remain UNKNOWN.",
+        "The corrected ECB path is `/press/calendars/mgcgc/html/index.en.html`. "
+        "All five official roots and a disposable isolated acquisition run succeeded; "
+        "the smoke-test output was not used for trade classification.",
         "",
         "The optional `reference/history/macro/price_manifest.json` has a `series` array "
         "with `name`, `file`, `source_url`, `downloaded_at_utc`, `close_convention`, "
