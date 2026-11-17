@@ -537,7 +537,9 @@ def write_trade_test(
                 "publication evidence. Only a timestamped release from a page dated strictly "
                 "before the UTC entry day can establish `EVENT_WINDOW`. Missing or later evidence "
                 "cannot establish `NO_EVENT`. With no verified `NO_EVENT` cohort, none of "
-                "the five event comparisons supports a gate.",
+                "the five event comparisons supports a gate. Removal fractions below use "
+                "classified observations only: 1.000 in an event row is a consequence of "
+                "having only positive matches, not a fraction of all V2 trades or total V2 R.",
                 "",
             ])
         lines.extend([
