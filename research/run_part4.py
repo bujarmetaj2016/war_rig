@@ -1,0 +1,315 @@
+"""Run REV4 offline against checksum-verified research inputs."""
+
+from __future__ import annotations
+
+import csv
+import hashlib
+import io
+import json
+import math
+from collections import Counter
+from dataclasses import asdict
+from datetime import date, datetime, time, timedelta
+from pathlib import Path
+from urllib.parse import urlsplit
+
+from . import part4_engine as engine
+from .verify_alfred import verified_vintages
+
+ALFRED_TESTS = {
+    "EURUSD_BRENT_SPOT": "DCOILBRENTEU",
+    "EURUSD_DGS2": "DGS2",
+    "GBPUSD_BRENT_SPOT": "DCOILBRENTEU",
+    "GBPUSD_DGS2": "DGS2",
+    "GOLD_DFII10": "DFII10",
+    "GOLD_DGS2": "DGS2",
+    "SP500_HY_SPREAD": "BAMLH0A0HYM2",
+    "DAX_BRENT_SPOT": "DCOILBRENTEU",
+}
+PRICE_NAMES = {
+    "USDJPY", "GBPUSD", "USDCAD", "USDCHF", "AUDUSD", "EURUSD", "VIX", "VIX3M",
+    "BRENT_FRONT_MONTH",
+}
+
+
+def load_prices(history: Path) -> tuple[dict[str, engine.PriceSeries], dict[str, str]]:
+    """Load researched close times and session dates; never infer them from Yahoo labels."""
+    path = history / "price_manifest.json"
+    if not path.is_file():
+        return {}, {}
+    manifest = path.read_bytes()
+    pins = {path.name: hashlib.sha256(manifest).hexdigest()}
+    prices = {}
+    for item in json.loads(manifest)["series"]:
+        name, filename = item["name"], item["file"]
+        source = urlsplit(item["source_url"])
+        if (name not in PRICE_NAMES or name in prices or filename != f"{name}.csv"
+                or source.scheme != "https"
+                or source.hostname not in ("finance.yahoo.com", "query1.finance.yahoo.com",
+                                           "query2.finance.yahoo.com")):
+            raise ValueError("Invalid or duplicate Yahoo Finance price input.")
+        raw = (history / filename).read_bytes()
+        pins[filename] = hashlib.sha256(raw).hexdigest()
+        if pins[filename] != item["sha256"]:
+            raise ValueError(f"{filename}: price SHA-256 mismatch.")
+        reader = csv.DictReader(io.StringIO(raw.decode("utf-8-sig")))
+        if reader.fieldnames != ["close_time_utc", "close", "complete"]:
+            raise ValueError(f"{filename}: invalid price schema.")
+        bars = []
+        for row in reader:
+            if row["complete"] not in ("true", "false"):
+                raise ValueError(f"{filename}: explicit completed-bar flag required.")
+            bars.append(engine.PriceBar(
+                datetime.fromisoformat(row["close_time_utc"].replace("Z", "+00:00")),
+                float(row["close"]), row["complete"] == "true",
+            ))
+        expected = tuple(date.fromisoformat(day) for day in item["expected_dates"])
+        if not expected:
+            raise ValueError(f"{filename}: expected close dates are required.")
+        prices[name] = engine.PriceSeries(name, tuple(bars), engine.PriceProvenance(
+            name, item["source_url"], datetime.fromisoformat(item["downloaded_at_utc"]),
+            item["close_convention"], pins[filename],
+        ), expected)
+    return prices, pins
+
+
+def load_calendar(history: Path) -> tuple[engine.OfficialCalendar | None, dict[str, str]]:
+    """Verify downloaded bytes; require reviewed as-known coverage before use."""
+    root = history / "schedules"
+    path = root / "release_schedule_manifest.json"
+    if not path.is_file():
+        return None, {}
+    raw = path.read_bytes()
+    manifest = json.loads(raw)
+    pins = {f"schedules/{path.name}": hashlib.sha256(raw).hexdigest()}
+
+    def pinned(item: dict, filename: str) -> bytes:
+        if filename != item["file"]:
+            raise ValueError("Unexpected schedule artifact path.")
+        data = (root / filename).read_bytes()
+        digest = hashlib.sha256(data).hexdigest()
+        if digest != item["sha256"]:
+            raise ValueError("Schedule artifact SHA-256 mismatch.")
+        pins[f"schedules/{filename}"] = digest
+        return data
+
+    pages = {}
+    for item in manifest["source_pages"]:
+        filename = item["file"]
+        if filename != f"sources/{Path(filename).name}" or filename in pages:
+            raise ValueError("Invalid schedule source-page path.")
+        pinned(item, filename)
+        pages[filename] = item
+    data = pinned(manifest["events_file"], "release_schedule_events.csv")
+    rows = list(csv.DictReader(io.StringIO(data.decode("utf-8-sig"))))
+    if len(rows) != manifest["event_count"]:
+        raise ValueError("Schedule event count mismatch.")
+    review_path = root / "as_known_coverage.json"
+    if not review_path.is_file():
+        return None, pins
+    review_raw = review_path.read_bytes()
+    pins[f"schedules/{review_path.name}"] = hashlib.sha256(review_raw).hexdigest()
+    review = json.loads(review_raw)
+    if review["download_manifest_sha256"] != pins[f"schedules/{path.name}"]:
+        raise ValueError("As-known schedule review does not match download manifest.")
+    verified_sources = {}
+    events = set()
+    for event_type in engine.EVENT_TYPES:
+        filename = review["complete_official_page_by_event_type"][event_type]
+        item = pages[filename]
+        if item["event_type"] != event_type:
+            raise ValueError("Reviewed event type is not supported by its source page.")
+        updated = item["page_updated_date"]
+        verified_sources[event_type] = engine.ScheduleProvenance(
+            event_type, item["source_url"], date.fromisoformat(updated) if updated else None,
+            datetime.fromisoformat(item["downloaded_at_utc"]), item["sha256"],
+        )
+        for row in rows:
+            if row["source_file"] != filename:
+                continue
+            if (row["event_type"] != event_type or row["source_sha256"] != item["sha256"]
+                    or row["source_url"] != item["source_url"]):
+                raise ValueError("Event disagrees with its reviewed source.")
+            if not row["scheduled_time"] or not row["time_zone"]:
+                return None, pins
+            events.add((event_type, row["scheduled_date"], row["scheduled_time"], row["time_zone"]))
+    start = date.fromisoformat(review["start"])
+    end = date.fromisoformat(review["end"])
+    coverage = manifest["schedule_coverage"]
+    if not (date.fromisoformat(coverage["start"]) <= start <= end
+            < date.fromisoformat(coverage["end"])):
+        raise ValueError("Reviewed schedule does not cover the 24-hour forward horizon.")
+    return engine.OfficialCalendar(
+        tuple(engine.ScheduledEvent(kind, date.fromisoformat(day), time.fromisoformat(hour), zone)
+              for kind, day, hour, zone in sorted(events)),
+        verified_sources, start, end,
+    ), pins
+
+
+def load_trades(contents: bytes) -> list[engine.Trade]:
+    return [
+        engine.Trade(
+            row["id"], row["instrument"],
+            {"BULLISH": "BUY", "BEARISH": "SELL"}[row["direction"]],
+            datetime.fromisoformat(row["fill_time"].removesuffix(" UTC") + "+00:00"),
+            row["final_outcome_label"], float(row["exit_r"]),
+        )
+        for row in csv.DictReader(io.StringIO(contents.decode("utf-8-sig")))
+        if row["final_outcome_label"] in ("WIN", "LOSS")
+    ]
+
+
+def brent_futures_reading(
+    series: engine.PriceSeries, documented_rolls: set[date], entry: datetime,
+) -> engine.Reading:
+    try:
+        closes = series.completed_before(entry)
+        changes = [
+            (day, math.log(close / prior))
+            for (_, prior), (day, close) in zip(closes, closes[1:])
+            if day not in documented_rolls
+        ]
+        return engine.log_return_momentum_reading(
+            changes, entry_date_utc=entry.date() + timedelta(days=1), label=series.name,
+        )
+    except engine.UnknownData as error:
+        return engine.Reading.unknown(str(error))
+
+
+def analyze(history: Path, trades_path: Path, *, prices=None, calendar=None) -> tuple[dict, dict[str, str]]:
+    contents = trades_path.read_bytes()
+    raw, pins = verified_vintages(history, contents)
+    from .download_macro import MANIFEST
+
+    manifest = json.loads((history / MANIFEST).read_bytes())
+    brent_path = history / "brent_session_calendar.json"
+    brent_sessions = ()
+    if brent_path.is_file():
+        brent_raw = brent_path.read_bytes()
+        brent_metadata = json.loads(brent_raw)
+        if urlsplit(brent_metadata["source_url"]).hostname not in (
+            "fred.stlouisfed.org", "alfred.stlouisfed.org", "api.stlouisfed.org",
+            "finance.yahoo.com",
+        ):
+            raise ValueError("Brent calendar source is not allow-listed.")
+        brent_sessions = tuple(date.fromisoformat(day) for day in brent_metadata["expected_dates"])
+        if tuple(sorted(set(brent_sessions))) != brent_sessions or not brent_sessions:
+            raise ValueError("Brent calendar must contain sorted, distinct session dates.")
+        pins[brent_path.name] = hashlib.sha256(brent_raw).hexdigest()
+    economic = {
+        item["series_id"]: engine.AlfredSeries(
+            engine.AlfredProvenance(
+                item["series_id"], (item["vintage_dates_url"], *item["observation_urls"]),
+                datetime.fromisoformat(item["downloaded_at_utc"]), item["sha256"],
+            ),
+            tuple(engine.AlfredVintage(
+                row.observation_date, row.start, row.end,
+                None if row.value == "." else float(row.value),
+            ) for row in raw[item["series_id"]]),
+            brent_sessions if item["series_id"] == "DCOILBRENTEU" else (),
+        )
+        for item in manifest["series"]
+    }
+    trades = load_trades(contents)
+    if prices is None:
+        prices, price_pins = load_prices(history)
+        pins.update(price_pins)
+    roll_dates = None
+    price_manifest = history / "price_manifest.json"
+    if "BRENT_FRONT_MONTH" in prices and price_manifest.name in pins:
+        metadata = json.loads(price_manifest.read_bytes())
+        front = next(item for item in metadata["series"] if item["name"] == "BRENT_FRONT_MONTH")
+        if front.get("roll_date_documentation") and front.get("roll_dates_complete") is True:
+            roll_dates = {date.fromisoformat(day) for day in front["roll_dates"]}
+    if calendar is None:
+        calendar, schedule_pins = load_calendar(history)
+        pins.update(schedule_pins)
+    readings = {}
+    classified = {}
+    for spec in engine.ALL_TESTS:
+        by_trade = {}
+        for trade in trades:
+            if trade.instrument != spec.instrument:
+                continue
+            entry = trade.entry_time_utc
+            if spec.test_id in ALFRED_TESTS:
+                series = ALFRED_TESTS[spec.test_id]
+                reading = engine.alfred_momentum_reading(
+                    economic[series], entry, price_series=series == "DCOILBRENTEU",
+                )
+                if (series == "DCOILBRENTEU" and reading.code == "UNKNOWN"
+                        and roll_dates is not None):
+                    reading = brent_futures_reading(prices["BRENT_FRONT_MONTH"], roll_dates, entry)
+            elif spec.test_id == "DAX_EURUSD_10D" and "EURUSD" in prices:
+                reading = engine.price_momentum_reading(prices["EURUSD"], entry)
+            elif spec.kind == "risk_off" and "VIX" not in prices:
+                reading = engine.Reading.unknown("verified VIX history is missing")
+            else:
+                reading = engine.evaluate_reading(spec, trade, {
+                    "usd_pairs": prices, "vix": prices.get("VIX"), "vix3m": prices.get("VIX3M"),
+                    **({"calendar": calendar} if calendar is not None else {}),
+                })
+            by_trade[trade.trade_id] = reading
+        readings[spec.test_id] = by_trade
+        classified[spec.test_id] = [
+            engine.classify(spec, trade, by_trade[trade.trade_id])
+            for trade in trades if trade.instrument == spec.instrument
+        ]
+    results = engine.run_all_tests(trades, readings, seed=0)
+    family = {}
+    for instrument in sorted({trade.instrument for trade in trades}):
+        drivers = {
+            result.test_id: {row.trade.trade_id: row.classification for row in classified[result.test_id]}
+            for result in results
+                if result.test_id.startswith(f"{instrument}_")
+                and (engine.TESTS_BY_ID[result.test_id].kind == "usd"
+                     or result.test_id.endswith(("_DGS2", "_DFII10")))
+        }
+        family[instrument] = {
+            "agreement": [
+                {"drivers": [left, right], "n": n, "agree": agree, "fraction": fraction}
+                for (left, right), (n, agree, fraction) in engine.overlapping_driver_agreement(drivers).items()
+            ],
+            "strongest": engine.strongest_family_member([r for r in results if r.test_id in drivers]),
+            "dxy": "NOT_TESTED: REV4 does not define a separate DXY classification/sign test",
+        }
+    dax_risk = {row.trade.trade_id: row.reading.code for row in classified["DAX_VIX_RISK_OFF"]}
+    exporter_split = {
+        regime: asdict(engine.compare(
+            "DAX_EURUSD_10D",
+            [row for row in classified["DAX_EURUSD_10D"]
+             if dax_risk[row.trade.trade_id] == regime],
+            seed=0,
+        ))
+        for regime in ("RISK_OFF", "NOT_RISK_OFF", "UNKNOWN")
+    }
+    for comparison in exporter_split.values():
+        comparison.pop("gate_recommended")
+        comparison.pop("gate_confirmed")
+    matrix = []
+    for result in results:
+        spec = engine.TESTS_BY_ID[result.test_id]
+        data = asdict(result)
+        if spec.kind == "usd" or spec.test_id.endswith(("_DGS2", "_DFII10")):
+            strongest, passes = family[spec.instrument]["strongest"]
+            data["family"] = "USD_AND_RATES"
+            data["gate_recommended"] = result.gate_recommended and passes and strongest == result.test_id
+            data["gate_confirmed"] = result.gate_confirmed and data["gate_recommended"]
+        data["unknown_reasons"] = dict(sorted(Counter(
+            row.reading.reason or "unspecified" for row in classified[result.test_id]
+            if row.classification == "UNKNOWN"
+        ).items()))
+        matrix.append(data)
+    return {
+        "status": "PARTIAL_TRADE_TEST",
+        "alfred_sources": manifest["series"],
+        "price_sources": {name: {
+            **asdict(series.provenance),
+            "downloaded_at_utc": series.provenance.downloaded_at_utc.isoformat(),
+        } for name, series in prices.items()},
+        "schedule_verified_for_classification": calendar is not None,
+        "bootstrap_seed": 0,
+        "matrix": matrix,
+        "family": family,
+        "dax_exporter_descriptive_split": exporter_split,
+    }, pins

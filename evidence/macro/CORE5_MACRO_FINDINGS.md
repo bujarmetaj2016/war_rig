@@ -15,11 +15,10 @@ listed files pass its checks. Prompt and hypothesis hashes are also repeated in
 modified.
 
 Owner-provided V2 source, trade-result, and prediction exports are present and
-hash-pinned. `reference/history/macro/` and the V2 daily parquet histories are
-absent. The separate isolated research job required for allowed public
-downloads was not provisioned or attested; no market or release-calendar
-downloads were made. Therefore source inventory is verified, but all trade
-performance tests remain `NOT_VERIFIED`.
+hash-pinned. The owner-delivered ALFRED manifest and its four CSVs are verified
+in `reference/history/macro/`. Historical price and release-calendar inputs
+are still missing. See [trade tests](CORE5_MACRO_TRADE_TEST.md) for the
+partial analysis and unavailable comparisons.
 
 ## 1. USD direction and EURUSD/GBPUSD entries
 
@@ -66,8 +65,12 @@ the computation at `backtest_ml/macro_confidence.py:77-91,151-185` and
 
 Thus a strengthening DXY can lower climate or the model probability, and
 climate below 40 can suppress the signal, but neither a BUY nor a SELL is
-rejected solely for opposing USD direction. The theme/Sharpe cluster filter can
-also suppress one of EURUSD/GBPUSD, but it does not arbitrate USD direction.
+rejected solely for opposing USD direction. **Verified cluster suppression:**
+both pairs are assigned theme `USD`; EURUSD has Sharpe `0.044` versus GBPUSD
+`0.029`. If both are directional at the cluster stage, the filter retains
+EURUSD and changes GBPUSD to `THEME_SUPPRESSED` regardless of either side.
+If only GBPUSD reaches that stage as directional, EURUSD does not displace it.
+See `backtest_ml/live_inference.py:43-45,578-594` (SHA-256 `8a298149c23ec23cd2dee63349834bd09e7e59c13bd533fb39a5e126795e4601`).
 This confirms the reported possibility from source; it does not establish how
 often it occurred in realized trades.
 
@@ -146,3 +149,41 @@ code also does not enforce the REV4 as-published restrictions.
   `execution/position_manager.py:1284-1305`).
 - Source paths, exact line ranges and per-file SHA-256 values are in the CSV
   evidence column and the final manifest. A `V2` role is not a V3 approval.
+
+## V2_PARITY — comparison baseline only
+
+All citations in the following tables are relative to `reference/v2_snapshot/`.
+
+| Instrument | Verified V2 macro behavior | Source |
+|---|---|---|
+| EURUSD | Directional signal suppressed below climate 40; `HALF` at `40 ≤ climate < 60`, `FULL` at `≥ 60`. `size_mult=0.5` is telemetry, not a stake multiplier. | `backtest_ml/live_inference.py:495-508`; `execution/governor.py:286-350,1365-1372` |
+| GBPUSD | Same direction-agnostic climate gate and telemetry bands as EURUSD. | `backtest_ml/live_inference.py:495-508`; `execution/governor.py:286-350,1365-1372` |
+| DAX/GER40 | Directional signal suppressed below climate 40. | `backtest_ml/live_inference.py:510-521` |
+| SP500/US500 | Directional signal suppressed below climate 40. Separately, Governor denies entry if VIX z-score is unavailable or `≥ 2.0` at the default threshold. | `backtest_ml/live_inference.py:510-521`; `execution/governor.py:618-620,844-882` |
+| GOLD/XAUUSD | Macro model features only for entry; climate is displayed, not used to gate or size Gold. | `backtest_ml/live_inference.py:487-493`; `execution/governor.py:618-620,849-867` |
+
+**FX direction defect:** the DXY term `clip(50 − 25 × dxy_zscore, 0, 100)`
+penalizes a strong USD equally for BUY and SELL before applying the same
+climate floor. See `backtest_ml/macro_confidence.py:157-170` and
+`backtest_ml/live_inference.py:495-508`. This baseline does not select an
+equivalent gate or a correction for V3.
+
+## Calculation and persistence lineage
+
+| Calculation | Exact definition | Source and SHA-256 |
+|---|---|---|
+| EURUSD feature `dxy_zscore` | 5-row simple DXY return divided by its rolling 20-row sample std plus `1e-10`, without demeaning. Return denominator is lagged close plus `1e-10`. | `backtest_ml/eurusd_v2_features.py:126-130` `b095b0e483c87b487e2af37987d1382fdfdfbbbf1e663035dc857347a13185e0` |
+| GBPUSD feature `dxy_zscore` | Same non-demeaned calculation on the GBPUSD feature index. | `backtest_ml/gbpusd_v2_features.py:121-125` `a1c0484651e3c2cb29a6566a8091692b6e88be97a71564087d0feb0bbd3b133a` |
+| GOLD feature `dxy_zscore` | Same non-demeaned calculation on the Gold feature index. | `backtest_ml/gold_v2_features.py:173-177` `ca22ee68f0f5b6e028a58270518aa039ca9a96c56c533a0dfc405f5d9a976e10` |
+| DAX feature `dxy_zscore` | Same non-demeaned calculation on the DAX feature index. SP500 has `dxy_5d_roc` but not the z-score feature. | `backtest_ml/dax_v2_features.py:186-194` `dbc0dc55a7cacf818008a0f133603f8604664c8a42c4a84139cf98e21354cdee`; `backtest_ml/sp500_v2_features.py:185-188` `f55d683bee0d7f6f891d0f8b3d3351c1c7cb5d936a5ed0f3f1f8bdca48a8065e` |
+| Climate `dxy_zscore` | Demeaned 20-row rolling sample z-score of the 5-row DXY return; zero or unavailable std yields 0. Output rounded to three decimals. | `backtest_ml/macro_confidence.py:45-50,151-160,177-183` `778a645033776aeec03dbbb76901894e71efbe1aa787fd52d0fa301ff9c5f245` |
+| SP500 feature `vix_zscore` | (VIX close minus rolling 20-row mean) divided by rolling 20-row sample std plus `1e-10`. | `backtest_ml/sp500_v2_features.py:171-174` `f55d683bee0d7f6f891d0f8b3d3351c1c7cb5d936a5ed0f3f1f8bdca48a8065e` |
+| DAX feature `vix_zscore` | Same formula on DAX-aligned VIX close. No `vix_zscore` feature for EURUSD, GBPUSD or GOLD; those use `vix_regime`. | `backtest_ml/dax_v2_features.py:182-184` `dbc0dc55a7cacf818008a0f133603f8604664c8a42c4a84139cf98e21354cdee`; other feature hashes above and ranges `eurusd_v2_features.py:132-133`, `gbpusd_v2_features.py:126-127`, `gold_v2_features.py:184-188` |
+| Climate `vix_zscore` | Demeaned 20-row rolling sample z-score of shared VIX close; zero or unavailable std yields 0. Output rounded to three decimals. | `backtest_ml/macro_confidence.py:45-50,151-160,177-183` `778a645033776aeec03dbbb76901894e71efbe1aa787fd52d0fa301ff9c5f245` |
+| Governor `MarketSnapshot.vix_zscore` | Latest non-null daily VIX close minus mean, divided by sample std over up to 252 closes by default (available count can contract to 20); rounded to three decimals. Fewer than 20 closes, zero std or failed fetch yields `None`. Lookback configurable. | `core/market_snapshot.py:213-236` `3a3a7bb6e7efbce06d5f5e4534eeabac077b11afc75d2cf44845d96937e68641`; `execution/governor.py:618-646,1549-1550,1605-1609` `80ce5f5d2982847bf1a14900ea0e8ddeff54ab6c2562026bb9b4ee64e9293320` |
+
+| Logged column | Verified producer and writer |
+|---|---|
+| `ml_signal_predictions.dxy_zscore` | **Climate DXY**, not the inference feature. Latest shared climate row → `live_inference.py:597-602,785-786,839-850` (hash above) → `execution/state_store.py:1347,1388-1389` `6e99a38ed85f55852118b75606f1956bb1085363c0acf62d87a1f08d138ba5a5`. |
+| `ml_signal_predictions.vix_zscore` | **Climate VIX**, not the model feature or Governor score. Same producer and writer as the DXY prediction column. |
+| `trade_decisions.vix_zscore` | **Governor snapshot VIX** for the traced Governor calls that pass a non-null value (`execution/governor.py:849-876,1539-1540,2016`, hash above); unavailable or not passed yields NULL. The named argument is inserted unchanged by `execution/decision_log.py:46-76,94-109` `927eca3c42d3c412c77ac6dff719c1ebd77d0ad767c683a6a9cb83c4eba4dc73`. This source trace does not certify the producer of every historical row. |

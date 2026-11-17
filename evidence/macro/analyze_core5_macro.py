@@ -5,13 +5,16 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import json
 import subprocess
+import sys
 import zipfile
 from collections import Counter, defaultdict
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 OUT = ROOT / "evidence" / "macro"
 V2 = "reference/v2_snapshot"
 REF_MANIFEST_SHA256 = "a06ac2de31fcce5436d9c975ea7b0cf872a050a6b7d475e2e4b2f09fdff1a38b"
@@ -117,6 +120,10 @@ TESTS = [
     ("DAX", "VIX risk-off", "EXPLORATORY"),
     ("DAX", "EURUSD 10-day change", "EXPLORATORY"),
     ("DAX", "Brent spot oil", "EXPLORATORY"),
+]
+ADDITIONAL_EVENT_TESTS = [
+    (instrument, "Scheduled-event proximity", "EXPLORATORY")
+    for instrument in ("GOLD", "SP500", "DAX")
 ]
 
 
@@ -362,19 +369,25 @@ def write_trade_test(
     per_instrument: dict[str, Counter],
     script_commit: str,
     prediction_entries: list[tuple[str, str]],
+    result: dict | None,
 ) -> None:
     strict_total = labels["WIN"] + labels["LOSS"]
     lines = [
         "# Core-5 macro trade test",
         "",
-        "**Status: `NOT_VERIFIED` — no trade/macro classifications or performance tests were run.**",
+        ("**Status: `PARTIAL_TRADE_TEST` — checksum-verified inputs only.**"
+         if result else "**Status: `TRADE_TEST_NOT_VERIFIED` — ALFRED delivery not verified.**"),
+        "",
+        "**Sample limit up front:** EURUSD 101, DAX 44, GBPUSD 19, GOLD 18, SP500 17 "
+        "strict closed WIN/LOSS outcomes. With 20 required in each comparison bucket, "
+        "GBPUSD, GOLD and SP500 cannot support gate recommendations; report descriptive "
+        "results where data permit. EURUSD and DAX are not guaranteed sufficient buckets.",
         "",
         "## Availability and execution status",
         "",
-        f"- Predefined instrument × macro tests: **{len(TESTS)}**; executed: **0**; "
-        "statistical recommendations: **0**.",
-        "- `reference/history/macro/` is absent/empty. The allowed separate research "
-        "container/job was not provisioned or attested, so no public downloads were made.",
+        f"- Original matrix comparisons: **{len(TESTS)}**; fully or partially classified: "
+        f"**{sum(any(b['n'] for b in r['buckets'].values()) for r in result['matrix']) if result else 0}**. "
+        "The remaining rows have no verified input.",
         "- The verified V2 exports provide 204 trade-result rows: "
         f"{strict_total} strict WIN/LOSS labels ({labels['WIN']} WIN, {labels['LOSS']} "
         f"LOSS) and {labels['SCRATCH']} SCRATCH outcomes. SCRATCH records are not "
@@ -416,14 +429,33 @@ def write_trade_test(
             "below the fixed 20-trade bucket threshold before any WITH/AGAINST split. "
             "EURUSD and DAX still require at least 20 usable trades in both buckets.",
             "",
-            "## Fixed test matrix",
+            "## Fixed test matrix (19 originally listed)",
             "",
             "| Instrument | Macro | Preregistered status | Result |",
             "|---|---|---|---|",
         ]
     )
-    for instrument, macro, kind in TESTS:
-        lines.append(f"| {instrument} | {macro} | {kind} | `NOT_VERIFIED` |")
+    for index, (instrument, macro, kind) in enumerate(TESTS):
+        row = result["matrix"][index] if result else None
+        status = row["status"] if row and any(b["n"] for b in row["buckets"].values()) else "UNKNOWN"
+        lines.append(f"| {instrument} | {macro} | {kind} | `{status}` |")
+    lines.extend(
+        [
+            "",
+            "REV4 explicitly specifies event proximity for all five instruments. The "
+            "original 19-row matrix listed it only for FX. The three omitted exploratory "
+            "rows are shown separately to preserve the original count and avoid silently "
+            "dropping a fixed rule. All five event tests are UNKNOWN pending verified, "
+            "point-in-time official schedules.",
+            "",
+            "| Instrument | Additional REV4 event test | Preregistered status | Result |",
+            "|---|---|---|---|",
+        ]
+    )
+    for index, (instrument, macro, kind) in enumerate(ADDITIONAL_EVENT_TESTS, start=len(TESTS)):
+        row = result["matrix"][index] if result else None
+        status = row["status"] if row and any(b["n"] for b in row["buckets"].values()) else "UNKNOWN"
+        lines.append(f"| {instrument} | {macro} | {kind} | `{status}` |")
     lines.extend(
         [
             "",
@@ -444,32 +476,71 @@ def write_trade_test(
             "weekly bootstrap, and decision thresholds are those in the controlling "
             "REV4 prompt.",
             "",
-            "- Every trade–macro pair is currently `UNKNOWN`; no WITH/AGAINST/NEUTRAL "
-            "bucket, win rate, mean/total R, weekly bootstrap CI, removal fraction, or "
-            "driver-agreement statistic can be calculated.",
-            "- Price-series daily close conventions and UTC close timestamps: "
-            "`UNKNOWN` (no series downloaded).",
-            "- FRED observation publication timestamps and ALFRED vintages: "
-            "`UNKNOWN` (no vintage data supplied/downloaded).",
-            "- Official Fed, ECB, BoE, and BLS release dates/times, time zones, and "
-            "page publication/update dates: `UNKNOWN` (no schedule pages downloaded).",
-            "- Macro histories, price histories, release schedules, and their hashes: "
-            "`NOT_PROVIDED`; no future or unpublished values were substituted.",
-            "- These unavailable market/release inputs have no hashes because they "
-            "were not supplied or downloaded.",
+            "- Unverified trade–macro observations are `UNKNOWN` and excluded from statistics.",
+            ("- Price-series close conventions and source metadata are recorded in the JSON."
+             if result and result["price_sources"]
+             else "- Price-series daily close conventions and UTC close timestamps: "
+             "`UNKNOWN` (no verified price history delivered)."),
+            ("- Verified ALFRED vintages are recorded in the results below. Publication "
+             "is date-granular; same-day releases are not assumed available." if result
+             else "- ALFRED artifacts are absent; vintages are `UNKNOWN`."),
+            ("- Official schedule pages passed the as-known intake checks."
+             if result and result["schedule_verified_for_classification"] else
+             "- Fed, ECB, BoE and BLS schedules: `UNKNOWN` until official as-known "
+             "coverage is verified."),
+            "- No future or unpublished values were substituted.",
             "- US–German/US–UK 2-year spreads remain "
             "`NOT_TESTED_DATA_UNAVAILABLE`; other candidate drivers without a fixed "
             "REV4 rule remain `NOT_TESTED`.",
             "",
-            "There are 19 predefined tests; multiple comparisons would produce chance "
-            "differences even if all drivers had no effect. These data do not support "
-            "any gate recommendation. V2's verified closed-trade sample is small, and "
+            "There are 19 original matrix rows plus 3 omitted REV4 event comparisons; "
+            "with multiple comparisons, some differences can occur by chance "
+            "even if all drivers had no effect. V2's verified closed-trade sample is small, and "
             "historical removal of losing trades would only be a partial counterfactual, "
             "not a measured future gain. No macro gate is executable V3 policy without "
             "explicit owner adoption and forward DEMO validation.",
             "",
         ]
     )
+    if result:
+        lines.extend([
+            "## Comparisons with verified inputs",
+            "",
+            "Full precision, UTC source timestamps, CSV hashes, URLs, family agreement "
+            "and DAX descriptive split: [machine-readable results](CORE5_MACRO_TRADE_RESULTS.json).",
+            "",
+            "| Test | Bucket | n | Win rate | Mean R | Total R | Weekly 95% CI |",
+            "|---|---|---:|---:|---:|---:|---|",
+        ])
+        def fmt(value):
+            return "—" if value is None else f"{value:.3f}"
+
+        for row in result["matrix"]:
+            if not any(b["n"] for b in row["buckets"].values()):
+                continue
+            for group, bucket in row["buckets"].items():
+                ci = bucket["mean_r_ci95"]
+                interval = "—" if ci is None else f"[{fmt(ci[0])}, {fmt(ci[1])}]"
+                lines.append(f"| {row['test_id']} | {group} | {bucket['n']} | "
+                             f"{fmt(bucket['win_rate'])} | {fmt(bucket['mean_r'])} | "
+                             f"{fmt(bucket['total_r'])} | {interval} |")
+        lines.extend(["", "| Test | Unknown n | Removed trade fraction | Removed R fraction | Gate |",
+                      "|---|---:|---:|---:|---|"])
+        for row in result["matrix"]:
+            if any(b["n"] for b in row["buckets"].values()):
+                gate = "confirmed" if row["gate_confirmed"] else "recommended" if row["gate_recommended"] else "no"
+                lines.append(f"| {row['test_id']} | {row['unknown_n']} | "
+                             f"{fmt(row['removed_trade_fraction'])} | "
+                             f"{fmt(row['removed_total_r_fraction'])} | {gate} |")
+        lines.extend([
+            "",
+            "`recommended` means the fixed historical comparison passed among eligible "
+            "tested family members; it is not confirmed or authorized policy. "
+            "When the primary USD basket is unavailable, the USD/rates family comparison "
+            "is incomplete. Brent remains UNKNOWN without documented trading sessions "
+            "or an eligible, roll-adjusted futures input.",
+            "",
+        ])
     (OUT / "CORE5_MACRO_TRADE_TEST.md").write_text("\n".join(lines))
 
 
@@ -479,6 +550,7 @@ def write_reproducibility(
     rows: list[dict[str, str]],
     labels: Counter,
     commit: str,
+    result: dict | None,
 ) -> None:
     script_path = relative(Path(__file__))
     content = [
@@ -491,18 +563,21 @@ def write_reproducibility(
         f"- Verified V2 reference manifest entries: {len(reference_entries)}",
         f"- Verified V2 trade-result rows: {labels['WIN'] + labels['LOSS'] + labels['SCRATCH']}",
         f"- Static source inventory rows: {len(rows)}",
-        f"- Predefined instrument × macro tests: {len(TESTS)}; executed: 0",
+        f"- Original matrix: {len(TESTS)} rows; REV4 additionally requires three omitted event rows.",
         "- Self-checks: checksum manifests, required trade columns, sample counts, "
         "and the 19-test matrix all passed.",
         "- V2 source files were read only as text. No V2 module was imported or run.",
-        "- No network calls, public market downloads, release-calendar downloads, "
-        "or V2/IG/runtime/database access were made.",
+        "- This worktree made no network calls and did not access V2/IG/runtime/databases. "
+        + ("The four owner-delivered ALFRED CSVs passed local verification." if result
+           else "The owner's reported isolated download is not locally verified."),
         "",
         "## Reproducible commands",
         "",
         "```sh",
         "shasum -a 256 -c SHA256SUMS.txt",
         "shasum -a 256 -c reference/MANIFEST.sha256",
+        "python3 -B -m unittest discover -s research -p 'test_*.py'",
+        "python3 -B -m research.verify_alfred --history reference/history/macro --trades reference/v2_outcomes/trade_results.csv",
         "python3 evidence/macro/analyze_core5_macro.py",
         "shasum -a 256 -c evidence/macro/MANIFEST.sha256",
         "```",
@@ -549,6 +624,33 @@ def write_reproducibility(
         "",
         "Nine offline downloader tests passed; live API behavior was not verified.",
         "",
+        "Download official schedules only in the isolated job, with the verified ALFRED manifest:",
+        "",
+        "```sh",
+        "python3 download_release_schedules.py --manifest /inputs/fred_download_manifest.json --out /out",
+        "```",
+        "",
+        "Place the schedule output under `reference/history/macro/schedules/`. "
+        "A schedule download alone does not prove that today's page was available "
+        "before entry. After reviewing completeness and publication evidence, an "
+        "`as_known_coverage.json` in that directory may identify inclusive UTC entry "
+        "`start` and `end` dates, the `download_manifest_sha256`, and "
+        "`complete_official_page_by_event_type` (a map from each event type to its "
+        "verified source-page file). Include the full 24-hour forward horizon. "
+        "Without that review or usable metadata, event comparisons remain UNKNOWN.",
+        "",
+        "The optional `reference/history/macro/price_manifest.json` has a `series` array "
+        "with `name`, `file`, `source_url`, `downloaded_at_utc`, `close_convention`, "
+        "`sha256` and `expected_dates` (sorted UTC close dates). The named, hash-pinned "
+        "CSV uses `close_time_utc,close,complete`, with explicit true/false completion. "
+        "Use only allow-listed Yahoo sources and verified close times, not midnight "
+        "inferred from daily labels. Missing series remain UNKNOWN.",
+        "For Brent spot, an optional `brent_session_calendar.json` names a reviewed "
+        "`source_url` and sorted `expected_dates`. For the optional `BRENT_FRONT_MONTH` "
+        "fallback, the price manifest must supply `roll_dates`, `roll_date_documentation`, "
+        "and `roll_dates_complete: true`; each documented roll-day return is excluded. "
+        "Neither supplemental Brent input was delivered for this run.",
+        "",
     ]
     (OUT / "REPRODUCIBILITY.md").write_text("\n".join(content))
 
@@ -557,6 +659,7 @@ def write_manifest(
     prompt_entries: list[tuple[str, str]],
     reference_entries: list[tuple[str, str]],
     commit: str,
+    history_pins: dict[str, str],
 ) -> None:
     script_path = relative(Path(__file__))
     design_path = ROOT / DESIGN_ZIP
@@ -568,10 +671,13 @@ def write_manifest(
     for digest, path in prompt_entries + reference_entries:
         entries[path] = digest
     entries["SHA256SUMS.txt"] = sha256(ROOT / "SHA256SUMS.txt")
+    continuation = "prompts/AGENT1_CONTINUATION_20261117.md"
+    entries[continuation] = sha256(ROOT / continuation)
     entries["reference/MANIFEST.sha256"] = sha256(
         ROOT / "reference/MANIFEST.sha256"
     )
     entries[DESIGN_ZIP] = sha256(design_path)
+    entries.update({f"reference/history/macro/{name}": digest for name, digest in history_pins.items()})
 
     output_paths = [
         "evidence/macro/CORE5_MACRO_INVENTORY.csv",
@@ -580,10 +686,12 @@ def write_manifest(
         "evidence/macro/CORE5_MACRO_TRADE_TEST.md",
         "evidence/macro/CORE5_V3_MACRO_PROFILE_PROPOSAL.md",
         "evidence/macro/REPRODUCIBILITY.md",
-        "research/download_macro.py",
-        "research/test_download_macro.py",
         script_path,
     ]
+    output_paths += [relative(path) for path in sorted((ROOT / "research").glob("*.py"))]
+    output_paths += [relative(path) for path in sorted((ROOT / "research/fixtures").rglob("*")) if path.is_file()]
+    if history_pins:
+        output_paths.append("evidence/macro/CORE5_MACRO_TRADE_RESULTS.json")
     output_entries = {path: sha256(ROOT / path) for path in output_paths}
 
     lines = [
@@ -623,14 +731,25 @@ def main() -> None:
         for digest, path in reference_entries
         if path.startswith("reference/v2_predictions/")
     ]
+    result = None
+    history_pins = {}
+    history = ROOT / "reference/history/macro"
+    results_path = OUT / "CORE5_MACRO_TRADE_RESULTS.json"
+    if (history / "fred_download_manifest.json").is_file():
+        from research.run_part4 import analyze
+
+        result, history_pins = analyze(history, ROOT / TRADE_FILE)
+        results_path.write_text(json.dumps(result, indent=2) + "\n")
+    elif results_path.exists():
+        raise ValueError("Restore the verified ALFRED inputs before regenerating committed results.")
     write_inventory(rows)
-    write_trade_test(labels, per_instrument, commit, prediction_entries)
-    write_reproducibility(prompt_entries, reference_entries, rows, labels, commit)
-    write_manifest(prompt_entries, reference_entries, commit)
+    write_trade_test(labels, per_instrument, commit, prediction_entries, result)
+    write_reproducibility(prompt_entries, reference_entries, rows, labels, commit, result)
+    write_manifest(prompt_entries, reference_entries, commit, history_pins)
     print(
         f"OK: {len(prompt_entries)} prompt pins, {len(reference_entries)} reference "
         f"pins, {len(trades)} trade rows, {len(rows)} inventory rows, "
-        f"{len(TESTS)} tests defined / 0 run."
+        f"{len(TESTS)} original matrix rows; ALFRED {'verified' if result else 'not provided'}."
     )
 
 

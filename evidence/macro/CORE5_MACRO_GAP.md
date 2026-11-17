@@ -26,3 +26,8 @@ lines 657-659); these are not acting runtime inputs.
 input, and no official release schedule was downloaded. Candidate policy and
 roles remain owner proposals; nothing in this comparison authorizes an
 executable V3 gate.
+
+**Continuation:** verified ALFRED inputs now support partial descriptive results
+and one unconfirmed exploratory EURUSD DGS2 candidate. Here `MISSING` still
+describes the V2 or V3 profile, not delivery of a historical research series.
+See the [trade-test report](CORE5_MACRO_TRADE_TEST.md).
