@@ -350,7 +350,9 @@ def current_script_commit() -> str:
 def write_inventory(rows: list[dict[str, str]]) -> None:
     path = OUT / "CORE5_MACRO_INVENTORY.csv"
     with path.open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=INVENTORY_FIELDS)
+        writer = csv.DictWriter(
+            stream, fieldnames=INVENTORY_FIELDS, lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
 
