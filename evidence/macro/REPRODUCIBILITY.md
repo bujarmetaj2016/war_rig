@@ -1,8 +1,8 @@
 # Macro research reproducibility
 
 - Analysis script: `evidence/macro/analyze_core5_macro.py`
-- Script commit: `0b7d14ae6c9196c195a4c5d994119307b3a39193`
-- Script SHA-256: `7049fb19d0ab02604fe639e8c8e1f6b54c3f5e08b38f69591603fe8283815924`
+- Script commit: `5d83be9a206bca7cf9b9150e78d3fec70645b9b1`
+- Script SHA-256: `dd0111703042465500a881254aa2e884ba2d0103bf7c0e5fa543dc2d6f890a00`
 - Verified prompt/hypothesis checksum entries: 8
 - Verified V2 reference manifest entries: 374
 - Verified V2 trade-result rows: 204
