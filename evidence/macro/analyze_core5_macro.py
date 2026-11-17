@@ -334,6 +334,19 @@ def read_trade_summary() -> tuple[list[dict[str, str]], Counter, dict[str, Count
     return trades, labels, per_instrument
 
 
+def current_script_commit() -> str:
+    script_path = relative(Path(__file__))
+    commit = subprocess.run(
+        ["git", "-C", str(ROOT), "log", "-1", "--format=%H", "--", script_path],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    if not commit:
+        raise RuntimeError("Commit the analysis script before generating final outputs.")
+    return commit
+
+
 def write_inventory(rows: list[dict[str, str]]) -> None:
     path = OUT / "CORE5_MACRO_INVENTORY.csv"
     with path.open("w", newline="") as stream:
@@ -342,7 +355,12 @@ def write_inventory(rows: list[dict[str, str]]) -> None:
         writer.writerows(rows)
 
 
-def write_trade_test(labels: Counter, per_instrument: dict[str, Counter]) -> None:
+def write_trade_test(
+    labels: Counter,
+    per_instrument: dict[str, Counter],
+    script_commit: str,
+    prediction_entries: list[tuple[str, str]],
+) -> None:
     strict_total = labels["WIN"] + labels["LOSS"]
     lines = [
         "# Core-5 macro trade test",
@@ -359,12 +377,30 @@ def write_trade_test(labels: Counter, per_instrument: dict[str, Counter]) -> Non
         f"{strict_total} strict WIN/LOSS labels ({labels['WIN']} WIN, {labels['LOSS']} "
         f"LOSS) and {labels['SCRATCH']} SCRATCH outcomes. SCRATCH records are not "
         "recast as WIN or LOSS.",
-        "- The five instruments have the following full strict-label counts before "
-        "any macro availability exclusions:",
-        "",
-        "| Instrument | WIN | LOSS | Strict WIN/LOSS n |",
-        "|---|---:|---:|---:|",
+        f"- Analysis script commit: `{script_commit}`.",
+        f"- Trade-results input: `{TRADE_FILE}` SHA-256 "
+        f"`{sha256(ROOT / TRADE_FILE)}`.",
+        "- V2 reference manifest SHA-256 "
+        f"`{sha256(ROOT / 'reference/MANIFEST.sha256')}`.",
+        "- Verified prediction exports (integrity inputs only; not used for trade "
+        "counts or tests):",
     ]
+    if prediction_entries:
+        lines.extend(
+            f"  - `{path}` SHA-256 `{digest}`"
+            for digest, path in prediction_entries
+        )
+    else:
+        lines.append("  - `NOT_PROVIDED`")
+    lines.extend(
+        [
+            "- The five instruments have the following full strict-label counts before "
+            "any macro availability exclusions:",
+            "",
+            "| Instrument | WIN | LOSS | Strict WIN/LOSS n |",
+            "|---|---:|---:|---:|",
+        ]
+    )
     for instrument in ("EURUSD", "GBPUSD", "GOLD", "SP500", "DAX"):
         counts = per_instrument[instrument]
         lines.append(
@@ -414,6 +450,8 @@ def write_trade_test(labels: Counter, per_instrument: dict[str, Counter]) -> Non
             "page publication/update dates: `UNKNOWN` (no schedule pages downloaded).",
             "- Macro histories, price histories, release schedules, and their hashes: "
             "`NOT_PROVIDED`; no future or unpublished values were substituted.",
+            "- These unavailable market/release inputs have no hashes because they "
+            "were not supplied or downloaded.",
             "- US–German/US–UK 2-year spreads remain "
             "`NOT_TESTED_DATA_UNAVAILABLE`; other candidate drivers without a fixed "
             "REV4 rule remain `NOT_TESTED`.",
@@ -435,16 +473,9 @@ def write_reproducibility(
     reference_entries: list[tuple[str, str]],
     rows: list[dict[str, str]],
     labels: Counter,
+    commit: str,
 ) -> None:
     script_path = relative(Path(__file__))
-    commit = subprocess.run(
-        ["git", "-C", str(ROOT), "log", "-1", "--format=%H", "--", script_path],
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.strip()
-    if not commit:
-        raise RuntimeError("Commit the analysis script before generating final outputs.")
     content = [
         "# Macro research reproducibility",
         "",
@@ -482,14 +513,9 @@ def write_reproducibility(
 def write_manifest(
     prompt_entries: list[tuple[str, str]],
     reference_entries: list[tuple[str, str]],
+    commit: str,
 ) -> None:
     script_path = relative(Path(__file__))
-    commit = subprocess.run(
-        ["git", "-C", str(ROOT), "log", "-1", "--format=%H", "--", script_path],
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.strip()
     design_path = ROOT / DESIGN_ZIP
     with zipfile.ZipFile(design_path) as archive:
         member_bytes = archive.read(DESIGN_MEMBER)
@@ -546,10 +572,16 @@ def main() -> None:
         raise ValueError("Fixed test matrix is incomplete")
 
     rows = build_inventory()
+    commit = current_script_commit()
+    prediction_entries = [
+        (digest, path)
+        for digest, path in reference_entries
+        if path.startswith("reference/v2_predictions/")
+    ]
     write_inventory(rows)
-    write_trade_test(labels, per_instrument)
-    write_reproducibility(prompt_entries, reference_entries, rows, labels)
-    write_manifest(prompt_entries, reference_entries)
+    write_trade_test(labels, per_instrument, commit, prediction_entries)
+    write_reproducibility(prompt_entries, reference_entries, rows, labels, commit)
+    write_manifest(prompt_entries, reference_entries, commit)
     print(
         f"OK: {len(prompt_entries)} prompt pins, {len(reference_entries)} reference "
         f"pins, {len(trades)} trade rows, {len(rows)} inventory rows, "
