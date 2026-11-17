@@ -20,7 +20,7 @@ from datetime import date, datetime, timedelta, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.error import HTTPError, URLError
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urldefrag, urljoin, urlsplit
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
 MAX_PAGE_BYTES = 12 * 1024 * 1024
@@ -69,7 +69,7 @@ SOURCES = (
     Source(
         "ecb",
         "ECB monetary policy meeting",
-        "https://www.ecb.europa.eu/press/calendars/mgc/html/index.en.html",
+        "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html",
         "www.ecb.europa.eu",
         ("monetary policy", "governing council"),
     ),
@@ -358,9 +358,11 @@ def archive_links(source: Source, page: PageParser, start: date, end: date, base
     years = set(range(start.year, end.year + 1))
     candidates = set()
     for href, label in page.links:
-        absolute = urljoin(base_url, href)
+        absolute = urldefrag(urljoin(base_url, href))[0]
         parsed = urlsplit(absolute)
         if parsed.scheme != "https" or parsed.hostname != source.host:
+            continue
+        if source.key == "boe" and "/monetary-policy-summary-and-minutes/" in parsed.path:
             continue
         searchable = f"{parsed.path} {parsed.query} {label}".lower()
         if not any(term in searchable for term in ("calendar", "schedule", "meeting", "cpi", "empsit", "mpc")):
@@ -383,10 +385,11 @@ def fetch_page(opener, source: Source, url: str) -> bytes:
                 raise DownloadError("Official source redirected outside its HTTPS host.")
             contents = response.read(MAX_PAGE_BYTES + 1)
     except HTTPError as error:
+        failed_url = error.geturl() or url
         error.close()
-        raise DownloadError(f"Official schedule request failed (HTTP {error.code}).") from None
+        raise DownloadError(f"Official schedule request failed (HTTP {error.code}): {failed_url}") from None
     except (URLError, OSError, TimeoutError):
-        raise DownloadError("Official schedule request failed or timed out.") from None
+        raise DownloadError(f"Official schedule request failed or timed out: {url}") from None
     if len(contents) > MAX_PAGE_BYTES:
         raise DownloadError("Official schedule page exceeded the size limit.")
     if not contents:

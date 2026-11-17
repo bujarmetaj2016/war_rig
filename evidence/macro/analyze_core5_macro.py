@@ -486,10 +486,17 @@ def write_trade_test(
         ]
     )
     if result:
-        if result.get("latest_run_scope"):
+        scope = result.get("latest_run_scope", [])
+        if scope:
+            scope_text = (
+                "Ran the nine remaining non-event comparisons. Prior statistics were "
+                "preserved; USD/rates family agreement and eligibility were refreshed. "
+                "The failed schedule delivery was not used."
+                if len(scope) == 9 else
+                "Only the three Brent comparisons were rerun; all other rows were preserved."
+            )
             lines.extend(["## Latest run scope", "",
-                          "Only the three Brent comparisons were rerun; the other 19 rows "
-                          "retain their previous results or UNKNOWN status.", ""])
+                          scope_text, ""])
         lines.extend([
             "## Comparisons with verified inputs",
             "",
@@ -524,8 +531,8 @@ def write_trade_test(
             "",
             "`exploratory, unconfirmed` means the historical comparison passed among eligible "
             "tested family members; it is not confirmed or authorized policy. "
-            "When the primary USD basket is unavailable, the USD/rates family comparison "
-            "is incomplete. Brent spot uses numeric ALFRED observations in force on the "
+            "USD/rates agreement and the strongest eligible family member are recorded "
+            "in the results JSON. Brent spot uses numeric ALFRED observations in force on the "
             "UTC day before entry; no separate session or futures roll calendar is required.",
             "",
         ])
@@ -566,6 +573,8 @@ def write_reproducibility(
         "shasum -a 256 -c reference/MANIFEST.sha256",
         "python3 -B -m unittest discover -s research -p 'test_*.py'",
         "python3 -B -m research.verify_alfred --history reference/history/macro --trades reference/v2_outcomes/trade_results.csv",
+        "python3 evidence/macro/analyze_core5_macro.py --remaining-non-event"
+        if result and len(result.get("latest_run_scope", [])) == 9 else
         ("python3 evidence/macro/analyze_core5_macro.py --brent-only"
          if result and result.get("latest_run_scope") else "python3 evidence/macro/analyze_core5_macro.py"),
         "shasum -a 256 -c evidence/macro/MANIFEST.sha256",
@@ -651,6 +660,7 @@ def write_manifest(
     reference_entries: list[tuple[str, str]],
     commit: str,
     history_pins: dict[str, str],
+    history: Path,
 ) -> None:
     script_path = relative(Path(__file__))
     design_path = ROOT / DESIGN_ZIP
@@ -668,7 +678,7 @@ def write_manifest(
         ROOT / "reference/MANIFEST.sha256"
     )
     entries[DESIGN_ZIP] = sha256(design_path)
-    entries.update({f"reference/history/macro/{name}": digest for name, digest in history_pins.items()})
+    entries.update({relative(history / name): digest for name, digest in history_pins.items()})
 
     output_paths = [
         "evidence/macro/CORE5_MACRO_INVENTORY.csv",
@@ -699,8 +709,11 @@ def write_manifest(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--brent-only", action="store_true",
+    scope = parser.add_mutually_exclusive_group()
+    scope.add_argument("--brent-only", action="store_true",
                         help="Refresh Brent using the existing ALFRED-only evidence; preserve other results.")
+    scope.add_argument("--remaining-non-event", action="store_true",
+                       help="Refresh the nine added ALFRED comparisons; do not read schedules.")
     args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     prompt_entries = verify_checksum_list(ROOT / "SHA256SUMS.txt")
@@ -730,20 +743,24 @@ def main() -> None:
     ]
     result = None
     history_pins = {}
-    history = ROOT / "reference/history/macro"
+    history = ROOT / ("reference/history/macro-fred-next" if args.remaining_non_event
+                      else "reference/history/macro")
     results_path = OUT / "CORE5_MACRO_TRADE_RESULTS.json"
     if (history / "fred_download_manifest.json").is_file():
         from research.run_part4 import analyze
 
-        prior = json.loads(results_path.read_bytes()) if args.brent_only else None
-        result, history_pins = analyze(history, ROOT / TRADE_FILE, brent_only_prior=prior)
+        prior = json.loads(results_path.read_bytes()) if args.brent_only or args.remaining_non_event else None
+        result, history_pins = analyze(
+            history, ROOT / TRADE_FILE, brent_only_prior=prior if args.brent_only else None,
+            remaining_prior=prior if args.remaining_non_event else None,
+        )
         results_path.write_text(json.dumps(result, indent=2) + "\n")
     elif results_path.exists():
         raise ValueError("Restore the verified ALFRED inputs before regenerating committed results.")
     write_inventory(rows)
     write_trade_test(labels, per_instrument, commit, prediction_entries, result)
     write_reproducibility(prompt_entries, reference_entries, rows, labels, commit, result)
-    write_manifest(prompt_entries, reference_entries, commit, history_pins)
+    write_manifest(prompt_entries, reference_entries, commit, history_pins, history)
     print(
         f"OK: {len(prompt_entries)} prompt pins, {len(reference_entries)} reference "
         f"pins, {len(trades)} trade rows, {len(rows)} inventory rows, "

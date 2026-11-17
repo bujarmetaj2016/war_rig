@@ -1,11 +1,13 @@
 import csv
 import hashlib
+import io
 import json
 import shutil
 import unittest
 from datetime import date
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
+from urllib.error import HTTPError
 
 from research import download_release_schedules as downloader
 
@@ -22,6 +24,16 @@ SAMPLE_PAGES = {
 
 
 class ReleaseScheduleTests(unittest.TestCase):
+    def test_http_error_reports_exact_failed_url_including_redirect_target(self):
+        source = next(source for source in downloader.SOURCES if source.key == "ecb")
+        for failed in (source.url, source.url + "?calendar=2026"):
+            with self.subTest(failed=failed):
+                opener = Mock()
+                opener.open.side_effect = HTTPError(failed, 404, "Not Found", None, io.BytesIO())
+                with self.assertRaises(downloader.DownloadError) as error:
+                    downloader.fetch_page(opener, source, source.url)
+                self.assertEqual(str(error.exception), f"Official schedule request failed (HTTP 404): {failed}")
+
     def test_mocked_fred_manifest_bounds(self):
         self.assertEqual(
             downloader.read_bounds(FIXTURES / "fred_manifest_mock.json"),

@@ -28,6 +28,10 @@ ALFRED_TESTS = {
     "DAX_BRENT_SPOT": "DCOILBRENTEU",
 }
 BRENT_TESTS = {test for test, series in ALFRED_TESTS.items() if series == "DCOILBRENTEU"}
+REMAINING_NON_EVENT = {
+    spec.test_id for spec in engine.ALL_TESTS
+    if spec.kind != "event" and spec.test_id not in ALFRED_TESTS
+}
 FRED_CLOSES = {
     **{base + quote: series for series, (base, quote) in FX_QUOTES.items()},
     **dict(zip(("VIX", "VIX3M"), VOLATILITY_SERIES)),
@@ -199,7 +203,8 @@ def brent_futures_reading(
 
 
 def analyze(history: Path, trades_path: Path, *, prices=None, calendar=None,
-            brent_only_prior: dict | None = None) -> tuple[dict, dict[str, str]]:
+            brent_only_prior: dict | None = None,
+            remaining_prior: dict | None = None) -> tuple[dict, dict[str, str]]:
     contents = trades_path.read_bytes()
     raw, pins = verified_vintages(history, contents)
     manifest = json.loads((history / MANIFEST).read_bytes())
@@ -244,6 +249,18 @@ def analyze(history: Path, trades_path: Path, *, prices=None, calendar=None,
             "matrix": [updated.get(row["test_id"], row) for row in brent_only_prior["matrix"]],
         }, pins
 
+    prior_rows = {}
+    if remaining_prior is not None:
+        prior_rows = {row["test_id"]: row for row in remaining_prior["matrix"]}
+        prior_sources = {row["series_id"]: row["sha256"] for row in remaining_prior["alfred_sources"]}
+        if (len(REMAINING_NON_EVENT) != 9 or set(prior_rows) != set(engine.TESTS_BY_ID)
+                or set(prior_sources) != set(ALFRED_TESTS.values())
+                or any(pins.get(f"{name}.csv") != digest for name, digest in prior_sources.items())
+                or set(economic) != set(ALFRED_TESTS.values()) | set(FRED_CLOSES.values())
+                or remaining_prior["price_sources"] or remaining_prior["schedule_verified_for_classification"]
+                or prices is not None or calendar is not None):
+            raise ValueError("Nine-comparison refresh requires the verified expanded ALFRED set and matching prior evidence.")
+        prices = {}
     if prices is None:
         prices, price_pins = load_prices(history)
         pins.update(price_pins)
@@ -258,12 +275,17 @@ def analyze(history: Path, trades_path: Path, *, prices=None, calendar=None,
         front = next(item for item in metadata["series"] if item["name"] == "BRENT_FRONT_MONTH")
         if front.get("roll_date_documentation") and front.get("roll_dates_complete") is True:
             roll_dates = {date.fromisoformat(day) for day in front["roll_dates"]}
-    if calendar is None:
+    if calendar is None and remaining_prior is None:
         calendar, schedule_pins = load_calendar(history)
         pins.update(schedule_pins)
     readings = {}
     classified = {}
     for spec in engine.ALL_TESTS:
+        # Reclassify the prior rates rows only for same-trade family agreement;
+        # do not rerun their statistical comparisons or bootstrap.
+        if (remaining_prior is not None and spec.test_id not in REMAINING_NON_EVENT
+                and not spec.test_id.endswith(("_DGS2", "_DFII10"))):
+            continue
         by_trade = {}
         for trade in trades:
             if trade.instrument != spec.instrument:
@@ -296,7 +318,19 @@ def analyze(history: Path, trades_path: Path, *, prices=None, calendar=None,
             engine.classify(spec, trade, by_trade[trade.trade_id])
             for trade in trades if trade.instrument == spec.instrument
         ]
-    results = engine.run_all_tests(trades, readings, seed=0)
+    if remaining_prior is None:
+        results = engine.run_all_tests(trades, readings, seed=0)
+    else:
+        results = tuple(
+            engine.run_test(spec.test_id, trades, readings[spec.test_id], seed=0)
+            if spec.test_id in REMAINING_NON_EVENT else engine.Comparison(
+                **{k: v for k, v in prior_rows[spec.test_id].items()
+                   if k not in ("buckets", "unknown_reasons")},
+                buckets={name: engine.BucketStats(**bucket)
+                         for name, bucket in prior_rows[spec.test_id]["buckets"].items()},
+            )
+            for spec in engine.ALL_TESTS
+        )
     family = {}
     for instrument in sorted({trade.instrument for trade in trades}):
         drivers = {
@@ -330,19 +364,22 @@ def analyze(history: Path, trades_path: Path, *, prices=None, calendar=None,
     matrix = []
     for result in results:
         spec = engine.TESTS_BY_ID[result.test_id]
-        data = asdict(result)
+        preserved = remaining_prior is not None and spec.test_id not in REMAINING_NON_EVENT
+        data = dict(prior_rows[spec.test_id]) if preserved else asdict(result)
         if spec.kind == "usd" or spec.test_id.endswith(("_DGS2", "_DFII10")):
             strongest, passes = family[spec.instrument]["strongest"]
             data["family"] = "USD_AND_RATES"
             data["gate_recommended"] = result.gate_recommended and passes and strongest == result.test_id
             data["gate_confirmed"] = result.gate_confirmed and data["gate_recommended"]
-        data["unknown_reasons"] = dict(sorted(Counter(
-            row.reading.reason or "unspecified" for row in classified[result.test_id]
-            if row.classification == "UNKNOWN"
-        ).items()))
+        if not preserved:
+            data["unknown_reasons"] = dict(sorted(Counter(
+                row.reading.reason or "unspecified" for row in classified[result.test_id]
+                if row.classification == "UNKNOWN"
+            ).items()))
         matrix.append(data)
     return {
         "status": "PARTIAL_TRADE_TEST",
+        **({"latest_run_scope": sorted(REMAINING_NON_EVENT)} if remaining_prior is not None else {}),
         "alfred_sources": manifest["series"],
         "price_sources": {name: {
             **asdict(series.provenance),
