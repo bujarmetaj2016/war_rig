@@ -13,7 +13,7 @@ from pathlib import Path
 from urllib.parse import parse_qsl, urlsplit
 
 from .download_macro import (
-    API, FIELDS, MANIFEST, SERIES, TRADE_SHA256, DownloadError, Vintage, trade_bounds,
+    API, BASE_SERIES, FIELDS, FX_QUOTES, MANIFEST, SERIES, TRADE_SHA256, DownloadError, Vintage, trade_bounds,
 )
 
 
@@ -34,10 +34,16 @@ def verified_vintages(history: Path, trades: bytes) -> tuple[dict[str, list[Vint
             json.dumps(asdict(bounds), default=date.isoformat)
         ):
             raise ValueError("Unexpected trade hash or coverage")
-        if sorted(item["series_id"] for item in metadata["series"]) != sorted(SERIES):
+        if sorted(item["series_id"] for item in metadata["series"]) not in (
+            sorted(BASE_SERIES), sorted(SERIES),
+        ):
             raise ValueError("Unexpected series list")
         for item in metadata["series"]:
             name = item["series_id"]
+            if name in FX_QUOTES:
+                base, quote = FX_QUOTES[name]
+                if item["quote_direction"] != {"base": base, "quote": quote}:
+                    raise ValueError("Unexpected FX quote direction")
             filename = f"{name}.csv"
             if item["file"] != filename or datetime.fromisoformat(item["downloaded_at_utc"]).utcoffset() is None:
                 raise ValueError("Unexpected artifact metadata")

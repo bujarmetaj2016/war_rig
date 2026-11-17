@@ -14,6 +14,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from . import part4_engine as engine
+from .download_macro import FX_QUOTES, MANIFEST, VOLATILITY_SERIES
 from .verify_alfred import verified_vintages
 
 ALFRED_TESTS = {
@@ -26,6 +27,27 @@ ALFRED_TESTS = {
     "SP500_HY_SPREAD": "BAMLH0A0HYM2",
     "DAX_BRENT_SPOT": "DCOILBRENTEU",
 }
+BRENT_TESTS = {test for test, series in ALFRED_TESTS.items() if series == "DCOILBRENTEU"}
+FRED_CLOSES = {
+    **{base + quote: series for series, (base, quote) in FX_QUOTES.items()},
+    **dict(zip(("VIX", "VIX3M"), VOLATILITY_SERIES)),
+}
+
+
+def required_fred_series(spec: engine.TestSpec) -> set[str]:
+    if spec.test_id in ALFRED_TESTS:
+        return {ALFRED_TESTS[spec.test_id]}
+    if spec.kind == "risk_off":
+        return set(VOLATILITY_SERIES)
+    if spec.kind == "usd":
+        excluded = {"EURUSD": "EUR", "GBPUSD": "GBP"}.get(spec.instrument)
+        return {FRED_CLOSES[pair] for currency, pair, _ in engine.USD_QUOTE_PAIRS
+                if currency != excluded}
+    if spec.test_id == "DAX_EURUSD_10D":
+        return {FRED_CLOSES["EURUSD"]}
+    if spec.kind == "event":
+        return set()
+    raise ValueError(f"No FRED input mapping for {spec.test_id}")
 PRICE_NAMES = {
     "USDJPY", "GBPUSD", "USDCAD", "USDCHF", "AUDUSD", "EURUSD", "VIX", "VIX3M",
     "BRENT_FRONT_MONTH",
@@ -176,26 +198,11 @@ def brent_futures_reading(
         return engine.Reading.unknown(str(error))
 
 
-def analyze(history: Path, trades_path: Path, *, prices=None, calendar=None) -> tuple[dict, dict[str, str]]:
+def analyze(history: Path, trades_path: Path, *, prices=None, calendar=None,
+            brent_only_prior: dict | None = None) -> tuple[dict, dict[str, str]]:
     contents = trades_path.read_bytes()
     raw, pins = verified_vintages(history, contents)
-    from .download_macro import MANIFEST
-
     manifest = json.loads((history / MANIFEST).read_bytes())
-    brent_path = history / "brent_session_calendar.json"
-    brent_sessions = ()
-    if brent_path.is_file():
-        brent_raw = brent_path.read_bytes()
-        brent_metadata = json.loads(brent_raw)
-        if urlsplit(brent_metadata["source_url"]).hostname not in (
-            "fred.stlouisfed.org", "alfred.stlouisfed.org", "api.stlouisfed.org",
-            "finance.yahoo.com",
-        ):
-            raise ValueError("Brent calendar source is not allow-listed.")
-        brent_sessions = tuple(date.fromisoformat(day) for day in brent_metadata["expected_dates"])
-        if tuple(sorted(set(brent_sessions))) != brent_sessions or not brent_sessions:
-            raise ValueError("Brent calendar must contain sorted, distinct session dates.")
-        pins[brent_path.name] = hashlib.sha256(brent_raw).hexdigest()
     economic = {
         item["series_id"]: engine.AlfredSeries(
             engine.AlfredProvenance(
@@ -206,14 +213,44 @@ def analyze(history: Path, trades_path: Path, *, prices=None, calendar=None) -> 
                 row.observation_date, row.start, row.end,
                 None if row.value == "." else float(row.value),
             ) for row in raw[item["series_id"]]),
-            brent_sessions if item["series_id"] == "DCOILBRENTEU" else (),
         )
         for item in manifest["series"]
     }
     trades = load_trades(contents)
+    if brent_only_prior is not None:
+        if (brent_only_prior["alfred_sources"] != manifest["series"]
+                or brent_only_prior["price_sources"]
+                or brent_only_prior["schedule_verified_for_classification"]
+                or [row["test_id"] for row in brent_only_prior["matrix"]]
+                != [spec.test_id for spec in engine.ALL_TESTS]):
+            raise ValueError("Brent-only refresh requires the existing ALFRED-only evidence and matching inputs.")
+        updated = {}
+        for test_id in sorted(BRENT_TESTS):
+            spec = engine.TESTS_BY_ID[test_id]
+            readings = {
+                trade.trade_id: engine.alfred_momentum_reading(
+                    economic["DCOILBRENTEU"], trade.entry_time_utc, price_series=True,
+                )
+                for trade in trades if trade.instrument == spec.instrument
+            }
+            updated[test_id] = asdict(engine.run_test(test_id, trades, readings, seed=0))
+            updated[test_id]["unknown_reasons"] = dict(sorted(Counter(
+                reading.reason or "unspecified" for reading in readings.values()
+                if reading.code == "UNKNOWN"
+            ).items()))
+        return {
+            **brent_only_prior,
+            "latest_run_scope": sorted(BRENT_TESTS),
+            "matrix": [updated.get(row["test_id"], row) for row in brent_only_prior["matrix"]],
+        }, pins
+
     if prices is None:
         prices, price_pins = load_prices(history)
         pins.update(price_pins)
+    closes = {**prices, **{
+        name: engine.AlfredCloseSeries(name, economic[series])
+        for name, series in FRED_CLOSES.items() if series in economic
+    }}
     roll_dates = None
     price_manifest = history / "price_manifest.json"
     if "BRENT_FRONT_MONTH" in prices and price_manifest.name in pins:
@@ -240,13 +277,17 @@ def analyze(history: Path, trades_path: Path, *, prices=None, calendar=None) -> 
                 if (series == "DCOILBRENTEU" and reading.code == "UNKNOWN"
                         and roll_dates is not None):
                     reading = brent_futures_reading(prices["BRENT_FRONT_MONTH"], roll_dates, entry)
+            elif spec.test_id == "DAX_EURUSD_10D" and FRED_CLOSES["EURUSD"] in economic:
+                reading = engine.alfred_momentum_reading(
+                    economic[FRED_CLOSES["EURUSD"]], entry, price_series=True,
+                )
             elif spec.test_id == "DAX_EURUSD_10D" and "EURUSD" in prices:
                 reading = engine.price_momentum_reading(prices["EURUSD"], entry)
-            elif spec.kind == "risk_off" and "VIX" not in prices:
+            elif spec.kind == "risk_off" and "VIX" not in closes:
                 reading = engine.Reading.unknown("verified VIX history is missing")
             else:
                 reading = engine.evaluate_reading(spec, trade, {
-                    "usd_pairs": prices, "vix": prices.get("VIX"), "vix3m": prices.get("VIX3M"),
+                    "usd_pairs": closes, "vix": closes.get("VIX"), "vix3m": closes.get("VIX3M"),
                     **({"calendar": calendar} if calendar is not None else {}),
                 })
             by_trade[trade.trade_id] = reading

@@ -20,7 +20,18 @@ from urllib.parse import unquote, urlencode
 from urllib.request import HTTPRedirectHandler, ProxyHandler, build_opener
 
 API = "https://api.stlouisfed.org/fred/series"
-SERIES = ("DGS2", "DFII10", "BAMLH0A0HYM2", "DCOILBRENTEU")
+BASE_SERIES = ("DGS2", "DFII10", "BAMLH0A0HYM2", "DCOILBRENTEU")
+# Units of the quoted currency per one unit of the base currency.
+FX_QUOTES = {
+    "DEXUSEU": ("EUR", "USD"),
+    "DEXJPUS": ("USD", "JPY"),
+    "DEXUSUK": ("GBP", "USD"),
+    "DEXCAUS": ("USD", "CAD"),
+    "DEXSZUS": ("USD", "CHF"),
+    "DEXUSAL": ("AUD", "USD"),
+}
+VOLATILITY_SERIES = ("VIXCLS", "VXVCLS")
+SERIES = BASE_SERIES + VOLATILITY_SERIES + tuple(FX_QUOTES)
 FIELDS = ("date", "realtime_start", "realtime_end", "value")
 PAGE_SIZE = 10_000
 VINTAGE_PAGE_SIZE = 1_000
@@ -253,6 +264,8 @@ def download_series(opener, series: str, bounds: Bounds, key: str, stage: Path) 
 
     return {
         "series_id": series,
+        **({"quote_direction": {"base": FX_QUOTES[series][0], "quote": FX_QUOTES[series][1]}}
+           if series in FX_QUOTES else {}),
         "vintage_dates_url": vintage_url,
         "observation_urls": sources,
         "vintage_dates": len(dates),

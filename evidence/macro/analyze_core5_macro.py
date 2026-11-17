@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -120,10 +121,9 @@ TESTS = [
     ("DAX", "VIX risk-off", "EXPLORATORY"),
     ("DAX", "EURUSD 10-day change", "EXPLORATORY"),
     ("DAX", "Brent spot oil", "EXPLORATORY"),
-]
-ADDITIONAL_EVENT_TESTS = [
-    (instrument, "Scheduled-event proximity", "EXPLORATORY")
-    for instrument in ("GOLD", "SP500", "DAX")
+    ("GOLD", "Scheduled-event proximity", "EXPLORATORY"),
+    ("SP500", "Scheduled-event proximity", "EXPLORATORY"),
+    ("DAX", "Scheduled-event proximity", "EXPLORATORY"),
 ]
 
 
@@ -385,7 +385,7 @@ def write_trade_test(
         "",
         "## Availability and execution status",
         "",
-        f"- Original matrix comparisons: **{len(TESTS)}**; fully or partially classified: "
+        f"- REV4 comparisons: **{len(TESTS)}**; fully or partially classified: "
         f"**{sum(any(b['n'] for b in r['buckets'].values()) for r in result['matrix']) if result else 0}**. "
         "The remaining rows have no verified input.",
         "- The verified V2 exports provide 204 trade-result rows: "
@@ -429,30 +429,13 @@ def write_trade_test(
             "below the fixed 20-trade bucket threshold before any WITH/AGAINST split. "
             "EURUSD and DAX still require at least 20 usable trades in both buckets.",
             "",
-            "## Fixed test matrix (19 originally listed)",
+            "## Fixed test matrix (22 comparisons)",
             "",
             "| Instrument | Macro | Preregistered status | Result |",
             "|---|---|---|---|",
         ]
     )
     for index, (instrument, macro, kind) in enumerate(TESTS):
-        row = result["matrix"][index] if result else None
-        status = row["status"] if row and any(b["n"] for b in row["buckets"].values()) else "UNKNOWN"
-        lines.append(f"| {instrument} | {macro} | {kind} | `{status}` |")
-    lines.extend(
-        [
-            "",
-            "REV4 explicitly specifies event proximity for all five instruments. The "
-            "original 19-row matrix listed it only for FX. The three omitted exploratory "
-            "rows are shown separately to preserve the original count and avoid silently "
-            "dropping a fixed rule. All five event tests are UNKNOWN pending verified, "
-            "point-in-time official schedules.",
-            "",
-            "| Instrument | Additional REV4 event test | Preregistered status | Result |",
-            "|---|---|---|---|",
-        ]
-    )
-    for index, (instrument, macro, kind) in enumerate(ADDITIONAL_EVENT_TESTS, start=len(TESTS)):
         row = result["matrix"][index] if result else None
         status = row["status"] if row and any(b["n"] for b in row["buckets"].values()) else "UNKNOWN"
         lines.append(f"| {instrument} | {macro} | {kind} | `{status}` |")
@@ -493,8 +476,8 @@ def write_trade_test(
             "`NOT_TESTED_DATA_UNAVAILABLE`; other candidate drivers without a fixed "
             "REV4 rule remain `NOT_TESTED`.",
             "",
-            "There are 19 original matrix rows plus 3 omitted REV4 event comparisons; "
-            "with multiple comparisons, some differences can occur by chance "
+            "There are 22 REV4 comparisons, including five event comparisons; "
+            "with 22 comparisons, some differences can occur by chance "
             "even if all drivers had no effect. V2's verified closed-trade sample is small, and "
             "historical removal of losing trades would only be a partial counterfactual, "
             "not a measured future gain. No macro gate is executable V3 policy without "
@@ -503,6 +486,10 @@ def write_trade_test(
         ]
     )
     if result:
+        if result.get("latest_run_scope"):
+            lines.extend(["## Latest run scope", "",
+                          "Only the three Brent comparisons were rerun; the other 19 rows "
+                          "retain their previous results or UNKNOWN status.", ""])
         lines.extend([
             "## Comparisons with verified inputs",
             "",
@@ -528,17 +515,18 @@ def write_trade_test(
                       "|---|---:|---:|---:|---|"])
         for row in result["matrix"]:
             if any(b["n"] for b in row["buckets"].values()):
-                gate = "confirmed" if row["gate_confirmed"] else "recommended" if row["gate_recommended"] else "no"
+                gate = ("confirmed" if row["gate_confirmed"] else "exploratory, unconfirmed"
+                        if row["gate_recommended"] else "no")
                 lines.append(f"| {row['test_id']} | {row['unknown_n']} | "
                              f"{fmt(row['removed_trade_fraction'])} | "
                              f"{fmt(row['removed_total_r_fraction'])} | {gate} |")
         lines.extend([
             "",
-            "`recommended` means the fixed historical comparison passed among eligible "
+            "`exploratory, unconfirmed` means the historical comparison passed among eligible "
             "tested family members; it is not confirmed or authorized policy. "
             "When the primary USD basket is unavailable, the USD/rates family comparison "
-            "is incomplete. Brent remains UNKNOWN without documented trading sessions "
-            "or an eligible, roll-adjusted futures input.",
+            "is incomplete. Brent spot uses numeric ALFRED observations in force on the "
+            "UTC day before entry; no separate session or futures roll calendar is required.",
             "",
         ])
     (OUT / "CORE5_MACRO_TRADE_TEST.md").write_text("\n".join(lines))
@@ -563,12 +551,12 @@ def write_reproducibility(
         f"- Verified V2 reference manifest entries: {len(reference_entries)}",
         f"- Verified V2 trade-result rows: {labels['WIN'] + labels['LOSS'] + labels['SCRATCH']}",
         f"- Static source inventory rows: {len(rows)}",
-        f"- Original matrix: {len(TESTS)} rows; REV4 additionally requires three omitted event rows.",
+        f"- REV4 matrix: {len(TESTS)} comparisons, including all five event rows.",
         "- Self-checks: checksum manifests, required trade columns, sample counts, "
-        "and the 19-test matrix all passed.",
+        "and the 22-comparison matrix all passed.",
         "- V2 source files were read only as text. No V2 module was imported or run.",
         "- This worktree made no network calls and did not access V2/IG/runtime/databases. "
-        + ("The four owner-delivered ALFRED CSVs passed local verification." if result
+        + ("The owner-delivered ALFRED CSVs passed local verification." if result
            else "The owner's reported isolated download is not locally verified."),
         "",
         "## Reproducible commands",
@@ -578,7 +566,8 @@ def write_reproducibility(
         "shasum -a 256 -c reference/MANIFEST.sha256",
         "python3 -B -m unittest discover -s research -p 'test_*.py'",
         "python3 -B -m research.verify_alfred --history reference/history/macro --trades reference/v2_outcomes/trade_results.csv",
-        "python3 evidence/macro/analyze_core5_macro.py",
+        ("python3 evidence/macro/analyze_core5_macro.py --brent-only"
+         if result and result.get("latest_run_scope") else "python3 evidence/macro/analyze_core5_macro.py"),
         "shasum -a 256 -c evidence/macro/MANIFEST.sha256",
         "```",
         "",
@@ -598,7 +587,9 @@ def write_reproducibility(
         "python3 download_macro.py --out /out",
         "```",
         "",
-        "This downloads vintages for DGS2, DFII10, BAMLH0A0HYM2 and DCOILBRENTEU. "
+        "This downloads 12 vintage series: DGS2, DFII10, BAMLH0A0HYM2, DCOILBRENTEU, "
+        "VIXCLS, VXVCLS, DEXUSEU, DEXJPUS, DEXUSUK, DEXCAUS, DEXSZUS and DEXUSAL. "
+        "FX manifest rows identify base and quote currencies. "
         "For the pinned trade export, the inclusive real-time range is "
         "2026-05-06 through 2026-11-09 (the UTC days before the first and last "
         "entries). The observation range starts 2024-11-03, 550 calendar days "
@@ -645,11 +636,11 @@ def write_reproducibility(
         "CSV uses `close_time_utc,close,complete`, with explicit true/false completion. "
         "Use only allow-listed Yahoo sources and verified close times, not midnight "
         "inferred from daily labels. Missing series remain UNKNOWN.",
-        "For Brent spot, an optional `brent_session_calendar.json` names a reviewed "
-        "`source_url` and sorted `expected_dates`. For the optional `BRENT_FRONT_MONTH` "
+        "For FRED-sourced Brent, VIX, VIX3M and FX, eligible numeric ALFRED vintages "
+        "are completed observations without a separate session calendar. For the optional `BRENT_FRONT_MONTH` "
         "fallback, the price manifest must supply `roll_dates`, `roll_date_documentation`, "
         "and `roll_dates_complete: true`; each documented roll-day return is excluded. "
-        "Neither supplemental Brent input was delivered for this run.",
+        "No futures fallback was needed for the Brent rerun.",
         "",
     ]
     (OUT / "REPRODUCIBILITY.md").write_text("\n".join(content))
@@ -707,6 +698,10 @@ def write_manifest(
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--brent-only", action="store_true",
+                        help="Refresh Brent using the existing ALFRED-only evidence; preserve other results.")
+    args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     prompt_entries = verify_checksum_list(ROOT / "SHA256SUMS.txt")
     reference_manifest = ROOT / "reference" / "MANIFEST.sha256"
@@ -721,7 +716,9 @@ def main() -> None:
     trades, labels, per_instrument = read_trade_summary()
     if len(trades) != 204 or labels != Counter({"WIN": 128, "LOSS": 71, "SCRATCH": 5}):
         raise ValueError("Verified trade-result summary changed; re-audit before proceeding")
-    if len(TESTS) != 19 or len({instrument for instrument, _, _ in TESTS}) != 5:
+    from research.part4_engine import ALL_TESTS
+
+    if len(TESTS) != 22 or TESTS != [(s.instrument, s.macro, s.preregistration) for s in ALL_TESTS]:
         raise ValueError("Fixed test matrix is incomplete")
 
     rows = build_inventory()
@@ -738,7 +735,8 @@ def main() -> None:
     if (history / "fred_download_manifest.json").is_file():
         from research.run_part4 import analyze
 
-        result, history_pins = analyze(history, ROOT / TRADE_FILE)
+        prior = json.loads(results_path.read_bytes()) if args.brent_only else None
+        result, history_pins = analyze(history, ROOT / TRADE_FILE, brent_only_prior=prior)
         results_path.write_text(json.dumps(result, indent=2) + "\n")
     elif results_path.exists():
         raise ValueError("Restore the verified ALFRED inputs before regenerating committed results.")
@@ -749,7 +747,7 @@ def main() -> None:
     print(
         f"OK: {len(prompt_entries)} prompt pins, {len(reference_entries)} reference "
         f"pins, {len(trades)} trade rows, {len(rows)} inventory rows, "
-        f"{len(TESTS)} original matrix rows; ALFRED {'verified' if result else 'not provided'}."
+        f"{len(TESTS)} REV4 comparisons; ALFRED {'verified' if result else 'not provided'}."
     )
 
 

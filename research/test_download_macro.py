@@ -12,9 +12,24 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlsplit
 
 from research import download_macro as downloader
+from research.part4_engine import ALL_TESTS
+from research.run_part4 import required_fred_series
 
 
 class DownloadTests(unittest.TestCase):
+    def test_series_cover_all_22_rev4_comparisons(self):
+        self.assertEqual(len(ALL_TESTS), 22)
+        requirements = [required_fred_series(spec) for spec in ALL_TESTS]
+        for spec, needed in zip(ALL_TESTS, requirements):
+            with self.subTest(test=spec.test_id):
+                self.assertEqual(bool(needed), spec.kind != "event")
+                self.assertLessEqual(needed, set(downloader.SERIES))
+        self.assertEqual(set().union(*requirements), set(downloader.SERIES))
+        self.assertEqual(set(downloader.SERIES), {
+            "DGS2", "DFII10", "BAMLH0A0HYM2", "DCOILBRENTEU", "VIXCLS", "VXVCLS",
+            "DEXUSEU", "DEXJPUS", "DEXUSUK", "DEXCAUS", "DEXSZUS", "DEXUSAL",
+        })
+
     key = "test" * 8
     trades = b"fill_time\n2024-01-05T20:00:00-05:00\n2024-01-04 12:00:00 UTC\n"
     row = {
@@ -83,6 +98,9 @@ class DownloadTests(unittest.TestCase):
             self.assertIn("550 calendar days", manifest["derivation"]["observation"])
             self.assertEqual([entry["series_id"] for entry in manifest["series"]], list(downloader.SERIES))
             for entry in manifest["series"]:
+                if entry["series_id"] in downloader.FX_QUOTES:
+                    base, quote = downloader.FX_QUOTES[entry["series_id"]]
+                    self.assertEqual(entry["quote_direction"], {"base": base, "quote": quote})
                 for url in [entry["vintage_dates_url"], *entry["observation_urls"]]:
                     self.assertNotIn("api_key", parse_qs(urlsplit(url).query))
                 self.assertEqual(entry["vintage_dates"], 2)

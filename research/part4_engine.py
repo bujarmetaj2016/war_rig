@@ -506,12 +506,13 @@ def momentum_reading(
     price_series: bool,
     label: str,
     expected_dates: Sequence[date] = (),
+    alfred_price: bool = False,
 ) -> Reading:
     """Compute REV4 S and trailing 250-observation sample standard deviation."""
     try:
         points = _checked_points(values, label=label)
         points = tuple(point for point in points if point.observation_date < entry_date_utc)
-        if price_series:
+        if price_series and not alfred_price:
             if not expected_dates:
                 return Reading.unknown(
                     f"{label}: verified trading-session calendar is required"
@@ -625,6 +626,7 @@ def alfred_momentum_reading(
             price_series=price_series,
             label=series.provenance.series_id,
             expected_dates=series.expected_dates,
+            alfred_price=price_series,
         )
     except UnknownData as error:
         return Reading.unknown(str(error))
@@ -640,8 +642,25 @@ USD_QUOTE_PAIRS = (
 )
 
 
+@dataclass(frozen=True)
+class AlfredCloseSeries:
+    """Expose previously published numeric ALFRED observations as completed closes."""
+
+    name: str
+    series: AlfredSeries
+
+    def completed_before(self, entry_time: datetime) -> tuple[tuple[date, float], ...]:
+        closes = tuple(
+            (row.observation_date, row.value)
+            for row in self.series.snapshot(entry_time) if row.value is not None
+        )
+        if not closes or any(value <= 0 for _, value in closes):
+            raise UnknownData(f"{self.name}: no usable ALFRED close history")
+        return closes
+
+
 def usd_basket_reading(
-    series_by_pair: Mapping[str, PriceSeries],
+    series_by_pair: Mapping[str, PriceSeries | AlfredCloseSeries],
     entry_time_utc: datetime,
     *,
     instrument: str,
@@ -682,15 +701,18 @@ def usd_basket_reading(
 
 
 def risk_off_reading(
-    vix: PriceSeries,
-    vix3m: PriceSeries | None,
+    vix: PriceSeries | AlfredCloseSeries,
+    vix3m: PriceSeries | AlfredCloseSeries | None,
     entry_time_utc: datetime,
 ) -> Reading:
     """REV4 binary risk-off condition: VIX/VIX3M > 1 OR VIX > 1.25×median20."""
     try:
         # Require the fixed 250-observation baseline even though the regime
         # classification itself uses the 20-day median and term ratio.
-        baseline = price_momentum_reading(vix, entry_time_utc)
+        baseline = (
+            alfred_momentum_reading(vix.series, entry_time_utc, price_series=True)
+            if isinstance(vix, AlfredCloseSeries) else price_momentum_reading(vix, entry_time_utc)
+        )
         if baseline.code == "UNKNOWN":
             raise UnknownData(baseline.reason or "insufficient VIX baseline")
         vix_rows = vix.completed_before(entry_time_utc)
