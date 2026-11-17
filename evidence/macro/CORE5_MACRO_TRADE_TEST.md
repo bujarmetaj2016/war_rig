@@ -1,13 +1,14 @@
 # Core-5 macro trade test
 
-**Status: `NOT_VERIFIED` — no trade/macro classifications or performance tests were run.**
+**Status: `PARTIAL_TRADE_TEST` — checksum-verified inputs only.**
+
+**Sample limit up front:** EURUSD 101, DAX 44, GBPUSD 19, GOLD 18, SP500 17 strict closed WIN/LOSS outcomes. With 20 required in each comparison bucket, GBPUSD, GOLD and SP500 cannot support gate recommendations; report descriptive results where data permit. EURUSD and DAX are not guaranteed sufficient buckets.
 
 ## Availability and execution status
 
-- Predefined instrument × macro tests: **19**; executed: **0**; statistical recommendations: **0**.
-- `reference/history/macro/` is absent/empty. The allowed separate research container/job was not provisioned or attested, so no public downloads were made.
+- Original matrix comparisons: **19**; fully or partially classified: **5**. The remaining rows have no verified input.
 - The verified V2 exports provide 204 trade-result rows: 199 strict WIN/LOSS labels (128 WIN, 71 LOSS) and 5 SCRATCH outcomes. SCRATCH records are not recast as WIN or LOSS.
-- Analysis script commit: `f6dbf1045650c2d296d58baecf0c37248fa0ea29`.
+- Analysis script commit: `cbf610c8e68883c62935e1c342e1713ad8a7da5b`.
 - Trade-results input: `reference/v2_outcomes/trade_results.csv` SHA-256 `ecd3e98ceda9806d86ddf35ac1dba5f50d9e790d7ad7b1223199ea163676bd7c`.
 - V2 reference manifest SHA-256 `a06ac2de31fcce5436d9c975ea7b0cf872a050a6b7d475e2e4b2f09fdff1a38b`.
 - Verified prediction exports (integrity inputs only; not used for trade counts or tests):
@@ -33,40 +34,79 @@
 
 The GBPUSD (n=19), GOLD (n=18), and SP500 (n=17) totals are already below the fixed 20-trade bucket threshold before any WITH/AGAINST split. EURUSD and DAX still require at least 20 usable trades in both buckets.
 
-## Fixed test matrix
+## Fixed test matrix (19 originally listed)
 
 | Instrument | Macro | Preregistered status | Result |
 |---|---|---|---|
-| EURUSD | USD strength basket excluding EUR | PRIMARY | `NOT_VERIFIED` |
-| EURUSD | VIX risk-off | EXPLORATORY | `NOT_VERIFIED` |
-| EURUSD | Brent spot oil | EXPLORATORY | `NOT_VERIFIED` |
-| EURUSD | US 2-year yield (DGS2) | EXPLORATORY | `NOT_VERIFIED` |
-| EURUSD | Scheduled-event proximity | EXPLORATORY | `NOT_VERIFIED` |
-| GBPUSD | USD strength basket excluding GBP | PRIMARY | `NOT_VERIFIED` |
-| GBPUSD | VIX risk-off | EXPLORATORY | `NOT_VERIFIED` |
-| GBPUSD | Brent spot oil | EXPLORATORY | `NOT_VERIFIED` |
-| GBPUSD | US 2-year yield (DGS2) | EXPLORATORY | `NOT_VERIFIED` |
-| GBPUSD | Scheduled-event proximity | EXPLORATORY | `NOT_VERIFIED` |
-| GOLD | US 10-year real yield (DFII10) | EXPLORATORY | `NOT_VERIFIED` |
-| GOLD | USD strength basket | EXPLORATORY | `NOT_VERIFIED` |
-| GOLD | VIX risk-off | EXPLORATORY | `NOT_VERIFIED` |
-| GOLD | US 2-year yield (DGS2) | EXPLORATORY | `NOT_VERIFIED` |
-| SP500 | VIX / VIX3M risk-off | EXPLORATORY | `NOT_VERIFIED` |
-| SP500 | High-yield spread (BAMLH0A0HYM2) | EXPLORATORY | `NOT_VERIFIED` |
-| DAX | VIX risk-off | EXPLORATORY | `NOT_VERIFIED` |
-| DAX | EURUSD 10-day change | EXPLORATORY | `NOT_VERIFIED` |
-| DAX | Brent spot oil | EXPLORATORY | `NOT_VERIFIED` |
+| EURUSD | USD strength basket excluding EUR | PRIMARY | `UNKNOWN` |
+| EURUSD | VIX risk-off | EXPLORATORY | `UNKNOWN` |
+| EURUSD | Brent spot oil | EXPLORATORY | `UNKNOWN` |
+| EURUSD | US 2-year yield (DGS2) | EXPLORATORY | `EVALUATED` |
+| EURUSD | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
+| GBPUSD | USD strength basket excluding GBP | PRIMARY | `UNKNOWN` |
+| GBPUSD | VIX risk-off | EXPLORATORY | `UNKNOWN` |
+| GBPUSD | Brent spot oil | EXPLORATORY | `UNKNOWN` |
+| GBPUSD | US 2-year yield (DGS2) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
+| GBPUSD | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
+| GOLD | US 10-year real yield (DFII10) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
+| GOLD | USD strength basket | EXPLORATORY | `UNKNOWN` |
+| GOLD | VIX risk-off | EXPLORATORY | `UNKNOWN` |
+| GOLD | US 2-year yield (DGS2) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
+| SP500 | VIX / VIX3M risk-off | EXPLORATORY | `UNKNOWN` |
+| SP500 | High-yield spread (BAMLH0A0HYM2) | EXPLORATORY | `INSUFFICIENT_SAMPLE` |
+| DAX | VIX risk-off | EXPLORATORY | `UNKNOWN` |
+| DAX | EURUSD 10-day change | EXPLORATORY | `UNKNOWN` |
+| DAX | Brent spot oil | EXPLORATORY | `UNKNOWN` |
+
+REV4 explicitly specifies event proximity for all five instruments. The original 19-row matrix listed it only for FX. The three omitted exploratory rows are shown separately to preserve the original count and avoid silently dropping a fixed rule. All five event tests are UNKNOWN pending verified, point-in-time official schedules.
+
+| Instrument | Additional REV4 event test | Preregistered status | Result |
+|---|---|---|---|
+| GOLD | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
+| SP500 | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
+| DAX | Scheduled-event proximity | EXPLORATORY | `UNKNOWN` |
 
 ## Frozen rules and unavailable observations
 
 No rule was changed after reviewing outcomes. If data are later provisioned in the permitted isolated job, apply REV4 exactly: `S` is the sum of ten daily log returns for price/FX/USD/oil series, or latest minus ten observations earlier in percentage points for yields/spreads; `sigma` is the standard deviation of that S over the trailing 250 observations. Fewer than 250 valid observations, missing timestamps, or unavailable as-published FRED/ALFRED vintages means UNKNOWN. Use the vintage in force on the UTC day before entry; a vintage first dated on the entry date is unavailable, and an observation with no eligible earlier vintage is UNKNOWN. USD_UP/DOWN requires S > +0.5 sigma / S < -0.5 sigma; risk-off is VIX/VIX3M > 1 or VIX > 1.25 times its trailing 20-day median. All remaining signs, headwinds, weekly bootstrap, and decision thresholds are those in the controlling REV4 prompt.
 
-- Every trade–macro pair is currently `UNKNOWN`; no WITH/AGAINST/NEUTRAL bucket, win rate, mean/total R, weekly bootstrap CI, removal fraction, or driver-agreement statistic can be calculated.
-- Price-series daily close conventions and UTC close timestamps: `UNKNOWN` (no series downloaded).
-- FRED observation publication timestamps and ALFRED vintages: `UNKNOWN` (no vintage data supplied/downloaded).
-- Official Fed, ECB, BoE, and BLS release dates/times, time zones, and page publication/update dates: `UNKNOWN` (no schedule pages downloaded).
-- Macro histories, price histories, release schedules, and their hashes: `NOT_PROVIDED`; no future or unpublished values were substituted.
-- These unavailable market/release inputs have no hashes because they were not supplied or downloaded.
+- Unverified trade–macro observations are `UNKNOWN` and excluded from statistics.
+- Price-series daily close conventions and UTC close timestamps: `UNKNOWN` (no verified price history delivered).
+- Verified ALFRED vintages are recorded in the results below. Publication is date-granular; same-day releases are not assumed available.
+- Fed, ECB, BoE and BLS schedules: `UNKNOWN` until official as-known coverage is verified.
+- No future or unpublished values were substituted.
 - US–German/US–UK 2-year spreads remain `NOT_TESTED_DATA_UNAVAILABLE`; other candidate drivers without a fixed REV4 rule remain `NOT_TESTED`.
 
-There are 19 predefined tests; multiple comparisons would produce chance differences even if all drivers had no effect. These data do not support any gate recommendation. V2's verified closed-trade sample is small, and historical removal of losing trades would only be a partial counterfactual, not a measured future gain. No macro gate is executable V3 policy without explicit owner adoption and forward DEMO validation.
+There are 19 original matrix rows plus 3 omitted REV4 event comparisons; with multiple comparisons, some differences can occur by chance even if all drivers had no effect. V2's verified closed-trade sample is small, and historical removal of losing trades would only be a partial counterfactual, not a measured future gain. No macro gate is executable V3 policy without explicit owner adoption and forward DEMO validation.
+
+## Comparisons with verified inputs
+
+Full precision, UTC source timestamps, CSV hashes, URLs, family agreement and DAX descriptive split: [machine-readable results](CORE5_MACRO_TRADE_RESULTS.json).
+
+| Test | Bucket | n | Win rate | Mean R | Total R | Weekly 95% CI |
+|---|---|---:|---:|---:|---:|---|
+| EURUSD_DGS2 | WITH | 22 | 0.636 | 0.149 | 3.272 | [-0.218, 0.450] |
+| EURUSD_DGS2 | AGAINST | 53 | 0.491 | -0.130 | -6.914 | [-0.425, 0.229] |
+| EURUSD_DGS2 | NEUTRAL | 26 | 0.885 | 0.586 | 15.223 | [0.357, 0.799] |
+| GBPUSD_DGS2 | WITH | 5 | 0.600 | 0.068 | 0.340 | [-0.625, 0.745] |
+| GBPUSD_DGS2 | AGAINST | 4 | 0.250 | -0.380 | -1.519 | [-0.990, 0.837] |
+| GBPUSD_DGS2 | NEUTRAL | 10 | 0.400 | -0.151 | -1.505 | [-0.760, 0.441] |
+| GOLD_DFII10 | WITH | 5 | 0.400 | -0.199 | -0.997 | [-0.996, 0.983] |
+| GOLD_DFII10 | AGAINST | 5 | 1.000 | 0.491 | 2.457 | [0.411, 0.670] |
+| GOLD_DFII10 | NEUTRAL | 8 | 0.625 | 0.321 | 2.570 | [-0.555, 0.818] |
+| GOLD_DGS2 | WITH | 5 | 0.400 | -0.289 | -1.448 | [-0.989, 0.177] |
+| GOLD_DGS2 | AGAINST | 8 | 0.875 | 0.525 | 4.202 | [0.419, 0.617] |
+| GOLD_DGS2 | NEUTRAL | 5 | 0.600 | 0.255 | 1.276 | [-1.004, 1.643] |
+| SP500_HY_SPREAD | WITH | 4 | 0.750 | 0.272 | 1.088 | [-0.559, 0.792] |
+| SP500_HY_SPREAD | AGAINST | 6 | 0.833 | 0.286 | 1.715 | [-0.369, 0.566] |
+| SP500_HY_SPREAD | NEUTRAL | 7 | 0.571 | -0.062 | -0.434 | [-0.593, 0.438] |
+
+| Test | Unknown n | Removed trade fraction | Removed R fraction | Gate |
+|---|---:|---:|---:|---|
+| EURUSD_DGS2 | 0 | 0.525 | -0.597 | recommended |
+| GBPUSD_DGS2 | 0 | 0.211 | 0.566 | no |
+| GOLD_DFII10 | 0 | 0.278 | 0.610 | no |
+| GOLD_DGS2 | 0 | 0.444 | 1.043 | no |
+| SP500_HY_SPREAD | 0 | 0.353 | 0.724 | no |
+
+`recommended` means the fixed historical comparison passed among eligible tested family members; it is not confirmed or authorized policy. When the primary USD basket is unavailable, the USD/rates family comparison is incomplete. Brent remains UNKNOWN without documented trading sessions or an eligible, roll-adjusted futures input.

@@ -1,0 +1,1195 @@
+{
+  "status": "PARTIAL_TRADE_TEST",
+  "alfred_sources": [
+    {
+      "series_id": "DGS2",
+      "vintage_dates_url": "https://api.stlouisfed.org/fred/series/vintagedates?series_id=DGS2&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=1000",
+      "observation_urls": [
+        "https://api.stlouisfed.org/fred/series/observations?series_id=DGS2&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
+      ],
+      "vintage_dates": 129,
+      "downloaded_at_utc": "2026-11-17T22:31:43.111957+00:00",
+      "file": "DGS2.csv",
+      "sha256": "e41f34feb4c8e6dd826d3d071520781f123b6b5b2b3f3d08dabf68d43077e03f",
+      "vintage_rows": 525
+    },
+    {
+      "series_id": "DFII10",
+      "vintage_dates_url": "https://api.stlouisfed.org/fred/series/vintagedates?series_id=DFII10&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=1000",
+      "observation_urls": [
+        "https://api.stlouisfed.org/fred/series/observations?series_id=DFII10&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
+      ],
+      "vintage_dates": 129,
+      "downloaded_at_utc": "2026-11-17T22:31:43.911193+00:00",
+      "file": "DFII10.csv",
+      "sha256": "d5262a35ee0ccd6ff6d076e7a534ef1cc8c2bb4865e4d04eed5a17da9d52f4e0",
+      "vintage_rows": 525
+    },
+    {
+      "series_id": "BAMLH0A0HYM2",
+      "vintage_dates_url": "https://api.stlouisfed.org/fred/series/vintagedates?series_id=BAMLH0A0HYM2&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=1000",
+      "observation_urls": [
+        "https://api.stlouisfed.org/fred/series/observations?series_id=BAMLH0A0HYM2&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
+      ],
+      "vintage_dates": 135,
+      "downloaded_at_utc": "2026-11-17T22:31:44.764423+00:00",
+      "file": "BAMLH0A0HYM2.csv",
+      "sha256": "2f19abd78761900dca2990d2057dce229399542391c830b4916d7f203ede24b0",
+      "vintage_rows": 533
+    },
+    {
+      "series_id": "DCOILBRENTEU",
+      "vintage_dates_url": "https://api.stlouisfed.org/fred/series/vintagedates?series_id=DCOILBRENTEU&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=1000",
+      "observation_urls": [
+        "https://api.stlouisfed.org/fred/series/observations?series_id=DCOILBRENTEU&file_type=json&sort_order=asc&realtime_start=2026-05-06&realtime_end=2026-11-09&limit=10000&output_type=1&observation_start=2024-11-03&observation_end=2026-11-09"
+      ],
+      "vintage_dates": 27,
+      "downloaded_at_utc": "2026-11-17T22:31:45.891784+00:00",
+      "file": "DCOILBRENTEU.csv",
+      "sha256": "593cd5e5e9a08833ffc4f02beafaf2c638c601b26c2b417a69a523376aee2301",
+      "vintage_rows": 522
+    }
+  ],
+  "price_sources": {},
+  "schedule_verified_for_classification": false,
+  "bootstrap_seed": 0,
+  "matrix": [
+    {
+      "test_id": "EURUSD_USD_BASKET_EX_EUR",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 101,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": "USD_AND_RATES",
+      "unknown_reasons": {
+        "USD basket missing USDJPY": 101
+      }
+    },
+    {
+      "test_id": "EURUSD_VIX_RISK_OFF",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 101,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "verified VIX history is missing": 101
+      }
+    },
+    {
+      "test_id": "EURUSD_BRENT_SPOT",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 101,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "DCOILBRENTEU: verified trading-session calendar is required": 101
+      }
+    },
+    {
+      "test_id": "EURUSD_DGS2",
+      "status": "EVALUATED",
+      "buckets": {
+        "WITH": {
+          "n": 22,
+          "wins": 14,
+          "win_rate": 0.6363636363636364,
+          "mean_r": 0.14874545454545454,
+          "total_r": 3.272400000000001,
+          "mean_r_ci95": [
+            -0.21770970833333333,
+            0.45043042499999997
+          ]
+        },
+        "AGAINST": {
+          "n": 53,
+          "wins": 26,
+          "win_rate": 0.49056603773584906,
+          "mean_r": -0.1304622641509434,
+          "total_r": -6.914499999999998,
+          "mean_r_ci95": [
+            -0.42496935952380954,
+            0.2289208865248225
+          ]
+        },
+        "NEUTRAL": {
+          "n": 26,
+          "wins": 23,
+          "win_rate": 0.8846153846153846,
+          "mean_r": 0.5855,
+          "total_r": 15.222999999999997,
+          "mean_r_ci95": [
+            0.3571574189814815,
+            0.798994659090909
+          ]
+        }
+      },
+      "unknown_n": 0,
+      "not_tested_n": 0,
+      "removed_trade_fraction": 0.5247524752475248,
+      "removed_total_r_fraction": -0.5970606774948402,
+      "gate_recommended": true,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": "USD_AND_RATES",
+      "unknown_reasons": {}
+    },
+    {
+      "test_id": "EURUSD_SCHEDULED_EVENT",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 101,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "missing or invalid Scheduled-event proximity input: 'calendar'": 101
+      }
+    },
+    {
+      "test_id": "GBPUSD_USD_BASKET_EX_GBP",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 19,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": "USD_AND_RATES",
+      "unknown_reasons": {
+        "USD basket missing USDJPY": 19
+      }
+    },
+    {
+      "test_id": "GBPUSD_VIX_RISK_OFF",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 19,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "verified VIX history is missing": 19
+      }
+    },
+    {
+      "test_id": "GBPUSD_BRENT_SPOT",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 19,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "DCOILBRENTEU: verified trading-session calendar is required": 19
+      }
+    },
+    {
+      "test_id": "GBPUSD_DGS2",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 5,
+          "wins": 3,
+          "win_rate": 0.6,
+          "mean_r": 0.06801999999999998,
+          "total_r": 0.34009999999999985,
+          "mean_r_ci95": [
+            -0.62455,
+            0.7447499999999999
+          ]
+        },
+        "AGAINST": {
+          "n": 4,
+          "wins": 1,
+          "win_rate": 0.25,
+          "mean_r": -0.37965,
+          "total_r": -1.5186,
+          "mean_r_ci95": [
+            -0.98955,
+            0.8368500000000001
+          ]
+        },
+        "NEUTRAL": {
+          "n": 10,
+          "wins": 4,
+          "win_rate": 0.4,
+          "mean_r": -0.15052,
+          "total_r": -1.5051999999999999,
+          "mean_r_ci95": [
+            -0.759628611111111,
+            0.4408539393939385
+          ]
+        }
+      },
+      "unknown_n": 0,
+      "not_tested_n": 0,
+      "removed_trade_fraction": 0.21052631578947367,
+      "removed_total_r_fraction": 0.5658605656369938,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": "USD_AND_RATES",
+      "unknown_reasons": {}
+    },
+    {
+      "test_id": "GBPUSD_SCHEDULED_EVENT",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 19,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "missing or invalid Scheduled-event proximity input: 'calendar'": 19
+      }
+    },
+    {
+      "test_id": "GOLD_DFII10",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 5,
+          "wins": 2,
+          "win_rate": 0.4,
+          "mean_r": -0.19934,
+          "total_r": -0.9967,
+          "mean_r_ci95": [
+            -0.9964999999999999,
+            0.983325
+          ]
+        },
+        "AGAINST": {
+          "n": 5,
+          "wins": 5,
+          "win_rate": 1.0,
+          "mean_r": 0.49142,
+          "total_r": 2.4571,
+          "mean_r_ci95": [
+            0.41050000000000003,
+            0.6697500000000001
+          ]
+        },
+        "NEUTRAL": {
+          "n": 8,
+          "wins": 5,
+          "win_rate": 0.625,
+          "mean_r": 0.32127500000000003,
+          "total_r": 2.5702000000000003,
+          "mean_r_ci95": [
+            -0.55518,
+            0.8184666666666667
+          ]
+        }
+      },
+      "unknown_n": 0,
+      "not_tested_n": 0,
+      "removed_trade_fraction": 0.2777777777777778,
+      "removed_total_r_fraction": 0.6096114722373841,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": "USD_AND_RATES",
+      "unknown_reasons": {}
+    },
+    {
+      "test_id": "GOLD_USD_BASKET",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 18,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": "USD_AND_RATES",
+      "unknown_reasons": {
+        "USD basket missing USDJPY": 18
+      }
+    },
+    {
+      "test_id": "GOLD_VIX_RISK_OFF",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 18,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "verified VIX history is missing": 18
+      }
+    },
+    {
+      "test_id": "GOLD_DGS2",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 5,
+          "wins": 2,
+          "win_rate": 0.4,
+          "mean_r": -0.2895,
+          "total_r": -1.4475,
+          "mean_r_ci95": [
+            -0.98885,
+            0.17673333333333335
+          ]
+        },
+        "AGAINST": {
+          "n": 8,
+          "wins": 7,
+          "win_rate": 0.875,
+          "mean_r": 0.5252875,
+          "total_r": 4.2023,
+          "mean_r_ci95": [
+            0.4187142857142857,
+            0.61704
+          ]
+        },
+        "NEUTRAL": {
+          "n": 5,
+          "wins": 3,
+          "win_rate": 0.6,
+          "mean_r": 0.25516000000000005,
+          "total_r": 1.2758000000000003,
+          "mean_r_ci95": [
+            -1.0038,
+            1.6435
+          ]
+        }
+      },
+      "unknown_n": 0,
+      "not_tested_n": 0,
+      "removed_trade_fraction": 0.4444444444444444,
+      "removed_total_r_fraction": 1.0425991167568105,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": "USD_AND_RATES",
+      "unknown_reasons": {}
+    },
+    {
+      "test_id": "SP500_VIX_TERM_RISK_OFF",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 17,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "verified VIX history is missing": 17
+      }
+    },
+    {
+      "test_id": "SP500_HY_SPREAD",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 4,
+          "wins": 3,
+          "win_rate": 0.75,
+          "mean_r": 0.272025,
+          "total_r": 1.0881,
+          "mean_r_ci95": [
+            -0.559425,
+            0.79215
+          ]
+        },
+        "AGAINST": {
+          "n": 6,
+          "wins": 5,
+          "win_rate": 0.8333333333333334,
+          "mean_r": 0.2858,
+          "total_r": 1.7148,
+          "mean_r_ci95": [
+            -0.36918,
+            0.5656
+          ]
+        },
+        "NEUTRAL": {
+          "n": 7,
+          "wins": 4,
+          "win_rate": 0.5714285714285714,
+          "mean_r": -0.061957142857142856,
+          "total_r": -0.4337,
+          "mean_r_ci95": [
+            -0.592784375,
+            0.4382666666666667
+          ]
+        }
+      },
+      "unknown_n": 0,
+      "not_tested_n": 0,
+      "removed_trade_fraction": 0.35294117647058826,
+      "removed_total_r_fraction": 0.7237886206314368,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {}
+    },
+    {
+      "test_id": "DAX_VIX_RISK_OFF",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 44,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "verified VIX history is missing": 44
+      }
+    },
+    {
+      "test_id": "DAX_EURUSD_10D",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 44,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "missing or invalid EURUSD 10-day change input: 'signal'": 44
+      }
+    },
+    {
+      "test_id": "DAX_BRENT_SPOT",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 44,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "DCOILBRENTEU: verified trading-session calendar is required": 44
+      }
+    },
+    {
+      "test_id": "GOLD_SCHEDULED_EVENT",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 18,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "missing or invalid Scheduled-event proximity input: 'calendar'": 18
+      }
+    },
+    {
+      "test_id": "SP500_SCHEDULED_EVENT",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 17,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "missing or invalid Scheduled-event proximity input: 'calendar'": 17
+      }
+    },
+    {
+      "test_id": "DAX_SCHEDULED_EVENT",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 44,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "gate_recommended": false,
+      "gate_confirmed": false,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null,
+      "unknown_reasons": {
+        "missing or invalid Scheduled-event proximity input: 'calendar'": 44
+      }
+    }
+  ],
+  "family": {
+    "DAX": {
+      "agreement": [],
+      "strongest": [
+        null,
+        false
+      ],
+      "dxy": "NOT_TESTED: REV4 does not define a separate DXY classification/sign test"
+    },
+    "EURUSD": {
+      "agreement": [
+        {
+          "drivers": [
+            "EURUSD_DGS2",
+            "EURUSD_USD_BASKET_EX_EUR"
+          ],
+          "n": 0,
+          "agree": 0,
+          "fraction": null
+        }
+      ],
+      "strongest": [
+        "EURUSD_DGS2",
+        true
+      ],
+      "dxy": "NOT_TESTED: REV4 does not define a separate DXY classification/sign test"
+    },
+    "GBPUSD": {
+      "agreement": [
+        {
+          "drivers": [
+            "GBPUSD_DGS2",
+            "GBPUSD_USD_BASKET_EX_GBP"
+          ],
+          "n": 0,
+          "agree": 0,
+          "fraction": null
+        }
+      ],
+      "strongest": [
+        null,
+        false
+      ],
+      "dxy": "NOT_TESTED: REV4 does not define a separate DXY classification/sign test"
+    },
+    "GOLD": {
+      "agreement": [
+        {
+          "drivers": [
+            "GOLD_DFII10",
+            "GOLD_DGS2"
+          ],
+          "n": 18,
+          "agree": 11,
+          "fraction": 0.6111111111111112
+        },
+        {
+          "drivers": [
+            "GOLD_DFII10",
+            "GOLD_USD_BASKET"
+          ],
+          "n": 0,
+          "agree": 0,
+          "fraction": null
+        },
+        {
+          "drivers": [
+            "GOLD_DGS2",
+            "GOLD_USD_BASKET"
+          ],
+          "n": 0,
+          "agree": 0,
+          "fraction": null
+        }
+      ],
+      "strongest": [
+        null,
+        false
+      ],
+      "dxy": "NOT_TESTED: REV4 does not define a separate DXY classification/sign test"
+    },
+    "SP500": {
+      "agreement": [],
+      "strongest": [
+        null,
+        false
+      ],
+      "dxy": "NOT_TESTED: REV4 does not define a separate DXY classification/sign test"
+    }
+  },
+  "dax_exporter_descriptive_split": {
+    "RISK_OFF": {
+      "test_id": "DAX_EURUSD_10D",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 0,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null
+    },
+    "NOT_RISK_OFF": {
+      "test_id": "DAX_EURUSD_10D",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 0,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null
+    },
+    "UNKNOWN": {
+      "test_id": "DAX_EURUSD_10D",
+      "status": "INSUFFICIENT_SAMPLE",
+      "buckets": {
+        "WITH": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "AGAINST": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        },
+        "NEUTRAL": {
+          "n": 0,
+          "wins": 0,
+          "win_rate": null,
+          "mean_r": null,
+          "total_r": 0.0,
+          "mean_r_ci95": null
+        }
+      },
+      "unknown_n": 44,
+      "not_tested_n": 0,
+      "removed_trade_fraction": null,
+      "removed_total_r_fraction": null,
+      "multiple_testing_statement": "22 instrument \u00d7 macro tests are defined; with this many tests some differences will appear by chance.",
+      "family": null
+    }
+  }
+}

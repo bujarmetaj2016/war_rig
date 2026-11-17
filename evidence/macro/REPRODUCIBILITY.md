@@ -1,22 +1,24 @@
 # Macro research reproducibility
 
 - Analysis script: `evidence/macro/analyze_core5_macro.py`
-- Script commit: `f6dbf1045650c2d296d58baecf0c37248fa0ea29`
-- Script SHA-256: `7a8e6afe3d90d40a4b30b4afd7a52ac8b84975d3339bba5a84b0dac9e441690a`
+- Script commit: `cbf610c8e68883c62935e1c342e1713ad8a7da5b`
+- Script SHA-256: `a067eaa698273226d208e845a8324df6a2f6f830405efa7c701465d74b93ab44`
 - Verified prompt/hypothesis checksum entries: 8
 - Verified V2 reference manifest entries: 374
 - Verified V2 trade-result rows: 204
 - Static source inventory rows: 64
-- Predefined instrument × macro tests: 19; executed: 0
+- Original matrix: 19 rows; REV4 additionally requires three omitted event rows.
 - Self-checks: checksum manifests, required trade columns, sample counts, and the 19-test matrix all passed.
 - V2 source files were read only as text. No V2 module was imported or run.
-- No network calls, public market downloads, release-calendar downloads, or V2/IG/runtime/database access were made.
+- This worktree made no network calls and did not access V2/IG/runtime/databases. The four owner-delivered ALFRED CSVs passed local verification.
 
 ## Reproducible commands
 
 ```sh
 shasum -a 256 -c SHA256SUMS.txt
 shasum -a 256 -c reference/MANIFEST.sha256
+python3 -B -m unittest discover -s research -p 'test_*.py'
+python3 -B -m research.verify_alfred --history reference/history/macro --trades reference/v2_outcomes/trade_results.csv
 python3 evidence/macro/analyze_core5_macro.py
 shasum -a 256 -c evidence/macro/MANIFEST.sha256
 ```
@@ -42,3 +44,14 @@ python3 -B -m unittest research.test_download_macro
 ```
 
 Nine offline downloader tests passed; live API behavior was not verified.
+
+Download official schedules only in the isolated job, with the verified ALFRED manifest:
+
+```sh
+python3 download_release_schedules.py --manifest /inputs/fred_download_manifest.json --out /out
+```
+
+Place the schedule output under `reference/history/macro/schedules/`. A schedule download alone does not prove that today's page was available before entry. After reviewing completeness and publication evidence, an `as_known_coverage.json` in that directory may identify inclusive UTC entry `start` and `end` dates, the `download_manifest_sha256`, and `complete_official_page_by_event_type` (a map from each event type to its verified source-page file). Include the full 24-hour forward horizon. Without that review or usable metadata, event comparisons remain UNKNOWN.
+
+The optional `reference/history/macro/price_manifest.json` has a `series` array with `name`, `file`, `source_url`, `downloaded_at_utc`, `close_convention`, `sha256` and `expected_dates` (sorted UTC close dates). The named, hash-pinned CSV uses `close_time_utc,close,complete`, with explicit true/false completion. Use only allow-listed Yahoo sources and verified close times, not midnight inferred from daily labels. Missing series remain UNKNOWN.
+For Brent spot, an optional `brent_session_calendar.json` names a reviewed `source_url` and sorted `expected_dates`. For the optional `BRENT_FRONT_MONTH` fallback, the price manifest must supply `roll_dates`, `roll_date_documentation`, and `roll_dates_complete: true`; each documented roll-day return is excluded. Neither supplemental Brent input was delivered for this run.
