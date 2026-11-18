@@ -13,10 +13,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 LOADER = "v3/offline/fixture_policy_loader.py"
 CLOCK = "v3/offline/calendar_completion.py"
+TIERS = "v3/offline/effective_policy.py"
 
 
 def main() -> None:
-    originals = {name: (ROOT / name).read_bytes() for name in (LOADER, CLOCK)}
+    originals = {name: (ROOT / name).read_bytes() for name in (LOADER, CLOCK, TIERS)}
     mutations = [
         (
             "signature_verification_removed",
@@ -112,6 +113,21 @@ def main() -> None:
             "calendar.session_open <= replay.at < calendar.session_close",
             "calendar.session_open <= replay.at <= calendar.session_close",
             "tests/v3/test_completed_snapshots.py::test_invalid_or_closed_session_cannot_be_fresh",
+        ),
+        (
+            "t3_owner_floor_widened",
+            TIERS,
+            "or tighter < floor",
+            "or False",
+            "tests/v3/test_policy_foundations.py::test_any_t3_rr_below_signed_owner_floor_denies",
+        ),
+        (
+            "t1_mandatory_checks_removed",
+            TIERS,
+            "not T1_REQUIRED_CHECKS <= set(policy.required_checks)",
+            "False",
+            "tests/v3/test_policy_foundations.py"
+            "::test_t1_and_unselected_or_unsupported_t2_parameters_deny",
         ),
     ]
     results = []

@@ -13,6 +13,8 @@ REQUIRED = {
     "v3/offline/__init__.py",
     "v3/offline/calendar_completion.py",
     "v3/offline/data_intake_schema.py",
+    "v3/offline/effective_policy.py",
+    "v3/offline/intent_identity.py",
     "v3/offline/fixture_policy_loader.py",
 }
 ALLOWED_IMPORTS = {
@@ -34,6 +36,26 @@ ALLOWED_IMPORTS = {
         "decimal",
         "v3.offline.calendar_completion",
         "v3.offline.fixture_policy_loader",
+    },
+    "v3/offline/effective_policy.py": {
+        "re",
+        "dataclasses",
+        "datetime",
+        "decimal",
+        "enum",
+        "v3.offline.calendar_completion",
+        "v3.offline.data_intake_schema",
+        "v3.offline.fixture_policy_loader",
+        "v3.offline.intent_identity",
+    },
+    "v3/offline/intent_identity.py": {
+        "hashlib",
+        "json",
+        "re",
+        "dataclasses",
+        "datetime",
+        "decimal",
+        "v3.offline.calendar_completion",
     },
     "v3/offline/fixture_policy_loader.py": {
         "hashlib",
@@ -138,6 +160,9 @@ from v3.offline.calendar_completion import ReplayClock
 from v3.offline.fixture_policy_loader import load_fixture_policy
 from v3.offline.data_intake_schema import load_snapshot_fixture
 from v3.offline.calendar_completion import assess_snapshot
+from v3.offline.effective_policy import load_fixture_tiers, resolve_fixture_tiers
+from v3.offline.intent_identity import (
+    Digest, Identity, InstrumentId, MarketId, PolicyId, RunContext, RunId, SimulatedAccountId)
 root = pathlib.Path.cwd()
 public = json.loads((root/'evidence/preflight/DEV_FIXTURE_PUBLIC_KEY.json').read_text())
 fixture = root/'fixtures/stage_a'
@@ -156,6 +181,19 @@ assessment = assess_snapshot(snapshot, snapshot.binding, ReplayClock(snapshot.cl
 result = {'identity_policy': dataclasses.asdict(policy),
           'snapshot': dataclasses.asdict(snapshot),
           'assessment': dataclasses.asdict(assessment)}
+tiers_fixture = fixture/'a3'
+tiers = load_fixture_tiers(
+    (tiers_fixture/'payload.json').read_bytes(), (tiers_fixture/'manifest.json').read_bytes(),
+    bytes.fromhex((tiers_fixture/'manifest.sig').read_text()),
+    bytes.fromhex(public['public_key_hex']))
+context = RunContext(
+    RunId('SYNTHETIC_RUN_001'), SimulatedAccountId('SIMULATED_ACCOUNT'),
+    MarketId('SYNTHETIC_MARKET'), InstrumentId('EURUSD'), PolicyId('SYNTHETIC_TIER_POLICY'),
+    tiers.payload_sha256, Digest('a'*64), Digest('b'*64), Digest('2'*64),
+    Identity('REPLAY_CLOCK_001'), tiers.valid_from, tiers.valid_until)
+result['tier_resolution'] = dataclasses.asdict(resolve_fixture_tiers(
+    tiers, context, snapshot.clock.at))
+result['context_sha256'] = context.sha256
 print(json.dumps(result, sort_keys=True, default=str, separators=(',',':')))
 """
     results = [

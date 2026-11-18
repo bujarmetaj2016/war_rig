@@ -105,6 +105,43 @@ def main() -> None:
             for path in paths
         )
     )
+    state_path = ROOT / "evidence/STAGE_STATE.json"
+    state = json.loads(state_path.read_text())
+    state.update(
+        status="IN_PROGRESS",
+        last_pass_slice=name.upper(),
+        last_commit=base_commit,
+        last_commit_role="BASE_OF_GATE_SOURCE_HASHES_BOUND_BY_ENCLOSING_CHECKPOINT",
+        resume_note="Resume after the enclosing committed slice gate; source SHA inventory "
+        "binds the tested runtime. Stage A is not complete until its final traceability gate.",
+    )
+    state["stage_a_slices"][name.upper()] = {
+        "status": "PASS",
+        "gate_path": str((target / "GATE.json").relative_to(ROOT)),
+        "source_commit_binding": "ENCLOSING_GATE_COMMIT",
+        "title": title,
+    }
+    state["tests_and_coverage"].update(
+        status="PASS_THROUGH_" + name.upper(),
+        tests_executed=test_count,
+        statements_total=totals["num_statements"],
+        statements_missing=0,
+        branches_total=totals["num_branches"],
+        branches_missing=0,
+        branches_partial=0,
+        coverage_artifact_path=str((target / "coverage.json").relative_to(ROOT)),
+        coverage_artifact_sha256=hashlib.sha256(
+            (target / "coverage.json").read_bytes()
+        ).hexdigest(),
+        mutations_killed=mutations["killed"],
+        mutation_report_path=str((target / "mutations.json").relative_to(ROOT)),
+        determinism_output_sha256=checks["determinism_output_sha256"],
+    )
+    state["evidence"][name + "_manifest_path"] = str((target / "MANIFEST.sha256").relative_to(ROOT))
+    state["evidence"][name + "_manifest_sha256"] = hashlib.sha256(
+        (target / "MANIFEST.sha256").read_bytes()
+    ).hexdigest()
+    state_path.write_text(json.dumps(state, indent=2) + "\n")
     print(json.dumps(record, indent=2))
 
 

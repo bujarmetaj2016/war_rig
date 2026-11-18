@@ -1,0 +1,49 @@
+{
+  "slice": "A3",
+  "title": "Typed identities, exact source units and restriction-only T1 T2 T3 policy",
+  "decision": "PASS",
+  "overall_stage_a": "IN_PROGRESS",
+  "source_commit_before_gate": "d24d2de1ed46c84f4fcc50e2cd2c8d854de27ad0",
+  "source_sha256": {
+    "v3/__init__.py": "9f173486bc106f30cef6de90dd3bf7175e99853e6d99e62a01b20cf03deedb3d",
+    "v3/offline/__init__.py": "8fa3adeaee35f07022156a5f0efbe70f701f8b196eb8ba8b3b0f1f82488dfd71",
+    "v3/offline/calendar_completion.py": "b474b5d4f037e934c0b42dc33ba093f3f445e71aa955e1271cb733e2d0101040",
+    "v3/offline/data_intake_schema.py": "77b00138224291754537ca1d80c62296f14ab1b05288c54afcd04d546302e042",
+    "v3/offline/effective_policy.py": "14c07b2bfe9a3936842714a0c11b5d435f804dbc0553993a4ffe50f337df7fa9",
+    "v3/offline/fixture_policy_loader.py": "9e5c8be82d0b1ffe541d985975681ab7fc00b3d5b5078820306d9adac0083b50",
+    "v3/offline/intent_identity.py": "4fd8c1e5c611629ba483da95e2a5be5e365f453233ec4f0fe2dabb2b14e26737"
+  },
+  "command": "sh tools/run_offline.sh",
+  "runner_exit_code": 0,
+  "dependency_lock_sha256": "6db111bb0a2ed79f9f7d2002d4b44a1cde5e62ce0e53c321be967f4839048b15",
+  "tests": 200,
+  "coverage": {
+    "covered_lines": 569,
+    "num_statements": 569,
+    "percent_covered": 100.0,
+    "percent_covered_display": "100.00",
+    "missing_lines": 0,
+    "excluded_lines": 0,
+    "percent_statements_covered": 100.0,
+    "percent_statements_covered_display": "100.00",
+    "num_branches": 162,
+    "num_partial_branches": 0,
+    "covered_branches": 162,
+    "missing_branches": 0,
+    "percent_branches_covered": 100.0,
+    "percent_branches_covered_display": "100.00"
+  },
+  "mutations_killed": 14,
+  "runtime_modules": [
+    "v3/offline/__init__.py",
+    "v3/offline/calendar_completion.py",
+    "v3/offline/data_intake_schema.py",
+    "v3/offline/effective_policy.py",
+    "v3/offline/fixture_policy_loader.py",
+    "v3/offline/intent_identity.py"
+  ],
+  "source_traceability": "evidence/stage_a/STAGE_A_REQUIREMENTS.csv",
+  "source_reading": "evidence/stage_a/SOURCE_READING.md",
+  "r2_handoff": "evidence/REVIEWER_R2_HANDOFF.md",
+  "authority": "SYNTHETIC_OFFLINE_ONLY_NO_IG_NO_TRADING_AUTHORITY"
+}

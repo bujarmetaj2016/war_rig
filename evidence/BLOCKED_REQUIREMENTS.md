@@ -66,7 +66,11 @@ requirement is needed; no source or acceptance threshold is self-amended.
 - Instrument definitions, dated listings, evidence graph, registration /
   plug-in manifests and the complete sixth-instrument onboarding proof remain.
 - Full source/account/instrument/policy/event binding, resource-bounded
-  symlink-safe on-disk fixture intake, and T1/T2/T3 policy precedence remain.
+  instrument registration and symlink-safe on-disk fixture intake remain.
+- A3 implements distinct typed identity/run/replay records, exact source units
+  and signed restriction-only T1/T2/T3 policy resolution. Missing bounds,
+  forbidden T3 overrides, unsupported entry types and scope mismatches deny;
+  no real owner-policy resolution or entry permit is provided.
 - No monetary, real-market, timer or model policy has been invented. Open
   source decisions stay unavailable; the current loader cannot express a
   broker permit, entry flag, risk fraction or real owner-policy load.

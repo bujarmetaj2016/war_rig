@@ -4,12 +4,12 @@
   "status": "IN_PROGRESS",
   "current_stage": "A",
   "last_pass_stage": null,
-  "last_pass_slice": "A2",
-  "last_commit": "b63d8822bc137fa0434763edda26a2846a1d04f5",
-  "last_commit_role": "LAST_VALIDATED_SOURCE_AND_EXECUTED_EVIDENCE_CHECKPOINT",
+  "last_pass_slice": "A3",
+  "last_commit": "d24d2de1ed46c84f4fcc50e2cd2c8d854de27ad0",
+  "last_commit_role": "BASE_OF_GATE_SOURCE_HASHES_BOUND_BY_ENCLOSING_CHECKPOINT",
   "historical_blocked_checkpoint_commit": "d6549b612b8415ecaa7101bf6e80b7061018199c",
   "checkpoint_form": "COMMITTED_A2_GATE_WITH_FOLLOWUP_SOURCE_CONFLICT_RECORD",
-  "resume_note": "Amendment 1 at 9cd873d resolves the NEG count gate: all four checks pass without per-ID classification, with 627 unchanged unique IDs and amendment citations on all 84 NEG rows. A1-A2 remain passed; continue remaining Stage A foundation slices. Full Stage A and later stages are not inferred complete. Never execute V3 code on the host.",
+  "resume_note": "Resume after the enclosing committed slice gate; source SHA inventory binds the tested runtime. Stage A is not complete until its final traceability gate.",
   "authority": {
     "offline_development_route": "OWNER_DIRECTED",
     "formal_governance_attestation": "NOT_VERIFIED",
@@ -86,7 +86,9 @@
     "preflight_probes_blocked": 6,
     "preflight_probes_attempted": 6,
     "reference_mount": "READ_ONLY",
-    "active_network_interfaces": ["lo"],
+    "active_network_interfaces": [
+      "lo"
+    ],
     "full_runtime_safety_suite": "A1_A2_CHECKS_PASS_FULL_STAGE_G_SCOPE_PENDING",
     "requirements_input_sha256": "6a1ffd92d4d95d765560acb87a46e21bc7c8a82bec5476f48c48dae8fe7ab531",
     "dependency_lock_sha256": "6db111bb0a2ed79f9f7d2002d4b44a1cde5e62ce0e53c321be967f4839048b15",
@@ -145,7 +147,9 @@
     "historical_source_count_gate_manifest": "evidence/stage_a/source_conflict/MANIFEST.sha256",
     "historical_source_count_gate_manifest_sha256": "4ae8562b4b5cc7f2152924c8d822efe151d2e17cf3a047a3d0f9aba4fe56066f",
     "r2_handoff_path": "evidence/REVIEWER_R2_HANDOFF.md",
-    "r2_handoff_status": "PARTIAL_A1_A2_CHECKPOINTS_ONLY_FULL_SCOPE_NOT_READY"
+    "r2_handoff_status": "PARTIAL_A1_A2_CHECKPOINTS_ONLY_FULL_SCOPE_NOT_READY",
+    "a3_manifest_path": "evidence/stage_a/a3/MANIFEST.sha256",
+    "a3_manifest_sha256": "5ba5a2c61bcd6a72d0fb63d7b04343900b36169a09187293d738e91e5192eeae"
   },
   "stages": {
     "A": "IN_PROGRESS",
@@ -157,27 +161,27 @@
     "G": "NOT_STARTED"
   },
   "tests_and_coverage": {
-    "status": "PASS_FOR_A1_A2_ONLY",
+    "status": "PASS_THROUGH_A3",
     "command": "sh tools/run_offline.sh",
     "exit_code": 0,
-    "tests_executed": 152,
+    "tests_executed": 200,
     "tests_failed": 0,
     "tests_skipped": 0,
-    "statements_total": 363,
+    "statements_total": 569,
     "statements_missing": 0,
-    "branches_total": 110,
+    "branches_total": 162,
     "branches_missing": 0,
     "branches_partial": 0,
     "excluded_executable_lines": 0,
     "coverage_scope": "ALL_CURRENT_V3_OFFLINE_PRODUCTION_MODULES_NOT_BUILD_EVIDENCE_TOOLS",
-    "coverage_artifact_path": "evidence/stage_a/a2/coverage.json",
-    "coverage_artifact_sha256": "fd20ff0349a41c91a7d87fe4e1848bf1bdebb2f3e994d651d886b79cc6a8f0ae",
-    "mutations_killed": 12,
+    "coverage_artifact_path": "evidence/stage_a/a3/coverage.json",
+    "coverage_artifact_sha256": "52512ab8cc0a4bbb0623154103180611ae550c72455c71b675bd73aef2ee7c99",
+    "mutations_killed": 14,
     "mutations_survived": 0,
-    "mutation_report_path": "evidence/stage_a/a2/mutations.json",
+    "mutation_report_path": "evidence/stage_a/a3/mutations.json",
     "macro_trading_decision_noninterference_tests": "NOT_RUN_MACRO_IMPLEMENTATION_PENDING",
     "determinism_processes": 2,
-    "determinism_output_sha256": "f7cd622d439e5a1a7fbdf525dcbb171c336ef4f7687880946fd55a3d5a37b104",
+    "determinism_output_sha256": "accf7393fd998b36a4581e1449e1e6a5a93e8bf6a10c323e0a163f9e641e2089",
     "v2_snapshot_source_files_compared": 279,
     "v2_identical_byte_matches": 0,
     "v2_normalized_12_line_matches": 0,
@@ -220,6 +224,12 @@
         "ACTUAL_FEATURE_ROW_COMPUTATION_OR_MODEL_PREDICTIONS",
         "OPERATIONAL_CLOCKS_OR_REAL_MARKET_AUTHORITY"
       ]
+    },
+    "A3": {
+      "status": "PASS",
+      "gate_path": "evidence/stage_a/a3/GATE.json",
+      "source_commit_binding": "ENCLOSING_GATE_COMMIT",
+      "title": "Typed identities, exact source units and restriction-only T1 T2 T3 policy"
     }
   },
   "open_blockers": [],
