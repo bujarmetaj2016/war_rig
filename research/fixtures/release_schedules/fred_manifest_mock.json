@@ -1,0 +1,10 @@
+{
+  "bounds": {
+    "earliest_entry": "2024-01-02",
+    "latest_entry": "2025-12-31",
+    "realtime": {
+      "start": "2024-01-01",
+      "end": "2025-12-30"
+    }
+  }
+}
