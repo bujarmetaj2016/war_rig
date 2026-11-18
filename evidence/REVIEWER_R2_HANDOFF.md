@@ -1,5 +1,11 @@
 # R2 checkpoint handoff - Stage A / A1-A2 only
 
+Current source-count gate: **PASS under owner Amendment 1 (`9cd873d`)**.
+The four exact checks pass, the 627 unique IDs are unchanged, and all 84 NEG rows
+cite the amendment and mechanical re-derivation. No per-ID source classification
+is inferred. `stage_a/amendment_1/checks.json` supersedes the historical source
+conflict described below; the old executed exit-two bundle remains immutable.
+
 Status: PARTIAL_IMPLEMENTATION_REVIEWABLE, not READY_FOR_R2_REVIEW for the full
 R3 deliverable. No independent review, formal governance attestation, software
 release readiness or trading authority is asserted.

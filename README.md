@@ -18,8 +18,8 @@ is under `evidence/stage_a/a1/` and `a2/`. V5 file/clause citations are in
 `evidence/stage_a/STAGE_A_REQUIREMENTS.csv`. Each fresh validation run writes a new ignored
 directory under `evidence/stage_a/runs/`, leaving committed evidence unchanged.
 
-The current full command also enforces R3's extracted source-count gate. It is
-explicitly blocked on D03 file02's 84 negative IDs versus the required 59; the
-runtime gate remains separately recorded as passed. See
-`evidence/BLOCKED_REQUIREMENTS.md` and `evidence/REQUIREMENT_UNIVERSE_REPORT.json`.
-No count or source is adjusted automatically.
+The full command also enforces R3's extracted source-count gate. Owner Amendment 1
+resolves the former NEG conflict using exact aggregate fields, 84 unique IDs and
+the independently rederived graph bijection; the universe remains 627.
+See `evidence/stage_a/amendment_1/checks.json` and
+`evidence/REQUIREMENT_UNIVERSE_REPORT.json`. No source is adjusted automatically.

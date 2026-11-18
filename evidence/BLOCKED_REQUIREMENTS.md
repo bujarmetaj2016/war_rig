@@ -13,7 +13,16 @@ See `stage_a/a1/preflight.json`, `install.txt` and `REPORT.md`.
 No current input/environment failure prevents continuing independent Stage A
 work. This does not make the entire Stage A or full implementation complete.
 
-## Hard gate: BLOCKED_SOURCE_CONFLICT (R3 section 4)
+## Resolved: prior BLOCKED_SOURCE_CONFLICT (R3 section 4)
+
+Owner Amendment 1, committed at `9cd873d`, replaces the original disposition's
+points 1, 2 and 4. All four amended checks pass: the exact aggregate fields
+`source_negative_count=59` and `new_master_axis_negative_count=25`, 84 distinct
+IDs, independently derived 38 guarded/84 denied pairs and a bijective exact
+ID/pair match. No per-ID provenance classification is inferred. All 84 rows
+cite the amendment and re-derivation; the universe remains 627. Current evidence:
+`stage_a/amendment_1/checks.json`. The historical failure below is retained,
+not asserted as a current blocker. No V5 or R3 bytes were changed.
 
 The preserved V5 member
 `SOURCE_PINS_UNMODIFIED/STAGE_D03_REVIEW_BYTES/02_NEGATIVE_GRAPH_COMPLEMENT_59_SOURCE_PRESERVED.json`

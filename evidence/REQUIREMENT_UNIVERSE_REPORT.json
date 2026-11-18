@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "BLOCKED_SOURCE_CONFLICT",
+  "status": "PENDING_TRACEABILITY",
   "traceability_complete": false,
   "runtime_stages_blocked_by_this_report": false,
   "controlling_prompt": {
@@ -9,7 +9,7 @@
   },
   "generator": {
     "path": "tools/extract_requirement_universe.py",
-    "sha256": "1ad52443fb8038307d8fada36d305144872f0d52f03a421cfa6f72a1c37e5ce9",
+    "sha256": "d7d5b18c658df137cdc31c754af64e5505191205561a73d3ab59c2b2b36f357a",
     "mode": "STANDARD_LIBRARY_METADATA_ONLY_NO_V3_OR_ARCHIVE_IMPORT"
   },
   "integrity": {
@@ -94,6 +94,68 @@
       "SOURCE_PINS_UNMODIFIED/War_Rig_V3_StageD03_Bounded_Mechanical_Residual_Fixes_20261113.zip": "23bdbe3b7d0d34b8b1d19fd78daf9990b7ea89b506634da7d4953cea9ef67ead"
     },
     "safety": "All 70 entries verified; no extraction/import/execution of archive code."
+  },
+  "controlled_source_count_amendment": {
+    "path": "evidence/stage_a/source_conflict/OWNER_DISPOSITION_20261118_AMENDMENT_1.md",
+    "sha256": "4a2b74acf6f0b7f081cf059bcc8503e2b0c8d4609cd24dd41631c3f2e70522d3",
+    "commit": "9cd873d3a06e5e036d477b0e1c4f1cb0a2414261",
+    "replaces": {
+      "path": "evidence/stage_a/source_conflict/OWNER_DISPOSITION_20261118.md",
+      "commit": "74608fd936e86ae253f732ba5a89d9b956ee821b",
+      "points": [
+        1,
+        2,
+        4
+      ],
+      "retained_points": [
+        3,
+        5
+      ]
+    },
+    "status": "PASS",
+    "aggregate_source": {
+      "member": "SOURCE_PINS_UNMODIFIED/STAGE_D03_REVIEW_BYTES/02_NEGATIVE_GRAPH_COMPLEMENT_59_SOURCE_PRESERVED.json",
+      "sha256": "8023c7e7d1067f64b40dcea01647e9166af53e91d9a1603e2bbc9e04987e03bf",
+      "fields": [
+        "$.source_negative_count",
+        "$.new_master_axis_negative_count"
+      ]
+    },
+    "per_id_provenance_classification": "NOT_REQUIRED_AND_NOT_INFERRED",
+    "checks": {
+      "2(a)": {
+        "expected": {
+          "source_negative_count": 59,
+          "new_master_axis_negative_count": 25
+        },
+        "actual": {
+          "source_negative_count": 59,
+          "new_master_axis_negative_count": 25
+        },
+        "status": "PASS"
+      },
+      "2(b)": {
+        "expected": 84,
+        "actual": 84,
+        "status": "PASS"
+      },
+      "2(c)": {
+        "expected": {
+          "guarded_pairs": 38,
+          "denied_pairs": 84
+        },
+        "actual": {
+          "guarded_pairs": 38,
+          "denied_pairs": 84
+        },
+        "status": "PASS"
+      },
+      "2(d)": {
+        "expected": true,
+        "actual": true,
+        "status": "PASS"
+      }
+    }
   },
   "counts": {
     "atc_contract_oracle": {
@@ -228,6 +290,7 @@
     },
     "d03_negative_case": {
       "expected_by_R3": 59,
+      "expected_by_controlled_amendment": 84,
       "actual_distinct": 84,
       "ids": [
         "CC1-NEG-001",
@@ -1088,7 +1151,7 @@
     "Module source names are preserved under MODULE:<exact source name>.",
     "WDA §21 local V1..V6 IDs are qualified as WDA-CF-1:V1..V6.",
     "Edge identities come from file01 $.edge_contracts[*].candidate_id: 42 exact D03-SRC/ADD/MST IDs. They are distinct from the 80 POS/NEG oracle IDs, which are preserved as their own shared D03-test IDs.",
-    "Negative-case identities come from file02 $.negative_cases[*].negative_id: 59 CC1-NEG plus 25 SD2-MST-NEG IDs. Do not silently drop master additions.",
+    "Negative-case identities come from file02 $.negative_cases[*].negative_id: 84 actual IDs. Amendment 1 checks aggregate counts only; no per-ID preserved/derived provenance is classified or inferred.",
     "No authoritative ID field value matches literal ^EDGE-[0-9]+$ or ^NEG-[0-9]+$. R3's EDGE-/NEG- family wording is not their actual namespace. Original full IDs are preserved; no bare EDGE-/NEG- IDs are manufactured.",
     "ATC document version IDs are not test IDs. T/C requirements, X tests and I integration oracle rows are included; J owner rows come from member05.",
     "V3WDA oracle rows and six named canonical vectors are included. Historical WDA versions, review-finding IDs and anonymous rejection cases are not new IDs.",
@@ -1101,108 +1164,7 @@
   "overlap_explanation": "All 80 edge oracle IDs and all 84 negative_case IDs also occur as D03 test IDs. They each have one universe row with multiple classes. The 42 D03 candidate_id values are separate edge-identity rows.",
   "traceability_row_count": 627,
   "one_to_one_mapping": true,
-  "source_conflicts": [
-    {
-      "status": "BLOCKED_SOURCE_CONFLICT",
-      "check": "d03_negative_case_count",
-      "expected": 59,
-      "actual": 84,
-      "source_selectors": [
-        {
-          "class": "d03_negative_case",
-          "member": "SOURCE_PINS_UNMODIFIED/STAGE_D03_REVIEW_BYTES/02_NEGATIVE_GRAPH_COMPLEMENT_59_SOURCE_PRESERVED.json",
-          "selector": "$.negative_cases[*].negative_id",
-          "pattern": "^(?:CC1-NEG|SD2-MST-NEG)-\\d{3}$"
-        }
-      ],
-      "actual_ids": [
-        "CC1-NEG-001",
-        "CC1-NEG-002",
-        "CC1-NEG-003",
-        "CC1-NEG-004",
-        "CC1-NEG-005",
-        "CC1-NEG-006",
-        "CC1-NEG-007",
-        "CC1-NEG-008",
-        "CC1-NEG-009",
-        "CC1-NEG-010",
-        "CC1-NEG-011",
-        "CC1-NEG-012",
-        "CC1-NEG-013",
-        "CC1-NEG-014",
-        "CC1-NEG-015",
-        "CC1-NEG-016",
-        "CC1-NEG-017",
-        "CC1-NEG-018",
-        "CC1-NEG-019",
-        "CC1-NEG-020",
-        "CC1-NEG-021",
-        "CC1-NEG-022",
-        "CC1-NEG-023",
-        "CC1-NEG-024",
-        "CC1-NEG-025",
-        "CC1-NEG-026",
-        "CC1-NEG-027",
-        "CC1-NEG-028",
-        "CC1-NEG-029",
-        "CC1-NEG-030",
-        "CC1-NEG-031",
-        "CC1-NEG-032",
-        "CC1-NEG-033",
-        "CC1-NEG-034",
-        "CC1-NEG-035",
-        "CC1-NEG-036",
-        "CC1-NEG-037",
-        "CC1-NEG-038",
-        "CC1-NEG-039",
-        "CC1-NEG-040",
-        "CC1-NEG-041",
-        "CC1-NEG-042",
-        "CC1-NEG-043",
-        "CC1-NEG-044",
-        "CC1-NEG-045",
-        "CC1-NEG-046",
-        "CC1-NEG-047",
-        "CC1-NEG-048",
-        "CC1-NEG-049",
-        "CC1-NEG-050",
-        "CC1-NEG-051",
-        "CC1-NEG-052",
-        "CC1-NEG-053",
-        "CC1-NEG-054",
-        "CC1-NEG-055",
-        "CC1-NEG-056",
-        "CC1-NEG-057",
-        "CC1-NEG-058",
-        "CC1-NEG-059",
-        "SD2-MST-NEG-001",
-        "SD2-MST-NEG-002",
-        "SD2-MST-NEG-003",
-        "SD2-MST-NEG-004",
-        "SD2-MST-NEG-005",
-        "SD2-MST-NEG-006",
-        "SD2-MST-NEG-007",
-        "SD2-MST-NEG-008",
-        "SD2-MST-NEG-009",
-        "SD2-MST-NEG-010",
-        "SD2-MST-NEG-011",
-        "SD2-MST-NEG-012",
-        "SD2-MST-NEG-013",
-        "SD2-MST-NEG-014",
-        "SD2-MST-NEG-015",
-        "SD2-MST-NEG-016",
-        "SD2-MST-NEG-017",
-        "SD2-MST-NEG-018",
-        "SD2-MST-NEG-019",
-        "SD2-MST-NEG-020",
-        "SD2-MST-NEG-021",
-        "SD2-MST-NEG-022",
-        "SD2-MST-NEG-023",
-        "SD2-MST-NEG-024",
-        "SD2-MST-NEG-025"
-      ]
-    }
-  ],
+  "source_conflicts": [],
   "identifier_field_evidence": {
     "edge": {
       "member": "SOURCE_PINS_UNMODIFIED/STAGE_D03_REVIEW_BYTES/01_EDGE_CONTRACTS_35_DRAFT.json",
@@ -1218,11 +1180,9 @@
       "member": "SOURCE_PINS_UNMODIFIED/STAGE_D03_REVIEW_BYTES/02_NEGATIVE_GRAPH_COMPLEMENT_59_SOURCE_PRESERVED.json",
       "jsonpath": "$.negative_cases[*].negative_id",
       "distinct_authoritative_ids": 84,
-      "preserved_ids": "CC1-NEG-001..CC1-NEG-059",
-      "added_ids": "SD2-MST-NEG-001..SD2-MST-NEG-025",
       "literal_NEG_base_pattern": "^NEG-[0-9]+$",
       "literal_NEG_base_matches": 0,
-      "expected_59_scope": "Matches the 59 preserved CC1 rows only, not all 84 actual negative_id fields in the named authoritative file."
+      "controlled_count_rule": "Amendment 1 §2(a–d): exact own aggregate fields 59/25, 84 distinct IDs, independent 38 guarded/84 denied pairs and exact ID/pair bijection; no per-ID preserved/derived inference."
     },
     "correction": "Earlier generator incorrectly compared 80 edge oracle IDs against 42 edge identities and omitted 42 candidate IDs. Corrected universe includes all 42 exact candidate IDs and all 84 exact negative IDs, merged only when the complete ID string is identical to a D03 test ID."
   },
@@ -1342,8 +1302,6 @@
     "guarded_pairs_actual": 38,
     "denied_pairs_actual": 84,
     "excluded_resting_pairs_actual": 4,
-    "preserved_CC1_negative_ids_actual": 59,
-    "master_added_negative_ids_actual": 25,
     "guarded_pairs": [
       {
         "axis": "attempt_send_eligibility",
@@ -3217,11 +3175,11 @@
   "blocker_record_boundary": "Only assigned script/CSV/report paths are writable for this deliverable. Parent must mirror source conflicts into evidence/BLOCKED_REQUIREMENTS.md as R3 §4 requests; this generator does not modify that shared file.",
   "outputs": {
     "evidence/requirement_universe.csv": {
-      "sha256": "d46ca7760c5ff3f409637d9b0b3c0e7156376f00f4e09d237f0c84fe9df2d72d",
+      "sha256": "cb377af05606ce35ab588d050efbadc2db125cd19ee4139d61fd7fe0f60f9092",
       "rows": 627
     },
     "evidence/traceability.csv": {
-      "sha256": "9c205aa1e626b013cf8bedabbb20c53238abe02f540db688b32d4a14af510233",
+      "sha256": "a4c69c053a6619791f670f0fb52e6ace552d84304527cee7a88c6860fd7eb447",
       "rows": 627
     }
   },
@@ -3231,8 +3189,9 @@
     "expected_current_exit_code": 2,
     "source_counts": {
       "command": "python -I tools/extract_requirement_universe.py --check-source-counts",
+      "status": "PASS",
       "success_requires": "Current artifacts, source integrity, exact extraction counts and one traceability row per universe ID. Honest pending mappings are allowed.",
-      "expected_current_exit_code": 2,
+      "expected_current_exit_code": 0,
       "pending_implementation_is_source_conflict": false
     },
     "exit_codes": {

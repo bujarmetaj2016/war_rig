@@ -9,6 +9,8 @@ completion, returning 2 for pending mappings. Exit 1 means invalid sources or
 stale/invalid artifacts. Pending rows have an empty final_status and a separate
 NOT_IMPLEMENTED implementation_state.
 Existing implementation mappings are preserved by ID when regenerating.
+The pinned owner Amendment 1 controls the NEG aggregate/count/bijection gate;
+no per-ID preserved/derived provenance is inferred.
 """
 
 from __future__ import annotations
@@ -45,6 +47,9 @@ ATC = PIN + "ATC_01_REV2_UNCHANGED.md"
 WDA = PIN + "WDA_08_UNCHANGED.md"
 MSB = "24_MSB_CONTROLLED_DUAL_SOURCE_PREDICTIONS_CONTRACT.md"
 INIT = "08_ACCEPTANCE_TEST_CONTRACT_AND_FAILURE_MATRIX.md"
+AMENDMENT = "evidence/stage_a/source_conflict/OWNER_DISPOSITION_20261118_AMENDMENT_1.md"
+AMENDMENT_SHA256 = "4a2b74acf6f0b7f081cf059bcc8503e2b0c8d4609cd24dd41631c3f2e70522d3"
+AMENDMENT_COMMIT = "9cd873d3a06e5e036d477b0e1c4f1cb0a2414261"
 EXPECTED = {
     "component": 13,
     "module": 18,
@@ -53,7 +58,7 @@ EXPECTED = {
     "repair": 21,
     "d03_test": 187,
     "d03_edge": 42,
-    "d03_negative_case": 59,
+    "d03_negative_case": 84,
     "msb_test": 19,
     "initial_protection_test": 10,
     "v3ext_oracle": 83,
@@ -164,7 +169,9 @@ def read_archive():
 
 class Extractor:
     def __init__(self, members):
-        self.members = members
+        amendment = (ROOT / AMENDMENT).read_bytes()
+        require(digest(amendment) == AMENDMENT_SHA256, "Controlled amendment hash mismatch")
+        self.members = {**members, AMENDMENT: amendment}
         self.rows = {}
         self.class_ids = defaultdict(set)
         self.recipes = []
@@ -386,7 +393,97 @@ class Extractor:
                 missing=sorted(expected - actual),
                 extra=sorted(actual - expected),
             )
-        return self.graph()
+        graph = self.graph()
+        self.amendment = self.controlled_amendment(graph)
+        return graph
+
+    def controlled_amendment(self, graph):
+        data = json.loads(self.text(NEGATIVES))
+        negatives = self.json_rows(NEGATIVES, "negative_cases")
+        identifiers = [row["negative_id"] for row, _ in negatives]
+        pairs = [(row["axis"], row["from_state"], row["to_state"]) for row, _ in negatives]
+        checks = {}
+        for clause, expected, actual in [
+            (
+                "2(a)",
+                {"source_negative_count": 59, "new_master_axis_negative_count": 25},
+                {
+                    field: data.get(field)
+                    for field in ("source_negative_count", "new_master_axis_negative_count")
+                },
+            ),
+            ("2(b)", 84, len(set(identifiers))),
+            (
+                "2(c)",
+                {"guarded_pairs": 38, "denied_pairs": 84},
+                {
+                    "guarded_pairs": graph["guarded_pairs_actual"],
+                    "denied_pairs": graph["denied_pairs_actual"],
+                },
+            ),
+            (
+                "2(d)",
+                True,
+                len(identifiers) == len(set(identifiers)) == len(set(pairs)) == 84
+                and len(graph["denied_pairs"]) == 84
+                and not graph["missing_pinned_pairs"]
+                and not graph["extra_pinned_pairs"],
+            ),
+        ]:
+            checks[clause] = {
+                "expected": expected,
+                "actual": actual,
+                "status": "PASS" if actual == expected else "BLOCKED_SOURCE_CONFLICT",
+            }
+            self.conflict("controlled_amendment_" + clause, expected, actual)
+        for index, (row, _) in enumerate(negatives):
+            reference = self.reference(
+                AMENDMENT, 0, len(self.text(AMENDMENT)), "Amendment 1 §1, §2(a–d), §3"
+            )
+            reference["commit"] = AMENDMENT_COMMIT
+            self.add(row["negative_id"], "d03_negative_case", reference)
+            graph_reference = self.reference(
+                EDGES,
+                0,
+                self.text(EDGES).find("\n") + 1,
+                "Amendment 1 §2(c–d), §3: independent graph complement re-derivation",
+                "$.edge_contracts[*]",
+            )
+            graph_reference["rederivation"] = {
+                "method": graph["method"],
+                "domain_source": graph["domain_source"],
+                "treatment_source": graph["treatment_source"],
+                "pair": list(pairs[index]),
+                "negative_id": row["negative_id"],
+                "pair_is_rederived_denial": list(pairs[index])
+                in [
+                    [pair["axis"], pair["from_state"], pair["to_state"]]
+                    for pair in graph["denied_pairs"]
+                ],
+                "evidence": OUTPUTS["report"] + "#/graph_verification",
+            }
+            self.add(row["negative_id"], "d03_negative_case", graph_reference)
+        return {
+            "path": AMENDMENT,
+            "sha256": AMENDMENT_SHA256,
+            "commit": AMENDMENT_COMMIT,
+            "replaces": {
+                "path": "evidence/stage_a/source_conflict/OWNER_DISPOSITION_20261118.md",
+                "commit": "74608fd936e86ae253f732ba5a89d9b956ee821b",
+                "points": [1, 2, 4],
+                "retained_points": [3, 5],
+            },
+            "status": "PASS"
+            if all(check["status"] == "PASS" for check in checks.values())
+            else "BLOCKED_SOURCE_CONFLICT",
+            "aggregate_source": {
+                "member": NEGATIVES,
+                "sha256": digest(self.members[NEGATIVES]),
+                "fields": ["$.source_negative_count", "$.new_master_axis_negative_count"],
+            },
+            "per_id_provenance_classification": "NOT_REQUIRED_AND_NOT_INFERRED",
+            "checks": checks,
+        }
 
     def graph(self):
         edges = self.json_rows(EDGES, "edge_contracts")
@@ -461,12 +558,6 @@ class Extractor:
             "guarded_pairs_actual": len(guarded),
             "denied_pairs_actual": len(denied),
             "excluded_resting_pairs_actual": len(excluded),
-            "preserved_CC1_negative_ids_actual": sum(
-                row["negative_id"].startswith("CC1-NEG-") for row, _ in negatives
-            ),
-            "master_added_negative_ids_actual": sum(
-                row["negative_id"].startswith("SD2-MST-NEG-") for row, _ in negatives
-            ),
             "guarded_pairs": [
                 {"axis": a, "from_state": b, "to_state": c, **pair_sources[(a, b, c)]}
                 for a, b, c in sorted(guarded)
@@ -610,6 +701,15 @@ def artifacts():
     graph = extractor.extract()
     universe = extractor.universe()
     trace = trace_rows(universe)
+    require(
+        len(universe) == len({row["universe_id"] for row in universe}) == 627,
+        "Universe != 627",
+    )
+    require(
+        len(trace) == 627
+        and {row["universe_id"] for row in trace} == {row["universe_id"] for row in universe},
+        "Traceability must map exactly the 627 universe IDs",
+    )
     pending = [row["universe_id"] for row in trace if not row["final_status"]]
     vocabulary = []
     if pending:
@@ -639,9 +739,11 @@ def artifacts():
             "mode": "STANDARD_LIBRARY_METADATA_ONLY_NO_V3_OR_ARCHIVE_IMPORT",
         },
         "integrity": integrity,
+        "controlled_source_count_amendment": extractor.amendment,
         "counts": {
             kind: {
-                "expected_by_R3": EXPECTED.get(kind),
+                "expected_by_R3": 59 if kind == "d03_negative_case" else EXPECTED.get(kind),
+                **({"expected_by_controlled_amendment": 84} if kind == "d03_negative_case" else {}),
                 "actual_distinct": len(identifiers),
                 "ids": sorted(identifiers),
             }
@@ -658,7 +760,8 @@ def artifacts():
             "42 exact D03-SRC/ADD/MST IDs. They are distinct from the 80 POS/NEG "
             "oracle IDs, which are preserved as their own shared D03-test IDs.",
             "Negative-case identities come from file02 $.negative_cases[*].negative_id: "
-            "59 CC1-NEG plus 25 SD2-MST-NEG IDs. Do not silently drop master additions.",
+            "84 actual IDs. Amendment 1 checks aggregate counts only; no per-ID "
+            "preserved/derived provenance is classified or inferred.",
             "No authoritative ID field value matches literal ^EDGE-[0-9]+$ or "
             "^NEG-[0-9]+$. R3's EDGE-/NEG- family wording is not their actual namespace. "
             "Original full IDs are preserved; no bare EDGE-/NEG- IDs are manufactured.",
@@ -698,15 +801,14 @@ def artifacts():
                 "member": NEGATIVES,
                 "jsonpath": "$.negative_cases[*].negative_id",
                 "distinct_authoritative_ids": len(extractor.class_ids["d03_negative_case"]),
-                "preserved_ids": "CC1-NEG-001..CC1-NEG-059",
-                "added_ids": "SD2-MST-NEG-001..SD2-MST-NEG-025",
                 "literal_NEG_base_pattern": "^NEG-[0-9]+$",
                 "literal_NEG_base_matches": sum(
                     bool(re.fullmatch(r"NEG-[0-9]+", identifier))
                     for identifier in extractor.class_ids["d03_negative_case"]
                 ),
-                "expected_59_scope": "Matches the 59 preserved CC1 rows only, not all "
-                "84 actual negative_id fields in the named authoritative file.",
+                "controlled_count_rule": "Amendment 1 §2(a–d): exact own aggregate fields "
+                "59/25, 84 distinct IDs, independent 38 guarded/84 denied pairs and exact "
+                "ID/pair bijection; no per-ID preserved/derived inference.",
             },
             "correction": "Earlier generator incorrectly compared 80 edge oracle IDs "
             "against 42 edge identities and omitted 42 candidate IDs. Corrected universe "
@@ -747,6 +849,7 @@ def artifacts():
             "expected_current_exit_code": 2 if extractor.conflicts or pending else 0,
             "source_counts": {
                 "command": "python -I tools/extract_requirement_universe.py --check-source-counts",
+                "status": "BLOCKED_SOURCE_CONFLICT" if extractor.conflicts else "PASS",
                 "success_requires": "Current artifacts, source integrity, exact extraction counts "
                 "and one traceability row per universe ID. Honest pending mappings are allowed.",
                 "expected_current_exit_code": 2 if extractor.conflicts else 0,

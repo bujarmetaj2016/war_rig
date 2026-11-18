@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "recorded_date_utc": "2026-11-18",
-  "status": "BLOCKED_SOURCE_CONFLICT",
+  "status": "IN_PROGRESS",
   "current_stage": "A",
   "last_pass_stage": null,
   "last_pass_slice": "A2",
@@ -9,7 +9,7 @@
   "last_commit_role": "LAST_VALIDATED_SOURCE_AND_EXECUTED_EVIDENCE_CHECKPOINT",
   "historical_blocked_checkpoint_commit": "d6549b612b8415ecaa7101bf6e80b7061018199c",
   "checkpoint_form": "COMMITTED_A2_GATE_WITH_FOLLOWUP_SOURCE_CONFLICT_RECORD",
-  "resume_note": "A1 and A2 passed; overall Stage A has not passed. R3 section 4 expects 59 negative IDs in D03 file02 but all authoritative negative_id fields contain 84 distinct IDs (59 preserved plus 25 Master-derived). Actual 42 candidate IDs and independently derived 38 guarded/84 denied pairs are not conflicts. The owner requested an immediate hard-gate report; remaining A3-A5 slices have not begun. Do not silently change the expected count or immutable source. Stage A source clauses were read and cited before A2. Never run V3 code on the host.",
+  "resume_note": "Amendment 1 at 9cd873d resolves the NEG count gate: all four checks pass without per-ID classification, with 627 unchanged unique IDs and amendment citations on all 84 NEG rows. A1-A2 remain passed; continue remaining Stage A foundation slices. Full Stage A and later stages are not inferred complete. Never execute V3 code on the host.",
   "authority": {
     "offline_development_route": "OWNER_DIRECTED",
     "formal_governance_attestation": "NOT_VERIFIED",
@@ -118,13 +118,13 @@
     "parity_path": "evidence/V2_V3_CAPABILITY_PARITY.csv",
     "parity_status": "PARTIAL_MACRO_SUMMARIES_ONLY",
     "parity_rows": 12,
-    "requirement_universe_sha256": "d46ca7760c5ff3f409637d9b0b3c0e7156376f00f4e09d237f0c84fe9df2d72d",
-    "traceability_status": "GENERATED_PENDING_MAPPINGS_SOURCE_COUNT_GATE_BLOCKED",
+    "requirement_universe_sha256": "cb377af05606ce35ab588d050efbadc2db125cd19ee4139d61fd7fe0f60f9092",
+    "traceability_status": "SOURCE_COUNT_PASS_UNCHANGED_627_IDS_IMPLEMENTATION_MAPPINGS_PENDING",
     "requirement_universe_path": "evidence/requirement_universe.csv",
     "traceability_path": "evidence/traceability.csv",
     "requirement_universe_report": "evidence/REQUIREMENT_UNIVERSE_REPORT.json",
-    "requirement_universe_report_sha256": "a3ca6142363ae5c66236cba1e7ee5529fc4331d1bfe11261056d07a7ce0c48bc",
-    "traceability_sha256": "9c205aa1e626b013cf8bedabbb20c53238abe02f540db688b32d4a14af510233",
+    "requirement_universe_report_sha256": "0a2c1f95334cebe5c6e6b8a741224c6c36bda8c2e5647b580414d193a1931264",
+    "traceability_sha256": "a4c69c053a6619791f670f0fb52e6ace552d84304527cee7a88c6860fd7eb447",
     "traceability_rows": 627,
     "traceability_totals": {
       "IMPLEMENTED_TESTED": 0,
@@ -133,13 +133,17 @@
       "BLOCKED_MISSING_APPROVAL": 0,
       "NOT_APPLICABLE_WITH_SIGNED_PROOF": 0,
       "PENDING_IMPLEMENTATION_NO_FINAL_STATUS": 627,
-      "source_count_conflicts": 1,
+      "source_count_conflicts": 0,
       "note": "These are whole-contract mappings; passed partial A1-A2 primitives are not promoted to full component/oracle completion."
     },
-    "source_count_gate_evidence": "evidence/stage_a/source_conflict/runner.txt",
-    "source_count_gate_runner_exit_code": 2,
-    "source_count_gate_manifest": "evidence/stage_a/source_conflict/MANIFEST.sha256",
-    "source_count_gate_manifest_sha256": "4ae8562b4b5cc7f2152924c8d822efe151d2e17cf3a047a3d0f9aba4fe56066f",
+    "source_count_gate_evidence": "evidence/stage_a/amendment_1/checks.json",
+    "source_count_gate_runner_exit_code": 0,
+    "source_count_gate_status": "PASS",
+    "source_count_gate_disposition": "evidence/stage_a/source_conflict/OWNER_DISPOSITION_20261118_AMENDMENT_1.md",
+    "source_count_gate_disposition_commit": "9cd873d3a06e5e036d477b0e1c4f1cb0a2414261",
+    "source_count_gate_disposition_sha256": "4a2b74acf6f0b7f081cf059bcc8503e2b0c8d4609cd24dd41631c3f2e70522d3",
+    "historical_source_count_gate_manifest": "evidence/stage_a/source_conflict/MANIFEST.sha256",
+    "historical_source_count_gate_manifest_sha256": "4ae8562b4b5cc7f2152924c8d822efe151d2e17cf3a047a3d0f9aba4fe56066f",
     "r2_handoff_path": "evidence/REVIEWER_R2_HANDOFF.md",
     "r2_handoff_status": "PARTIAL_A1_A2_CHECKPOINTS_ONLY_FULL_SCOPE_NOT_READY"
   },
@@ -218,18 +222,17 @@
       ]
     }
   },
-  "open_blockers": [
+  "open_blockers": [],
+  "resolved_blockers": [
     {
       "id": "BLOCKED_SOURCE_CONFLICT",
-      "scope": "R3_SECTION_4_TRACEABILITY_COMPLETION_ONLY",
-      "source": "SOURCE_PINS_UNMODIFIED/STAGE_D03_REVIEW_BYTES/02_NEGATIVE_GRAPH_COMPLEMENT_59_SOURCE_PRESERVED.json",
-      "clause": "$.negative_cases[*].negative_id",
-      "expected": 59,
-      "actual": 84,
-      "disposition": "OWNER_CONTROLLED_COUNT_DISPOSITION_REQUIRED_NO_SELF_AMENDMENT"
-    }
-  ],
-  "resolved_blockers": [
+      "status": "RESOLVED_OWNER_AMENDMENT_1_ALL_FOUR_CHECKS_PASS",
+      "evidence_path": "evidence/stage_a/amendment_1/checks.json",
+      "negative_ids": 84,
+      "guarded_pairs": 38,
+      "denied_pairs": 84,
+      "universe_ids_unchanged": 627
+    },
     {
       "id": "MISSING_PINNED_OFFLINE_DEPENDENCIES",
       "status": "RESOLVED_VERIFIED",
