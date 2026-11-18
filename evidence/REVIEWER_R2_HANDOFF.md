@@ -1,4 +1,4 @@
-# R2 checkpoint handoff - Stage A / A1 only
+# R2 checkpoint handoff - Stage A / A1-A2 only
 
 Status: PARTIAL_IMPLEMENTATION_REVIEWABLE, not READY_FOR_R2_REVIEW for the full
 R3 deliverable. No independent review, formal governance attestation, software
@@ -6,7 +6,7 @@ release readiness or trading authority is asserted.
 
 The unchanged historical blocked checkpoint is commit
 `d6549b612b8415ecaa7101bf6e80b7061018199c`. The source checkpoint and evidence
-hashes are recorded in `STAGE_STATE.json` and `stage_a/a1/`.
+hashes are recorded in `STAGE_STATE.json`, `stage_a/a1/` and `stage_a/a2/`.
 
 Reproduce using **only** `sh tools/run_offline.sh` at the repository root,
 with the owner-provided `reference/` inputs and `wheelhouse/` restored.
@@ -22,18 +22,23 @@ Review priorities:
    key boundary, payload hashing, strict schema, limits before decoding,
    duplicate/nonfinite handling, UTC validity and explicit typed denials.
 2. `v3/offline/calendar_completion.py`: no wall-clock authority, UTC-only
-   instants, immutable nondecreasing replay; this is not yet a completed-bar or
-   session eligibility implementation.
+   instants, immutable nondecreasing replay, signed synthetic event-clock domain/
+   skew proof and completed-bar/PIT/session checks. TZif bytes come from the signed
+   pinned-image calendar fixture, not a host timezone lookup.
+   `data_intake_schema.py` authenticates a closed synthetic snapshot schema;
+   distinguish immutable lineage references from an actual computed feature row.
 3. `tools/run_offline.sh` and `tools/offline_preflight.py`: exact image, absence
    of host credentials, reference read-only mount, install provenance and
    six actual egress probes. Build/evidence tooling is not included in the
    runtime coverage denominator.
 4. `tests/v3/`, mutation/evidence checkers and `stage_a/a1/`: independently
-   challenge the 175/175 statement and 70/70 branch counters and eight killed
+   challenge the cumulative 363/363 statement and 110/110 branch counters and 12 killed
    safety mutants; distinguish fixture metadata extensibility from full
    instrument onboarding.
 
 Complete slice scope, test failures fixed, explicit limitations, fixture schema
-and remaining work are in `stage_a/a1/REPORT.md`. The full requirement universe,
+and remaining work are in `stage_a/a1/REPORT.md` and `stage_a/a2/REPORT.md`.
+Each Stage A requirement has a V5 member/clause citation in
+`stage_a/STAGE_A_REQUIREMENTS.csv`, read before A2. The full requirement universe,
 all-stage traceability, risk/entry/trade lifecycle and adopted macro logging
 remain unfinished; do not infer their completion from this handoff.

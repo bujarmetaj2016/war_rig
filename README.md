@@ -9,8 +9,11 @@ read-only reference inputs, and the owner-supplied hash-locked offline wheelhous
 Never run V3 code or tests on the host. A clean checkout also needs the separately
 supplied `reference/` inputs and `wheelhouse/`; neither is downloaded by the runner.
 
-Stage A slice A1 implements authenticated fixture-policy metadata and immutable
-UTC replay-clock primitives, not completed-bar/session eligibility or trading.
+Stage A slices A1-A2 implement authenticated fixture metadata and signed synthetic
+completed snapshots, point-in-time publication/revision/freshness checks, explicit
+source/unit bindings, UTC replay/event clocks and signed IANA calendar/session/DST
+evidence. These are data assessments, not entry permission or trading.
 Progress and remaining work are in `evidence/STAGE_STATE.json`; executed evidence
-is under `evidence/stage_a/a1/`. Each fresh validation run writes a new ignored
+is under `evidence/stage_a/a1/` and `a2/`. V5 file/clause citations are in
+`evidence/stage_a/STAGE_A_REQUIREMENTS.csv`. Each fresh validation run writes a new ignored
 directory under `evidence/stage_a/runs/`, leaving committed evidence unchanged.

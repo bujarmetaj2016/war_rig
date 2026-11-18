@@ -100,6 +100,17 @@ class FixturePolicy:
     bounds: ResourceBounds
 
 
+@dataclass(frozen=True)
+class AuthenticatedFixture:
+    """Bounded authenticated bytes, not a parsed policy, permission or eligibility."""
+
+    payload: bytes
+    manifest_sha256: str
+    payload_sha256: str
+    signer_sha256: str
+    bounds: ResourceBounds
+
+
 def _reject_number(value: str) -> None:
     raise FixtureDenied(DenialReason.JSON, "Float and nonfinite JSON numbers are forbidden")
 
@@ -180,19 +191,17 @@ def _identity(value: JsonValue) -> str:
     return result
 
 
-def load_fixture_policy(
+def authenticate_fixture(
     payload: bytes,
     manifest: bytes,
     signature: bytes,
     public_key: bytes,
-    as_of: datetime,
-) -> FixturePolicy:
-    """Verify signed fixture bytes and return immutable metadata, or raise FixtureDenied.
+) -> AuthenticatedFixture:
+    """Verify domain-separated manifest, byte bounds and hash, or raise FixtureDenied.
 
-    The caller pins the raw 32-byte Ed25519 public key independently; a key
-    supplied by an untrusted fixture is not a trust anchor. Signatures cover
-    SIGNATURE_DOMAIN + exact manifest bytes. The half-open validity interval
-    [valid_from, valid_until) uses UTC and grants no operational permissions.
+    The independently pinned raw public key is not taken from the payload.
+    Callers must still validate their exact payload schema before consuming it.
+    This pure byte boundary grants neither owner-policy nor broker authority.
     """
     # A fixed bootstrap ceiling applies before parsing any untrusted signed limits.
     if len(manifest) > 4096:
@@ -221,7 +230,29 @@ def load_fixture_policy(
     payload_hash = hashlib.sha256(payload).hexdigest()
     if payload_hash != expected_hash:
         raise FixtureDenied(DenialReason.HASH, "Fixture payload hash mismatch")
-    policy = _parse(payload, bounds)
+    return AuthenticatedFixture(
+        payload,
+        hashlib.sha256(manifest).hexdigest(),
+        payload_hash,
+        hashlib.sha256(public_key).hexdigest(),
+        bounds,
+    )
+
+
+def load_fixture_policy(
+    payload: bytes,
+    manifest: bytes,
+    signature: bytes,
+    public_key: bytes,
+    as_of: datetime,
+) -> FixturePolicy:
+    """Return verified immutable identity metadata, or raise FixtureDenied; no effects.
+
+    The half-open fixture interval [valid_from, valid_until) uses supplied UTC.
+    Unknown fields, including monetary or broker permissions, are never accepted.
+    """
+    authenticated = authenticate_fixture(payload, manifest, signature, public_key)
+    policy = _parse(authenticated.payload, authenticated.bounds)
     if set(policy) != _POLICY_FIELDS:
         raise FixtureDenied(DenialReason.SCHEMA, "Unexpected/missing fixture policy fields")
     policy_id, run_id, account_id = (
@@ -250,8 +281,8 @@ def load_fixture_policy(
         instrument_ids,
         valid_from,
         valid_until,
-        hashlib.sha256(manifest).hexdigest(),
-        payload_hash,
-        hashlib.sha256(public_key).hexdigest(),
-        bounds,
+        authenticated.manifest_sha256,
+        authenticated.payload_sha256,
+        authenticated.signer_sha256,
+        authenticated.bounds,
     )

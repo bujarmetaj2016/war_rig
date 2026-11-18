@@ -82,6 +82,37 @@ def main() -> None:
             "tests/v3/test_calendar_completion.py"
             "::test_utc_clock_is_immutable_monotonic_and_replayable",
         ),
+        (
+            "forming_bar_allowed",
+            CLOCK,
+            "not bar.complete",
+            "False",
+            "tests/v3/test_completed_snapshots.py"
+            "::test_forming_wrong_interval_or_prior_bar_cannot_substitute",
+        ),
+        (
+            "post_decision_revision_allowed",
+            CLOCK,
+            "not bar.end <= bar.revision_available_at <= replay.at",
+            "False",
+            "tests/v3/test_completed_snapshots.py"
+            "::test_post_decision_or_pre_completion_evidence_is_not_available",
+        ),
+        (
+            "untrusted_event_clock_domain_allowed",
+            CLOCK,
+            'self.domain != "SIMULATED_REPLAY"',
+            "False",
+            "tests/v3/test_completed_snapshots.py"
+            "::test_invalid_clock_replay_or_calendar_evidence_returns_explicit_data_denial",
+        ),
+        (
+            "closed_session_boundary_allowed",
+            CLOCK,
+            "calendar.session_open <= replay.at < calendar.session_close",
+            "calendar.session_open <= replay.at <= calendar.session_close",
+            "tests/v3/test_completed_snapshots.py::test_invalid_or_closed_session_cannot_be_fresh",
+        ),
     ]
     results = []
     for name, module, before, after, selector in mutations:

@@ -12,12 +12,29 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = {
     "v3/offline/__init__.py",
     "v3/offline/calendar_completion.py",
+    "v3/offline/data_intake_schema.py",
     "v3/offline/fixture_policy_loader.py",
 }
 ALLOWED_IMPORTS = {
     "v3/__init__.py": set(),
     "v3/offline/__init__.py": set(),
-    "v3/offline/calendar_completion.py": {"dataclasses", "datetime"},
+    "v3/offline/calendar_completion.py": {
+        "dataclasses",
+        "datetime",
+        "decimal",
+        "enum",
+        "io",
+        "struct",
+        "zoneinfo",
+    },
+    "v3/offline/data_intake_schema.py": {
+        "base64",
+        "re",
+        "datetime",
+        "decimal",
+        "v3.offline.calendar_completion",
+        "v3.offline.fixture_policy_loader",
+    },
     "v3/offline/fixture_policy_loader.py": {
         "hashlib",
         "json",
@@ -119,6 +136,8 @@ def main() -> None:
 import dataclasses, datetime, json, pathlib
 from v3.offline.calendar_completion import ReplayClock
 from v3.offline.fixture_policy_loader import load_fixture_policy
+from v3.offline.data_intake_schema import load_snapshot_fixture
+from v3.offline.calendar_completion import assess_snapshot
 root = pathlib.Path.cwd()
 public = json.loads((root/'evidence/preflight/DEV_FIXTURE_PUBLIC_KEY.json').read_text())
 fixture = root/'fixtures/stage_a'
@@ -127,7 +146,17 @@ policy = load_fixture_policy(
     (fixture/'policy.json').read_bytes(), (fixture/'manifest.json').read_bytes(),
     bytes.fromhex((fixture/'manifest.sig').read_text()),
     bytes.fromhex(public['public_key_hex']), clock.at)
-print(json.dumps(dataclasses.asdict(policy), sort_keys=True, default=str, separators=(',',':')))
+snapshot_fixture = fixture/'a2'
+snapshot = load_snapshot_fixture(
+    (snapshot_fixture/'payload.json').read_bytes(),
+    (snapshot_fixture/'manifest.json').read_bytes(),
+    bytes.fromhex((snapshot_fixture/'manifest.sig').read_text()),
+    bytes.fromhex(public['public_key_hex']))
+assessment = assess_snapshot(snapshot, snapshot.binding, ReplayClock(snapshot.clock.at))
+result = {'identity_policy': dataclasses.asdict(policy),
+          'snapshot': dataclasses.asdict(snapshot),
+          'assessment': dataclasses.asdict(assessment)}
+print(json.dumps(result, sort_keys=True, default=str, separators=(',',':')))
 """
     results = [
         subprocess.check_output(

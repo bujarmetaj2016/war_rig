@@ -1,0 +1,45 @@
+{
+  "slice": "A2",
+  "title": "Signed completed data, IANA calendars and verified event clocks",
+  "decision": "PASS",
+  "overall_stage_a": "IN_PROGRESS",
+  "source_commit_before_gate": "1af562df26f60340164ee7a8e04682f1158d7d52",
+  "source_sha256": {
+    "v3/__init__.py": "9f173486bc106f30cef6de90dd3bf7175e99853e6d99e62a01b20cf03deedb3d",
+    "v3/offline/__init__.py": "8fa3adeaee35f07022156a5f0efbe70f701f8b196eb8ba8b3b0f1f82488dfd71",
+    "v3/offline/calendar_completion.py": "b474b5d4f037e934c0b42dc33ba093f3f445e71aa955e1271cb733e2d0101040",
+    "v3/offline/data_intake_schema.py": "77b00138224291754537ca1d80c62296f14ab1b05288c54afcd04d546302e042",
+    "v3/offline/fixture_policy_loader.py": "9e5c8be82d0b1ffe541d985975681ab7fc00b3d5b5078820306d9adac0083b50"
+  },
+  "command": "sh tools/run_offline.sh",
+  "runner_exit_code": 0,
+  "dependency_lock_sha256": "6db111bb0a2ed79f9f7d2002d4b44a1cde5e62ce0e53c321be967f4839048b15",
+  "tests": 152,
+  "coverage": {
+    "covered_lines": 363,
+    "num_statements": 363,
+    "percent_covered": 100.0,
+    "percent_covered_display": "100.00",
+    "missing_lines": 0,
+    "excluded_lines": 0,
+    "percent_statements_covered": 100.0,
+    "percent_statements_covered_display": "100.00",
+    "num_branches": 110,
+    "num_partial_branches": 0,
+    "covered_branches": 110,
+    "missing_branches": 0,
+    "percent_branches_covered": 100.0,
+    "percent_branches_covered_display": "100.00"
+  },
+  "mutations_killed": 12,
+  "runtime_modules": [
+    "v3/offline/__init__.py",
+    "v3/offline/calendar_completion.py",
+    "v3/offline/data_intake_schema.py",
+    "v3/offline/fixture_policy_loader.py"
+  ],
+  "source_traceability": "evidence/stage_a/STAGE_A_REQUIREMENTS.csv",
+  "source_reading": "evidence/stage_a/SOURCE_READING.md",
+  "r2_handoff": "evidence/REVIEWER_R2_HANDOFF.md",
+  "authority": "SYNTHETIC_OFFLINE_ONLY_NO_IG_NO_TRADING_AUTHORITY"
+}

@@ -1,4 +1,4 @@
-# R3 outstanding work - after Stage A / A1
+# R3 outstanding work - after Stage A / A2
 
 ## Resolved environment and source blockers
 
@@ -17,9 +17,10 @@ work. This does not make the entire Stage A or full implementation complete.
 
 - Full technical reading of the verified V5 package, full requirement-universe
   extraction and exact R3 section 4 traceability are pending.
-- Clock primitives and signed fixture identity/validity metadata are tested;
-  completed/forming bars, publication/freshness/revision/source alignment and
-  IANA/DST/session handling are not yet implemented.
+- A1-A2 authenticate signed synthetic snapshots and distinguish completed,
+  forming, absent, failed and expected-stale inputs; publication/observation/
+  vintage/revision/freshness/source alignment and signed IANA/DST/session checks
+  are implemented. Their PASS verdict is fixture-data-only, not entry permission.
 - Instrument definitions, dated listings, evidence graph, registration /
   plug-in manifests and the complete sixth-instrument onboarding proof remain.
 - Full source/account/instrument/policy/event binding, resource-bounded
@@ -27,6 +28,10 @@ work. This does not make the entire Stage A or full implementation complete.
 - No monetary, real-market, timer or model policy has been invented. Open
   source decisions stay unavailable; the current loader cannot express a
   broker permit, entry flag, risk fraction or real owner-policy load.
+
+The Stage A clauses were read and cited before A2 in
+`stage_a/STAGE_A_REQUIREMENTS.csv` and `stage_a/SOURCE_READING.md`.
+Whole-package reading is not inferred from that scoped reading record.
 
 ## Unstarted downstream work
 
