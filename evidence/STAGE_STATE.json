@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "recorded_date_utc": "2026-11-18",
+  "status": "BLOCKED_ENVIRONMENT",
+  "current_stage": "A",
+  "last_pass_stage": null,
+  "last_commit": "f64c138b145e7000bb81559d79316bfba29b419d",
+  "checkpoint_form": "REVIEWABLE_UNCOMMITTED_EVIDENCE_PATCH",
+  "resume_note": "No earlier stage state or V3 implementation was present. Begin Stage A after the execution prerequisites are supplied; do not infer a passed stage.",
+  "authority": {
+    "offline_development_route": "OWNER_DIRECTED",
+    "formal_governance_attestation": "NOT_VERIFIED",
+    "trading_authority": "NONE",
+    "broker_capability": "DENIED",
+    "reference_package": "V5_CANDIDATE"
+  },
+  "owner_directed_start_record": {
+    "path": "evidence/preflight/OWNER_DIRECTED_OFFLINE_START.md",
+    "sha256": "e601e066ae601df9d6080d5bff187b73a212e987e5c95cf3d2d6aebc57f9662f"
+  },
+  "controlling_prompt": {
+    "path": "prompts/War_Rig_V3_OWNER_DIRECTED_OFFLINE_START_MASTER_IDE_PROMPT_R3_20261116.md",
+    "sha256": "52d86cfc4b4e2b4bcb9791d04c35ae2bd9c876198f55a147622c21d341de41b5"
+  },
+  "historical_prompt_sha256": "ac3344db248c3391327f8e59df8cc8e5c8bc7c208bc2e162e2549bd86120697f",
+  "v5_candidate": {
+    "archive_path": "design/War_Rig_V3_Complete_Offline_Design_V5_MSB_REVIEW_CANDIDATE_20261113.zip",
+    "archive_sha256": "3d6632a2d662deade05b957ad822edd9af6e8eda8c1d7ebca3f098e122760796",
+    "manifest_sha256": "756cc650770105a30ef7e824d275476ce7e642b77dccf407f704e7146ec5a135",
+    "id": "V3-ONE-STAGE-OFFLINE-CORE-CANDIDATE-20261113-V5",
+    "status": "PROPOSED_CANDIDATE_NOT_FROZEN",
+    "verified_members": 69,
+    "integrity_and_path_safety": "PASS",
+    "full_contract_reading": "NOT_COMPLETE"
+  },
+  "reference_manifest": {
+    "path": "reference/MANIFEST.sha256",
+    "sha256": "a06ac2de31fcce5436d9c975ea7b0cf872a050a6b7d475e2e4b2f09fdff1a38b",
+    "status": "PASS",
+    "verified_entries": 374
+  },
+  "macro_research": {
+    "prompt_path": "prompts/War_Rig_V2_CORE5_MACRO_VERIFICATION_IDE_PROMPT_REV4_20261116.md",
+    "prompt_sha256": "c3941ab923a9fdc79eb8855ea077e456d902d48c987e39344a13f70dd4161997",
+    "research_commit": "2fdd7e3981d498ab7783bb81ac643eafe8abe998",
+    "merge_commit": "efece4a3c981033b161f49769db42ed06eb6ea69",
+    "merge_main_result": "ALREADY_UP_TO_DATE_ON_MAIN_NO_NEW_MERGE",
+    "research_ancestry_verified": true,
+    "manifest_path": "evidence/macro/MANIFEST.sha256",
+    "manifest_sha256": "12ebf4559badf11714ff6af71eb1092537230ed699721fc3bda6b95bdb3a17ca",
+    "manifest_identity_matches_handover": true,
+    "filesystem_verification": "BLOCKED_SOURCE_INTEGRITY_FOR_MISSING_HISTORICAL_INPUTS",
+    "listed_entries": 482,
+    "verified_entries": 412,
+    "missing_entries": 70,
+    "mismatched_entries": 0,
+    "owner_decision_path": "evidence/macro/OWNER_DECISION_20261117.md",
+    "owner_decision_sha256": "fdbf1eae05af2307afe0f2bcc18bb16c370c1e5f8936a9748170a3a4a92c9d4a",
+    "baseline": "V2_PARITY",
+    "baseline_use": "COMPARISON_ONLY",
+    "adopted_mode": "COMPUTE_AND_LOG_ONLY",
+    "adopted_checks": [
+      "EURUSD_USD_STRENGTH_BASKET_EX_EUR",
+      "GBPUSD_USD_STRENGTH_BASKET_EX_GBP",
+      "EVENT_PROXIMITY_ALL_FIVE_INSTRUMENTS"
+    ],
+    "entry_gate_adopted": false,
+    "size_modifier_adopted": false,
+    "additional_proposal_items_adopted": false,
+    "implementation_status": "BLOCKED_ENVIRONMENT",
+    "evidence_consumption": "READ_ONLY_IN_PLACE"
+  },
+  "execution_environment": {
+    "status": "BLOCKED_ENVIRONMENT",
+    "preflight_image_id": "sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b",
+    "observed_python": "3.12.16",
+    "approved_runtime_interpreter_provenance": "NOT_VERIFIED",
+    "network_mode": "none",
+    "preflight_probes_blocked": 5,
+    "preflight_probes_attempted": 5,
+    "full_runtime_safety_suite": "NOT_RUN",
+    "dependency_lock_sha256": null,
+    "wheelhouse_manifest_sha256": null,
+    "fixture_public_key_fingerprint": null,
+    "v3_runtime_or_tests_executed": false
+  },
+  "evidence": {
+    "inspection_path": "evidence/preflight/INSPECTION_20261118.json",
+    "inspection_sha256": "b76b8a9da6c3caecfdec91118ead26d0825120672ece327b89273b1a8b536b9f",
+    "source_verification_path": "evidence/preflight/SOURCE_VERIFICATION_20261118.json",
+    "source_verification_sha256": "e4752d29a393eb5052fec684c16cac98355b2ad8afae063d308f8de24bfa17fd",
+    "historical_blocked_authority_sha256": "53f37c69cd870df237ec8fe8c9d83e4860823ceca3a8cbc9ce63c5831a12d589",
+    "parity_path": "evidence/V2_V3_CAPABILITY_PARITY.csv",
+    "parity_status": "PARTIAL_MACRO_SUMMARIES_ONLY",
+    "parity_rows": 12,
+    "requirement_universe_sha256": null,
+    "traceability_status": "NOT_GENERATED",
+    "r2_handoff_status": "NOT_READY"
+  },
+  "stages": {
+    "A": "BLOCKED_ENVIRONMENT",
+    "B": "NOT_STARTED",
+    "C": "NOT_STARTED",
+    "D": "NOT_STARTED",
+    "E": "NOT_STARTED",
+    "F": "NOT_STARTED",
+    "G": "NOT_STARTED"
+  },
+  "tests_and_coverage": {
+    "status": "NOT_RUN",
+    "tests_executed": 0,
+    "statements_total": null,
+    "statements_missing": null,
+    "branches_total": null,
+    "branches_missing": null,
+    "coverage_artifact_sha256": null,
+    "mutation_style_noninterference_tests": "NOT_RUN",
+    "lint_and_strict_types": "NOT_RUN"
+  },
+  "open_blockers": [
+    {
+      "id": "MISSING_PINNED_OFFLINE_DEPENDENCIES",
+      "status": "BLOCKED_ENVIRONMENT",
+      "scope": "V3 execution and stage completion",
+      "missing": [
+        "requirements-dev.lock",
+        "wheelhouse/",
+        "wheelhouse/SHA256SUMS"
+      ]
+    },
+    {
+      "id": "MISSING_MACRO_HISTORICAL_INPUTS",
+      "status": "BLOCKED_SOURCE_INTEGRITY",
+      "scope": "Historical macro reproduction only; verified source inventory remains usable",
+      "missing_paths_evidence": "evidence/preflight/SOURCE_VERIFICATION_20261118.json"
+    }
+  ]
+}
