@@ -1,12 +1,15 @@
 {
   "schema_version": 1,
   "recorded_date_utc": "2026-11-18",
-  "status": "BLOCKED_ENVIRONMENT",
+  "status": "IN_PROGRESS",
   "current_stage": "A",
   "last_pass_stage": null,
-  "last_commit": "f64c138b145e7000bb81559d79316bfba29b419d",
-  "checkpoint_form": "REVIEWABLE_UNCOMMITTED_EVIDENCE_PATCH",
-  "resume_note": "No earlier stage state or V3 implementation was present. Begin Stage A after the execution prerequisites are supplied; do not infer a passed stage.",
+  "last_pass_slice": "A1",
+  "last_commit": "83a4e053c2cc914bac4937b6035446457f719826",
+  "last_commit_role": "LAST_VALIDATED_SOURCE_AND_EXECUTED_EVIDENCE_CHECKPOINT",
+  "historical_blocked_checkpoint_commit": "d6549b612b8415ecaa7101bf6e80b7061018199c",
+  "checkpoint_form": "COMMITTED_A1_SOURCE_AND_EVIDENCE_WITH_FOLLOWUP_RESUME_RECORD",
+  "resume_note": "A1 passed; overall Stage A has not passed. Reverify the original start record and current artifact/source pins, finish verified-contract inventory, then continue remaining Stage A requirements. Reproduce with sh tools/run_offline.sh; never run V3 code on the host.",
   "authority": {
     "offline_development_route": "OWNER_DIRECTED",
     "formal_governance_attestation": "NOT_VERIFIED",
@@ -49,10 +52,10 @@
     "manifest_path": "evidence/macro/MANIFEST.sha256",
     "manifest_sha256": "12ebf4559badf11714ff6af71eb1092537230ed699721fc3bda6b95bdb3a17ca",
     "manifest_identity_matches_handover": true,
-    "filesystem_verification": "BLOCKED_SOURCE_INTEGRITY_FOR_MISSING_HISTORICAL_INPUTS",
+    "filesystem_verification": "PASS",
     "listed_entries": 482,
-    "verified_entries": 412,
-    "missing_entries": 70,
+    "verified_entries": 482,
+    "missing_entries": 0,
     "mismatched_entries": 0,
     "owner_decision_path": "evidence/macro/OWNER_DECISION_20261117.md",
     "owner_decision_sha256": "fdbf1eae05af2307afe0f2bcc18bb16c370c1e5f8936a9748170a3a4a92c9d4a",
@@ -67,38 +70,56 @@
     "entry_gate_adopted": false,
     "size_modifier_adopted": false,
     "additional_proposal_items_adopted": false,
-    "implementation_status": "BLOCKED_ENVIRONMENT",
+    "implementation_status": "NOT_IMPLEMENTED",
     "evidence_consumption": "READ_ONLY_IN_PLACE"
   },
   "execution_environment": {
-    "status": "BLOCKED_ENVIRONMENT",
+    "status": "PASS_FOR_A1_OFFLINE_EXECUTION",
+    "pinned_image_file": "evidence/preflight/PYTHON_IMAGE.txt",
+    "pinned_image_file_sha256": "46ac1a7a3411ab200b2184dc9e0b5e484c97c177e7568582aaf1fc4b750848fb",
+    "pinned_image": "python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b",
     "preflight_image_id": "sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b",
     "observed_python": "3.12.16",
-    "approved_runtime_interpreter_provenance": "NOT_VERIFIED",
+    "approved_runtime_interpreter_provenance": "OWNER_SUPPLIED_PINNED_IMAGE_VERIFIED",
+    "mirror_preparation_provenance": "OWNER_DECLARED_SEPARATE_NETWORKED_SCRATCH_CONTAINER",
     "network_mode": "none",
-    "preflight_probes_blocked": 5,
-    "preflight_probes_attempted": 5,
-    "full_runtime_safety_suite": "NOT_RUN",
-    "dependency_lock_sha256": null,
-    "wheelhouse_manifest_sha256": null,
-    "fixture_public_key_fingerprint": null,
-    "v3_runtime_or_tests_executed": false
+    "preflight_probes_blocked": 6,
+    "preflight_probes_attempted": 6,
+    "reference_mount": "READ_ONLY",
+    "active_network_interfaces": ["lo"],
+    "full_runtime_safety_suite": "A1_CHECKS_PASS_FULL_STAGE_G_SCOPE_PENDING",
+    "requirements_input_sha256": "6a1ffd92d4d95d765560acb87a46e21bc7c8a82bec5476f48c48dae8fe7ab531",
+    "dependency_lock_sha256": "6db111bb0a2ed79f9f7d2002d4b44a1cde5e62ce0e53c321be967f4839048b15",
+    "wheelhouse_manifest_sha256": "d93c3cc5ebaf4e43d34d85556967c212a8179549407e22cbcd5aef904bbbe850",
+    "verified_wheels": 19,
+    "offline_install": "PASS",
+    "pip_check": "PASS",
+    "fixture_public_key_path": "evidence/preflight/DEV_FIXTURE_PUBLIC_KEY.json",
+    "fixture_public_key_record_sha256": "8e7ab76d598b298a5cb9f2cef38a896d875e2a8f230239149252b33d294e810c",
+    "fixture_public_key_fingerprint": "6dab654164d1e219c5bfc2c4bee1bc73c418f0151bb1162dac6e62150ca0baac",
+    "v3_runtime_or_tests_executed": true
   },
   "evidence": {
-    "inspection_path": "evidence/preflight/INSPECTION_20261118.json",
-    "inspection_sha256": "b76b8a9da6c3caecfdec91118ead26d0825120672ece327b89273b1a8b536b9f",
-    "source_verification_path": "evidence/preflight/SOURCE_VERIFICATION_20261118.json",
-    "source_verification_sha256": "e4752d29a393eb5052fec684c16cac98355b2ad8afae063d308f8de24bfa17fd",
+    "historical_inspection_path": "evidence/preflight/INSPECTION_20261118.json",
+    "historical_inspection_sha256": "b76b8a9da6c3caecfdec91118ead26d0825120672ece327b89273b1a8b536b9f",
+    "historical_source_verification_path": "evidence/preflight/SOURCE_VERIFICATION_20261118.json",
+    "historical_source_verification_sha256": "e4752d29a393eb5052fec684c16cac98355b2ad8afae063d308f8de24bfa17fd",
+    "source_verification_path": "evidence/stage_a/a1/preflight.json",
+    "source_verification_sha256": "e954d7e2b7872accb06611f11ea9940fdbb68dfbd6d061e5e29d8a89b1e8c9bd",
+    "a1_manifest_path": "evidence/stage_a/a1/MANIFEST.sha256",
+    "a1_manifest_sha256": "2a4649f3c1cca2de2ce6c06d949e321b83db365703f5e385cf2fb9f36c0829e2",
+    "a1_report_path": "evidence/stage_a/a1/REPORT.md",
     "historical_blocked_authority_sha256": "53f37c69cd870df237ec8fe8c9d83e4860823ceca3a8cbc9ce63c5831a12d589",
     "parity_path": "evidence/V2_V3_CAPABILITY_PARITY.csv",
     "parity_status": "PARTIAL_MACRO_SUMMARIES_ONLY",
     "parity_rows": 12,
     "requirement_universe_sha256": null,
     "traceability_status": "NOT_GENERATED",
-    "r2_handoff_status": "NOT_READY"
+    "r2_handoff_path": "evidence/REVIEWER_R2_HANDOFF.md",
+    "r2_handoff_status": "PARTIAL_A1_CHECKPOINT_ONLY_FULL_SCOPE_NOT_READY"
   },
   "stages": {
-    "A": "BLOCKED_ENVIRONMENT",
+    "A": "IN_PROGRESS",
     "B": "NOT_STARTED",
     "C": "NOT_STARTED",
     "D": "NOT_STARTED",
@@ -107,32 +128,70 @@
     "G": "NOT_STARTED"
   },
   "tests_and_coverage": {
-    "status": "NOT_RUN",
-    "tests_executed": 0,
-    "statements_total": null,
-    "statements_missing": null,
-    "branches_total": null,
-    "branches_missing": null,
-    "coverage_artifact_sha256": null,
-    "mutation_style_noninterference_tests": "NOT_RUN",
-    "lint_and_strict_types": "NOT_RUN"
+    "status": "PASS_FOR_A1_ONLY",
+    "command": "sh tools/run_offline.sh",
+    "exit_code": 0,
+    "tests_executed": 77,
+    "tests_failed": 0,
+    "tests_skipped": 0,
+    "statements_total": 175,
+    "statements_missing": 0,
+    "branches_total": 70,
+    "branches_missing": 0,
+    "branches_partial": 0,
+    "excluded_executable_lines": 0,
+    "coverage_scope": "ALL_CURRENT_V3_OFFLINE_PRODUCTION_MODULES_NOT_BUILD_EVIDENCE_TOOLS",
+    "coverage_artifact_path": "evidence/stage_a/a1/coverage.json",
+    "coverage_artifact_sha256": "f1192fdab3fc13434377053347acf6a565550a917f004404390406c53031e1d6",
+    "mutations_killed": 8,
+    "mutations_survived": 0,
+    "mutation_report_path": "evidence/stage_a/a1/mutations.json",
+    "macro_trading_decision_noninterference_tests": "NOT_RUN_MACRO_IMPLEMENTATION_PENDING",
+    "determinism_processes": 2,
+    "determinism_output_sha256": "45b16e111cc0b2dc184377cbdb2c3015de179eda57c1f47627b92f35dd53cb13",
+    "v2_snapshot_source_files_compared": 279,
+    "v2_identical_byte_matches": 0,
+    "v2_normalized_12_line_matches": 0,
+    "lint_and_strict_types": "PASS",
+    "optional_third_party_mutation_and_vulnerability_tools": "NOT_RUN"
   },
-  "open_blockers": [
+  "stage_a_slices": {
+    "A1": {
+      "status": "PASS",
+      "source_commit": "83a4e053c2cc914bac4937b6035446457f719826",
+      "implemented": [
+        "EXT06_PURE_SIGNED_FIXTURE_IDENTITY_VALIDITY_METADATA_LOADER",
+        "UNIT06_IMMUTABLE_UTC_REPLAY_CLOCK_PRIMITIVES"
+      ],
+      "not_proven": [
+        "FULL_COMPLETED_DATA_AND_MARKET_CALENDAR_PREDICATES",
+        "FULL_INSTRUMENT_REGISTRATION_OR_V3EXT006_ONBOARDING",
+        "MONETARY_POLICY_OR_T1_T2_T3_RESOLUTION",
+        "TRADING_OR_MACRO_CLASSIFICATIONS"
+      ]
+    }
+  },
+  "open_blockers": [],
+  "resolved_blockers": [
     {
       "id": "MISSING_PINNED_OFFLINE_DEPENDENCIES",
-      "status": "BLOCKED_ENVIRONMENT",
-      "scope": "V3 execution and stage completion",
-      "missing": [
-        "requirements-dev.lock",
-        "wheelhouse/",
-        "wheelhouse/SHA256SUMS"
-      ]
+      "status": "RESOLVED_VERIFIED",
+      "evidence_path": "evidence/stage_a/a1/preflight.json"
     },
     {
       "id": "MISSING_MACRO_HISTORICAL_INPUTS",
-      "status": "BLOCKED_SOURCE_INTEGRITY",
-      "scope": "Historical macro reproduction only; verified source inventory remains usable",
-      "missing_paths_evidence": "evidence/preflight/SOURCE_VERIFICATION_20261118.json"
+      "status": "RESOLVED_482_OF_482_ENTRIES_VERIFIED",
+      "evidence_path": "evidence/stage_a/a1/preflight.json"
     }
+  ],
+  "remaining_stage_a_work": [
+    "FULL_VERIFIED_CONTRACT_READING_AND_REQUIREMENT_UNIVERSE_EXTRACTION",
+    "COMPLETED_BARS_PUBLICATION_VINTAGE_FRESHNESS_AND_SOURCE_ALIGNMENT",
+    "IANA_DST_AND_MARKET_SESSION_COMPLETION",
+    "INSTRUMENT_LISTING_PLUGIN_MANIFEST_AND_INPUT_EVIDENCE_GRAPH",
+    "SOURCE_ACCOUNT_INSTRUMENT_POLICY_EVENT_IDENTITY_BINDING",
+    "T1_T2_T3_POLICY_PRECEDENCE",
+    "RESOURCE_BOUNDED_SYMLINK_SAFE_FILESYSTEM_FIXTURE_INTAKE",
+    "INTEGRATED_SIGNED_SNAPSHOTS_AND_SIXTH_INSTRUMENT_ONBOARDING"
   ]
 }
