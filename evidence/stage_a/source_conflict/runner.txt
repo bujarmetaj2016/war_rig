@@ -1,0 +1,27 @@
+No broken requirements found.
+........................................................................ [ 47%]
+........................................................................ [ 94%]
+........                                                                 [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.16-final-0 _______________
+
+Name                                  Stmts   Miss Branch BrPart    Cover   Missing
+-----------------------------------------------------------------------------------
+v3/offline/__init__.py                    0      0      0      0  100.00%
+v3/offline/calendar_completion.py       136      0     22      0  100.00%
+v3/offline/data_intake_schema.py         65      0     22      0  100.00%
+v3/offline/fixture_policy_loader.py     162      0     66      0  100.00%
+-----------------------------------------------------------------------------------
+TOTAL                                   363      0    110      0  100.00%
+Coverage XML written to file evidence/stage_a/runs/20261118T231935Z-78870/coverage-report.xml
+Coverage JSON written to file evidence/stage_a/runs/20261118T231935Z-78870/coverage.json
+Required test coverage of 100% reached. Total coverage: 100.00%
+152 passed in 0.99s
+All checks passed!
+15 files already formatted
+Success: no issues found in 5 source files
+Exact counters, independence, replay and mutation checks: PASS
+{"artifacts":"EXACTLY_REPRODUCED","gate":"SOURCE_COUNTS","pending_blocks_requested_gate":false,"pending_count":627,"runtime_stages_blocked":false,"source_conflicts":[{"actual":84,"check":"d03_negative_case_count","expected":59}],"status":"BLOCKED_SOURCE_CONFLICT","traceability_rows":627,"traceability_status":"BLOCKED_SOURCE_CONFLICT","universe_rows":627}
+BLOCKED: source-count/cardinality gate failed; runtime results above are separate.
+Evidence: evidence/stage_a/runs/20261118T231935Z-78870
+Runner exit code: 2

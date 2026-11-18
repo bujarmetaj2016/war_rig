@@ -46,5 +46,17 @@ docker run --rm --pull never --network none --read-only \
         cat "$report/tests.txt"
         cat "$report/lint.txt" "$report/types.txt"
         printf "%s\n" "Exact counters, independence, replay and mutation checks: PASS"
-    '
+        python -I tools/extract_requirement_universe.py --check-source-counts \
+            > "$report/traceability-check.txt" 2>&1 || {
+                status=$?
+                cat "$report/traceability-check.txt"
+                printf "%s\n" \
+                    "BLOCKED: source-count/cardinality gate failed; runtime results above are separate." >&2
+                exit "$status"
+            }
+    ' || {
+        status=$?
+        printf 'Evidence: %s\nRunner exit code: %s\n' "$output" "$status" >&2
+        exit "$status"
+    }
 printf 'Evidence: %s\n' "$output"

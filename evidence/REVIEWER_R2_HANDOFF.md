@@ -42,3 +42,29 @@ Each Stage A requirement has a V5 member/clause citation in
 `stage_a/STAGE_A_REQUIREMENTS.csv`, read before A2. The full requirement universe,
 all-stage traceability, risk/entry/trade lifecycle and adopted macro logging
 remain unfinished; do not infer their completion from this handoff.
+
+## Source-count hard gate after A2
+
+A2's validated source/evidence commit is
+`b63d8822bc137fa0434763edda26a2846a1d04f5`.
+The follow-up checkpoint records `BLOCKED_SOURCE_CONFLICT`: D03 file02 has
+84 distinct `$.negative_cases[*].negative_id` values (59 preserved plus
+25 Master-derived), while R3 section 4 requires 59. The actual source IDs are
+retained; no source or expected acceptance count is silently changed.
+The 42 candidate IDs and rederived 38 guarded / 84 denied pairs do match.
+
+`requirement_universe.csv`, `traceability.csv` and
+`REQUIREMENT_UNIVERSE_REPORT.json` preserve extraction provenance and honest
+pending mappings. No overall source-contract requirement is marked fully
+implemented merely because A1-A2 primitives passed. Challenge the count
+disposition independently before accepting traceability completion.
+The current `sh tools/run_offline.sh` checks runtime first and then fails the
+source-count gate explicitly; A2's enclosing historical commit reproduces its
+passed runtime gate without claiming the later traceability failure passed.
+
+The generated CSVs preserve quoted, multiline original source records, including
+their original whitespace. Count parsed CSV records, not physical lines. The
+checkpoint whitespace check excludes only `evidence/requirement_universe.csv`
+and `evidence/traceability.csv` for that reason; code, tools and all other
+evidence pass the normal check. Normalising original text merely to silence
+that check would destroy the retained byte-faithful provenance.

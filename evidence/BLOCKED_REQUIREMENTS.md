@@ -13,10 +13,43 @@ See `stage_a/a1/preflight.json`, `install.txt` and `REPORT.md`.
 No current input/environment failure prevents continuing independent Stage A
 work. This does not make the entire Stage A or full implementation complete.
 
+## Hard gate: BLOCKED_SOURCE_CONFLICT (R3 section 4)
+
+The preserved V5 member
+`SOURCE_PINS_UNMODIFIED/STAGE_D03_REVIEW_BYTES/02_NEGATIVE_GRAPH_COMPLEMENT_59_SOURCE_PRESERVED.json`
+contains **84 distinct authoritative negative IDs** at
+`$.negative_cases[*].negative_id`:
+`CC1-NEG-001..059` and `SD2-MST-NEG-001..025`.
+R3 section 4 requires **59** from that named source and explicitly requires
+`BLOCKED_SOURCE_CONFLICT` when a source count differs. Counting only the 59
+preserved IDs would silently omit the 25 additional Master-derived cases.
+The source archive and controlling prompt have not been amended.
+
+The candidate-edge source has **42** actual candidates at
+`$.edge_contracts[*].candidate_id`, not 80. The larger number counts separate
+positive/negative oracle identifiers and is **not** a candidate-count blocker.
+The independently rederived graph has **38 guarded / 84 denied pairs**, matching
+those two expected graph totals; pair totals are not the negative-ID count.
+
+`tools/extract_requirement_universe.py` preserves every actual source ID and
+its provenance in `requirement_universe.csv` and one matching row per universe
+ID in `traceability.csv`. `REQUIREMENT_UNIVERSE_REPORT.json` records actual and
+expected counts. Pending implementation is kept separate from source conflict;
+an unfinished later-stage module is not a missing owner approval or an executed
+pass. The build source-count gate must fail, not silently choose a new count.
+
+This blocks **traceability completion**, not safe independent implementation
+under R3. A2 was gated and committed before this conflict checkpoint. The latest
+owner instruction requires an immediate report when a hard gate blocks the
+requested Stage A completion, so A3-A5 are not claimed complete or silently
+continued before that report. A controlled disposition of the 59-versus-84
+requirement is needed; no source or acceptance threshold is self-amended.
+
 ## Incomplete Stage A requirements
 
 - Full technical reading of the verified V5 package, full requirement-universe
-  extraction and exact R3 section 4 traceability are pending.
+  extraction/traceability completion are not satisfied. The actual extracted
+  universe is recorded, but the count conflict above prevents its final gate.
 - A1-A2 authenticate signed synthetic snapshots and distinguish completed,
   forming, absent, failed and expected-stale inputs; publication/observation/
   vintage/revision/freshness/source alignment and signed IANA/DST/session checks
