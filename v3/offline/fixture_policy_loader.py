@@ -5,21 +5,27 @@ Untrusted bytes cross this boundary only after a domain-separated signature from
 the caller's independently pinned public key. The signed manifest binds the exact
 payload hash and resource limits. Outputs are immutable simulator identities and
 validity metadata, not risk policy, entry eligibility, broker permits or model grants.
-This pure loader performs no filesystem access, dynamic imports or deserialisation
-of executable formats; path-safe on-disk intake remains a later Stage A slice.
+Byte verification stays pure. The separate on-disk function accepts a signed
+intake policy and can read only the fixed three-file layout under repo fixtures,
+using descriptor-relative, no-follow, bounded regular-file operations.
 """
 
 import hashlib
 import json
+import os
 import re
+import stat
+from contextlib import ExitStack
 from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
+from pathlib import Path
 
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
 from v3.offline.calendar_completion import ClockDenied, parse_utc, require_utc
+from v3.offline.intent_identity import Digest, RunId, SimulatedAccountId
 
 type JsonValue = str | int | bool | None | list[JsonValue] | dict[str, JsonValue]
 
@@ -54,6 +60,7 @@ class DenialReason(StrEnum):
     DOMAIN = "DOMAIN"
     HASH = "HASH"
     TIME = "TIME"
+    FILESYSTEM = "FILESYSTEM"
 
 
 class FixtureDenied(ValueError):
@@ -286,3 +293,174 @@ def load_fixture_policy(
         authenticated.signer_sha256,
         authenticated.bounds,
     )
+
+
+@dataclass(frozen=True)
+class IntakePolicy:
+    """Signed FIXTURE_ONLY file/path/count/total bounds, scope and finite replay expiry."""
+
+    relative_directory: str
+    max_path_depth: int
+    max_files: int
+    max_file_bytes: int
+    max_total_bytes: int
+    run: RunId
+    account: SimulatedAccountId
+    valid_from: datetime
+    valid_until: datetime
+    payload_sha256: Digest
+
+    def __post_init__(self) -> None:
+        """Validate path syntax and bootstrap ceilings before any filesystem operation."""
+        parts = self.relative_directory.split("/")
+        if parts[0] != "stage_a" or any(not _IDENTITY.fullmatch(part) for part in parts):
+            raise FixtureDenied(DenialReason.FILESYSTEM, "Invalid repository-fixture path")
+        for value, maximum in (
+            (self.max_path_depth, 8),
+            (self.max_files, 3),
+            (self.max_file_bytes, 1_048_576),
+            (self.max_total_bytes, 1_052_801),
+        ):
+            if type(value) is not int or not 1 <= value <= maximum:
+                raise FixtureDenied(DenialReason.RESOURCE_BOUND, "Invalid signed filesystem bound")
+        if len(parts) > self.max_path_depth:
+            raise FixtureDenied(DenialReason.RESOURCE_BOUND, "Signed path depth exceeded")
+        require_utc(self.valid_from)
+        require_utc(self.valid_until)
+        if self.valid_until <= self.valid_from:
+            raise FixtureDenied(DenialReason.TIME, "Invalid intake-policy validity interval")
+
+
+@dataclass(frozen=True)
+class FixtureFiles:
+    """Verified immutable bytes from one bounded fixture directory; never executable data."""
+
+    payload: bytes
+    manifest: bytes
+    signature: bytes
+    payload_sha256: str
+    intake_policy_sha256: str
+
+
+def load_intake_policy(
+    payload: bytes, manifest: bytes, signature: bytes, public_key: bytes
+) -> IntakePolicy:
+    """Authenticate closed filesystem policy bytes; reject unsigned scope/bounds; no I/O."""
+    verified = authenticate_fixture(payload, manifest, signature, public_key)
+    record = _parse(verified.payload, verified.bounds)
+    fields = {
+        "kind",
+        "relative_directory",
+        "max_path_depth",
+        "max_files",
+        "max_file_bytes",
+        "max_total_bytes",
+        "run_id",
+        "account_id",
+        "valid_from",
+        "valid_until",
+    }
+    if set(record) != fields or record["kind"] != "FIXTURE_INTAKE_POLICY_V1":
+        raise FixtureDenied(DenialReason.SCHEMA, "Invalid fixture-intake policy schema")
+    return IntakePolicy(
+        _text(record["relative_directory"]),
+        _integer(record["max_path_depth"]),
+        _integer(record["max_files"]),
+        _integer(record["max_file_bytes"]),
+        _integer(record["max_total_bytes"]),
+        RunId(_identity(record["run_id"])),
+        SimulatedAccountId(_identity(record["account_id"])),
+        parse_utc(_text(record["valid_from"])),
+        parse_utc(_text(record["valid_until"])),
+        Digest(verified.payload_sha256),
+    )
+
+
+def _read_regular(directory: int, name: str, maximum: int, stack: ExitStack) -> bytes:
+    descriptor = os.open(name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=directory)
+    stack.callback(os.close, descriptor)
+    metadata = os.fstat(descriptor)
+    if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1 or metadata.st_mode & 0o111:
+        raise FixtureDenied(DenialReason.FILESYSTEM, "Fixture must be a non-linked regular file")
+    if metadata.st_size > maximum:
+        raise FixtureDenied(DenialReason.RESOURCE_BOUND, "Fixture file byte limit exceeded")
+    chunks: list[bytes] = []
+    size = 0
+    while True:
+        chunk = os.read(descriptor, maximum + 1 - size)
+        if not chunk:
+            return b"".join(chunks)
+        size += len(chunk)
+        if size > maximum:
+            raise FixtureDenied(DenialReason.RESOURCE_BOUND, "Fixture grew beyond signed bound")
+        chunks.append(chunk)
+
+
+def read_fixture_directory(
+    policy: IntakePolicy,
+    public_key: bytes,
+    run: RunId,
+    account: SimulatedAccountId,
+    at: datetime,
+) -> FixtureFiles:
+    """Read/authenticate fixed JSON fixture files or raise; no path outside repo fixtures.
+
+    Every ancestor and file is opened no-follow relative to pinned descriptors.
+    No directory recursion, executable format, caller-selected filename, hardlink,
+    FIFO, unlisted file, credentials or archive extraction is permitted.
+    """
+    require_utc(at)
+    if (
+        policy.run != run
+        or policy.account != account
+        or not policy.valid_from <= at < policy.valid_until
+    ):
+        raise FixtureDenied(DenialReason.DOMAIN, "Intake scope or replay validity mismatch")
+    expected = {"payload.json", "manifest.json", "manifest.sig"}
+    try:
+        with ExitStack() as stack:
+            root = Path(__file__).resolve().parents[2] / "fixtures"
+            directory = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+            stack.callback(os.close, directory)
+            for part in policy.relative_directory.split("/"):
+                directory = os.open(
+                    part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=directory
+                )
+                stack.callback(os.close, directory)
+            found = set()
+            with os.scandir(directory) as entries:
+                for entry in entries:
+                    found.add(entry.name)
+                    if entry.name not in expected or len(found) > policy.max_files:
+                        raise FixtureDenied(
+                            DenialReason.FILESYSTEM, "Unlisted or excessive fixture files"
+                        )
+            if found != expected:
+                raise FixtureDenied(DenialReason.FILESYSTEM, "Incomplete fixture directory")
+            manifest = _read_regular(
+                directory, "manifest.json", min(4096, policy.max_file_bytes), stack
+            )
+            signature_text = _read_regular(
+                directory, "manifest.sig", min(129, policy.max_file_bytes), stack
+            )
+            if len(signature_text) not in {128, 129} or (
+                len(signature_text) == 129 and not signature_text.endswith(b"\n")
+            ):
+                raise FixtureDenied(DenialReason.SIGNATURE, "Invalid signature file shape")
+            try:
+                signature = bytes.fromhex(signature_text.decode("ascii"))
+            except (ValueError, UnicodeDecodeError) as error:
+                raise FixtureDenied(DenialReason.SIGNATURE, "Invalid signature encoding") from error
+            payload = _read_regular(directory, "payload.json", policy.max_file_bytes, stack)
+            if len(payload) + len(manifest) + len(signature_text) > policy.max_total_bytes:
+                raise FixtureDenied(
+                    DenialReason.RESOURCE_BOUND, "Signed total intake byte limit exceeded"
+                )
+            verified = authenticate_fixture(payload, manifest, signature, public_key)
+            return FixtureFiles(
+                payload, manifest, signature, verified.payload_sha256, policy.payload_sha256.value
+            )
+    except OSError as error:
+        raise FixtureDenied(
+            DenialReason.FILESYSTEM, "Fixture filesystem operation failed"
+        ) from error

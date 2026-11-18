@@ -129,6 +129,22 @@ def main() -> None:
             "tests/v3/test_policy_foundations.py"
             "::test_t1_and_unselected_or_unsupported_t2_parameters_deny",
         ),
+        (
+            "fixture_leaf_symlink_followed",
+            LOADER,
+            "os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK",
+            "os.O_RDONLY | os.O_NONBLOCK",
+            "tests/v3/test_fixture_filesystem.py"
+            "::test_even_authentic_bytes_cannot_be_followed_through_a_symlink",
+        ),
+        (
+            "fixture_total_byte_limit_removed",
+            LOADER,
+            "if len(payload) + len(manifest) + len(signature_text) > policy.max_total_bytes:",
+            "if False:",
+            "tests/v3/test_fixture_filesystem.py"
+            "::test_exact_inventory_file_and_total_limits_are_enforced[total_bytes]",
+        ),
     ]
     results = []
     for name, module, before, after, selector in mutations:

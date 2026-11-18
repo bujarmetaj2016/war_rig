@@ -65,8 +65,9 @@ requirement is needed; no source or acceptance threshold is self-amended.
   are implemented. Their PASS verdict is fixture-data-only, not entry permission.
 - Instrument definitions, dated listings, evidence graph, registration /
   plug-in manifests and the complete sixth-instrument onboarding proof remain.
-- Full source/account/instrument/policy/event binding, resource-bounded
-  instrument registration and symlink-safe on-disk fixture intake remain.
+- Full source/account/instrument/policy/event binding through instrument and
+  plug-in registration remains. A4 passes signed, bounded no-follow filesystem
+  intake, including links, FIFO, hidden/unlisted files and explicit I/O faults.
 - A3 implements distinct typed identity/run/replay records, exact source units
   and signed restriction-only T1/T2/T3 policy resolution. Missing bounds,
   forbidden T3 overrides, unsupported entry types and scope mismatches deny;

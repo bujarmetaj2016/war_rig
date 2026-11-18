@@ -61,12 +61,17 @@ ALLOWED_IMPORTS = {
         "hashlib",
         "json",
         "re",
+        "os",
+        "stat",
+        "contextlib",
+        "pathlib",
         "dataclasses",
         "datetime",
         "enum",
         "cryptography.exceptions",
         "cryptography.hazmat.primitives.asymmetric.ed25519",
         "v3.offline.calendar_completion",
+        "v3.offline.intent_identity",
     },
 }
 
@@ -157,7 +162,8 @@ def main() -> None:
     program = """
 import dataclasses, datetime, json, pathlib
 from v3.offline.calendar_completion import ReplayClock
-from v3.offline.fixture_policy_loader import load_fixture_policy
+from v3.offline.fixture_policy_loader import (
+    load_fixture_policy, load_intake_policy, read_fixture_directory)
 from v3.offline.data_intake_schema import load_snapshot_fixture
 from v3.offline.calendar_completion import assess_snapshot
 from v3.offline.effective_policy import load_fixture_tiers, resolve_fixture_tiers
@@ -194,6 +200,14 @@ context = RunContext(
 result['tier_resolution'] = dataclasses.asdict(resolve_fixture_tiers(
     tiers, context, snapshot.clock.at))
 result['context_sha256'] = context.sha256
+intake_fixture = fixture/'a4'
+intake = load_intake_policy(
+    (intake_fixture/'payload.json').read_bytes(), (intake_fixture/'manifest.json').read_bytes(),
+    bytes.fromhex((intake_fixture/'manifest.sig').read_text()),
+    bytes.fromhex(public['public_key_hex']))
+disk = read_fixture_directory(intake, bytes.fromhex(public['public_key_hex']),
+                              context.run, context.account, snapshot.clock.at)
+result['filesystem_payload_sha256'] = disk.payload_sha256
 print(json.dumps(result, sort_keys=True, default=str, separators=(',',':')))
 """
     results = [

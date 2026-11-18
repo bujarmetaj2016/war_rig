@@ -1,6 +1,7 @@
 """Create only new signed Stage A fixture slices inside the verified sandbox."""
 
 import json
+import sys
 from pathlib import Path
 
 from cryptography.hazmat.primitives import serialization
@@ -20,6 +21,27 @@ def main() -> None:
     public = json.loads((ROOT / "evidence/preflight/DEV_FIXTURE_PUBLIC_KEY.json").read_text())
     if key.public_key().public_bytes_raw().hex() != public["public_key_hex"]:
         raise ValueError("Pinned public key mismatch")
+    if len(sys.argv) == 2 and sys.argv[1] == "a4":
+        write_fixture(
+            "a4",
+            {
+                "kind": "FIXTURE_INTAKE_POLICY_V1",
+                "relative_directory": "stage_a/a3",
+                "max_path_depth": 2,
+                "max_files": 3,
+                "max_file_bytes": 65536,
+                "max_total_bytes": 70000,
+                "run_id": "SYNTHETIC_RUN_001",
+                "account_id": "SIMULATED_ACCOUNT",
+                "valid_from": "2027-01-01T00:00:00Z",
+                "valid_until": "2028-01-01T00:00:00Z",
+            },
+            key,
+        )
+        print("Signed explicit non-authoritative A4 filesystem intake policy")
+        return
+    if len(sys.argv) != 1:
+        raise ValueError("Only a3 (no argument) or a4 fixture generation is supported")
     write_fixture(
         "a3",
         {
