@@ -31,4 +31,7 @@ htmlcov/
 coverage.xml
 
 # macOS
-.DS_Store
+.DS_Storereference/MANIFEST.sha256
+reference/V2_DB_INVENTORY.md
+reference/V2_EXPORT_*REPORT.md
+reference/v2_export_allowlist*.json
