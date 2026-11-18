@@ -1,0 +1,6 @@
+{
+  "purpose": "SYNTHETIC_FIXTURES_ONLY_NOT_TRADING_POLICY",
+  "algorithm": "Ed25519",
+  "public_key_hex": "0e5b857a4b8154aa522b1d21572cf60f61b281bfbc343a8dcf1293a37fe4fd53",
+  "sha256": "6dab654164d1e219c5bfc2c4bee1bc73c418f0151bb1162dac6e62150ca0baac"
+}

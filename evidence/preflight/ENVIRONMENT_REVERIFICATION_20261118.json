@@ -1,0 +1,62 @@
+{
+  "status": "PASS_PREFLIGHT_FOR_OFFLINE_INSTALL",
+  "image": "python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b",
+  "python": "3.12.16 (main, Nov  5 2026, 08:06:14) [GCC 14.2.0]",
+  "resume_hashes": "PASS",
+  "manifests": {
+    "evidence/macro/MANIFEST.sha256": {
+      "sha256": "12ebf4559badf11714ff6af71eb1092537230ed699721fc3bda6b95bdb3a17ca",
+      "verified_entries": 482,
+      "status": "PASS"
+    },
+    "reference/MANIFEST.sha256": {
+      "sha256": "a06ac2de31fcce5436d9c975ea7b0cf872a050a6b7d475e2e4b2f09fdff1a38b",
+      "verified_entries": 374,
+      "status": "PASS"
+    },
+    "wheelhouse/SHA256SUMS": {
+      "sha256": "d93c3cc5ebaf4e43d34d85556967c212a8179549407e22cbcd5aef904bbbe850",
+      "verified_entries": 19,
+      "status": "PASS"
+    }
+  },
+  "requirements_lock_sha256": "6db111bb0a2ed79f9f7d2002d4b44a1cde5e62ce0e53c321be967f4839048b15",
+  "requirements_input_sha256": "6a1ffd92d4d95d765560acb87a46e21bc7c8a82bec5476f48c48dae8fe7ab531",
+  "probes": [
+    {
+      "name": "literal_ip_tcp",
+      "status": "BLOCKED_AS_REQUIRED",
+      "error": "[Errno 101] Network is unreachable"
+    },
+    {
+      "name": "dns",
+      "status": "BLOCKED_AS_REQUIRED",
+      "error": "[Errno -3] Temporary failure in name resolution"
+    },
+    {
+      "name": "metadata_tcp",
+      "status": "BLOCKED_AS_REQUIRED",
+      "error": "[Errno 101] Network is unreachable"
+    },
+    {
+      "name": "python_child_http",
+      "status": "BLOCKED_AS_REQUIRED",
+      "exit_code": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 1357, in do_open\n    h.request(req.get_method(), req.selector, req.data, headers,\n  File \"/usr/local/lib/python3.12/http/client.py\", line 1386, in request\n    self._send_request(method, url, body, headers, encode_chunked)\n  File \"/usr/local/lib/python3.12/http/client.py\", line 1432, in _send_request\n    self.endheaders(body, encode_chunked=encode_chunked)\n  File \"/usr/local/lib/python3.12/http/client.py\", line 1381, in endheaders\n    self._send_output(message_body, encode_chunked=encode_chunked)\n  File \"/usr/local/lib/python3.12/http/client.py\", line 1141, in _send_output\n    self.send(msg)\n  File \"/usr/local/lib/python3.12/http/client.py\", line 1085, in send\n    self.connect()\n  File \"/usr/local/lib/python3.12/http/client.py\", line 1051, in connect\n    self.sock = self._create_connection(\n                ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/socket.py\", line 865, in create_connection\n    raise exceptions[0]\n  File \"/usr/local/lib/python3.12/socket.py\", line 850, in create_connection\n    sock.connect(sa)\nOSError: [Errno 101] Network is unreachable\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 215, in urlopen\n    return opener.open(url, data, timeout)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 515, in open\n    response = self._open(req, data)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 532, in _open\n    result = self._call_chain(self.handle_open, protocol, protocol +\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 492, in _call_chain\n    result = func(*args)\n             ^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 1386, in http_open\n    return self.do_open(http.client.HTTPConnection, req)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 1360, in do_open\n    raise URLError(err)\nurllib.error.URLError: <urlopen error [Errno 101] Network is unreachable>\n"
+    },
+    {
+      "name": "shell_child_http",
+      "status": "BLOCKED_AS_REQUIRED",
+      "exit_code": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 1357, in do_open\n    h.request(req.get_method(), req.selector, req.data, headers,\n  File \"/usr/local/lib/python3.12/http/client.py\", line 1386, in request\n    self._send_request(method, url, body, headers, encode_chunked)\n  File \"/usr/local/lib/python3.12/http/client.py\", line 1432, in _send_request\n    self.endheaders(body, encode_chunked=encode_chunked)\n  File \"/usr/local/lib/python3.12/http/client.py\", line 1381, in endheaders\n    self._send_output(message_body, encode_chunked=encode_chunked)\n  File \"/usr/local/lib/python3.12/http/client.py\", line 1141, in _send_output\n    self.send(msg)\n  File \"/usr/local/lib/python3.12/http/client.py\", line 1085, in send\n    self.connect()\n  File \"/usr/local/lib/python3.12/http/client.py\", line 1051, in connect\n    self.sock = self._create_connection(\n                ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/socket.py\", line 865, in create_connection\n    raise exceptions[0]\n  File \"/usr/local/lib/python3.12/socket.py\", line 850, in create_connection\n    sock.connect(sa)\nOSError: [Errno 101] Network is unreachable\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 215, in urlopen\n    return opener.open(url, data, timeout)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 515, in open\n    response = self._open(req, data)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 532, in _open\n    result = self._call_chain(self.handle_open, protocol, protocol +\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 492, in _call_chain\n    result = func(*args)\n             ^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 1386, in http_open\n    return self.do_open(http.client.HTTPConnection, req)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/urllib/request.py\", line 1360, in do_open\n    raise URLError(err)\nurllib.error.URLError: <urlopen error [Errno 101] Network is unreachable>\n"
+    },
+    {
+      "name": "loopback_http_redirect_to_metadata",
+      "status": "BLOCKED_AS_REQUIRED",
+      "error": "<urlopen error [Errno 101] Network is unreachable>"
+    }
+  ],
+  "credential_environment": "NOT_FORWARDED",
+  "broker_cloud_model_sdks": "ABSENT",
+  "v3_runtime_executed": false
+}

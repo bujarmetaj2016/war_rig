@@ -1,0 +1,16 @@
+........................................................................ [ 93%]
+.....                                                                    [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.16-final-0 _______________
+
+Name                                  Stmts   Miss Branch BrPart    Cover   Missing
+-----------------------------------------------------------------------------------
+v3/offline/__init__.py                    0      0      0      0  100.00%
+v3/offline/calendar_completion.py        23      0      4      0  100.00%
+v3/offline/fixture_policy_loader.py     152      0     66      0  100.00%
+-----------------------------------------------------------------------------------
+TOTAL                                   175      0     70      0  100.00%
+Coverage XML written to file evidence/stage_a/runs/20261118T174850Z-75081/coverage-report.xml
+Coverage JSON written to file evidence/stage_a/runs/20261118T174850Z-75081/coverage.json
+Required test coverage of 100% reached. Total coverage: 100.00%
+77 passed in 0.67s

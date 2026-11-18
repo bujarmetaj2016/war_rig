@@ -23,6 +23,9 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.hypothesis/
+.stage-a-mutation-*/
+evidence/stage_a/runs/
 
 # Coverage artefacts
 .coverage

@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "coverage": {
+    "covered_lines": 175,
+    "num_statements": 175,
+    "percent_covered": 100.0,
+    "percent_covered_display": "100.00",
+    "missing_lines": 0,
+    "excluded_lines": 0,
+    "percent_statements_covered": 100.0,
+    "percent_statements_covered_display": "100.00",
+    "num_branches": 70,
+    "num_partial_branches": 0,
+    "covered_branches": 70,
+    "missing_branches": 0,
+    "percent_branches_covered": 100.0,
+    "percent_branches_covered_display": "100.00"
+  },
+  "required_modules": [
+    "v3/offline/__init__.py",
+    "v3/offline/calendar_completion.py",
+    "v3/offline/fixture_policy_loader.py"
+  ],
+  "source_sha256": {
+    "v3/__init__.py": "9f173486bc106f30cef6de90dd3bf7175e99853e6d99e62a01b20cf03deedb3d",
+    "v3/offline/__init__.py": "8fa3adeaee35f07022156a5f0efbe70f701f8b196eb8ba8b3b0f1f82488dfd71",
+    "v3/offline/calendar_completion.py": "fdabe05098156edbeb0d0a99d6fa1f28fa50612cf7f9c667cce481d9775d4242",
+    "v3/offline/fixture_policy_loader.py": "7dbaa40301df976c0bb6e822efc9c1f9e4ab199d77a9081ae892ad05f4e4d07c"
+  },
+  "forbidden_import_and_direct_io_scan": "PASS",
+  "first_party_import_allowlist": "PASS",
+  "v2_snapshot_files_compared": 279,
+  "identical_byte_matches": 0,
+  "normalized_12_line_matches": [],
+  "normalization": "strip and collapse whitespace; omit blank/full-line comments",
+  "finite_recall_caution": "These source comparisons do not prove absence of V2 reuse",
+  "determinism_processes": 2,
+  "determinism_output_sha256": "45b16e111cc0b2dc184377cbdb2c3015de179eda57c1f47627b92f35dd53cb13"
+}

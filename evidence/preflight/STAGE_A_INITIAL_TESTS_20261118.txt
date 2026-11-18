@@ -1,0 +1,64 @@
+..................................................................F..... [ 97%]
+..                                                                       [100%]
+=================================== FAILURES ===================================
+________ test_hostile_json_is_never_deserialized_as_policy[raw12-JSON] _________
+
+raw = b'{"a":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[...]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]}'
+reason = <DenialReason.JSON: 'JSON'>
+
+    @pytest.mark.parametrize(
+        "raw,reason",
+        [
+            (b'{"domain":"FIXTURE_ONLY","domain":"LIVE"}', DenialReason.JSON),
+            (b'{"a":1.5}', DenialReason.JSON),
+            (b'{"a":NaN}', DenialReason.JSON),
+            (b'{"a":Infinity}', DenialReason.JSON),
+            (b'{"a":-Infinity}', DenialReason.JSON),
+            (b'{"a":1e9999}', DenialReason.JSON),
+            (b'{"a":' + b"9" * 5000 + b"}", DenialReason.JSON),
+            (b"\xff", DenialReason.JSON),
+            (b"{", DenialReason.JSON),
+            (b'{"x":true} trailing', DenialReason.JSON),
+            (b"[]", DenialReason.SCHEMA),
+            (b"null", DenialReason.SCHEMA),
+            (b'{"a":' + b"[" * 1100 + b"0" + b"]" * 1100 + b"}", DenialReason.JSON),
+            (b'{"a":' + b"[" * 10 + b"0" + b"]" * 10 + b"}", DenialReason.RESOURCE_BOUND),
+        ],
+    )
+    def test_hostile_json_is_never_deserialized_as_policy(raw: bytes, reason: DenialReason) -> None:
+>       assert_denied(reason, signed(raw_payload=raw))
+
+tests/v3/test_fixture_policy_loader.py:206: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+reason = <DenialReason.JSON: 'JSON'>
+bundle = (b'{"a":[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[...x1fO \x97\x10J\xe1e\x00', b'TQ70\xc4TT\x9e\xfc\xc8\x87n\x8d\x9eE!\x9d\x8b-\xa9\xa5\x05\xe1b\xd6\xd3\xca\x08\x85J\x96^')
+at = datetime.datetime(2026, 11, 18, 12, 0, tzinfo=datetime.timezone.utc)
+
+    def assert_denied(
+        reason: DenialReason, bundle: tuple[bytes, bytes, bytes, bytes], at: datetime = NOW
+    ) -> None:
+        with pytest.raises(FixtureDenied) as result:
+            load_fixture_policy(*bundle, at)
+>       assert result.value.reason is reason
+E       AssertionError: assert <DenialReason.RESOURCE_BOUND: 'RESOURCE_BOUND'> is <DenialReason.JSON: 'JSON'>
+E        +  where <DenialReason.RESOURCE_BOUND: 'RESOURCE_BOUND'> = FixtureDenied('Fixture structural limit exceeded').reason
+E        +    where FixtureDenied('Fixture structural limit exceeded') = <ExceptionInfo FixtureDenied('Fixture structural limit exceeded') tblen=3>.value
+
+tests/v3/test_fixture_policy_loader.py:62: AssertionError
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.16-final-0 _______________
+
+Name                                  Stmts   Miss Branch BrPart    Cover   Missing
+-----------------------------------------------------------------------------------
+v3/offline/__init__.py                    0      0      0      0  100.00%
+v3/offline/calendar_completion.py        23      0      4      0  100.00%
+v3/offline/fixture_policy_loader.py     133      0     48      0  100.00%
+-----------------------------------------------------------------------------------
+TOTAL                                   156      0     52      0  100.00%
+Coverage XML written to file /tmp/stage-a-coverage.xml
+Coverage JSON written to file /tmp/stage-a-coverage.json
+Required test coverage of 100% reached. Total coverage: 100.00%
+=========================== short test summary info ============================
+FAILED tests/v3/test_fixture_policy_loader.py::test_hostile_json_is_never_deserialized_as_policy[raw12-JSON]
+1 failed, 73 passed in 0.64s
