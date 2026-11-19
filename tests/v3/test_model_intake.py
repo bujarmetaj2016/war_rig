@@ -59,6 +59,7 @@ def artifact_bodies():
         "scaler.json": {"kind": "STANDARD", "columns": ["x"], "center": [10], "scale": [2]},
         "calibration.json": {
             "kind": "ISOTONIC_STEP",
+            "side": "BULLISH",
             "x": [-2, 0, 2],
             "y": [Decimal("0.1"), Decimal("0.5"), Decimal("0.9")],
         },
@@ -154,7 +155,7 @@ def model_body(bodies=None):
     }, files
 
 
-def load_model(body=None, files=None, *, metadata_updates=None, nested_updates=None):
+def model_fixture(body=None, files=None, *, metadata_updates=None, nested_updates=None):
     original, artifacts = model_body()
     value = original if body is None else copy.deepcopy(body)
     actual_files = artifacts if files is None else files
@@ -194,14 +195,18 @@ def load_model(body=None, files=None, *, metadata_updates=None, nested_updates=N
     if nested_updates is not None:
         field, updates = nested_updates
         value[field].update(updates)
-    return load_synthetic_model(
-        *signed(
+    return (
+        signed(
             policy=value,
             manifest_updates={"max_bytes": 65536, "max_nodes": 1024, "max_depth": 12},
         ),
         actual_files,
-        prediction_plugins(),
     )
+
+
+def load_model(body=None, files=None, **kwargs):
+    bundle, artifacts = model_fixture(body, files, **kwargs)
+    return load_synthetic_model(*bundle, artifacts, prediction_plugins())
 
 
 def native_tree():
@@ -412,6 +417,7 @@ def test_scaler_shape_order_and_positive_scale(field, value):
     "field,value",
     [
         ("kind", "FIT"),
+        ("side", "BEARISH"),
         ("x", []),
         ("x", [-2, -2, 2]),
         ("y", [Decimal("0.9"), 0, 1]),
@@ -463,7 +469,7 @@ def test_missing_calibration_does_not_make_probability_by_climate():
 
 def test_platt_and_logistic_numerics_are_pure_registered_constant_proofs():
     bodies = artifact_bodies()
-    bodies["calibration.json"] = {"kind": "PLATT", "x": [0], "y": [0]}
+    bodies["calibration.json"] = {"kind": "PLATT", "x": [0], "y": [0], "side": "BULLISH"}
     body, files = model_body(bodies)
     for vector in body["golden_vectors"]:
         vector["expected_probability"] = "0.5"
@@ -595,3 +601,40 @@ def test_declared_file_bytes_are_independent_of_correct_hashes():
     body["files"][0]["bytes"] += 1
     with pytest.raises(ModelDenied, match="schema.json"):
         load_model(body, files)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("version", [2, False, 3]),
+        ("tree_info", [False]),
+        ("iteration_indptr", [0, True]),
+    ],
+)
+def test_native_integer_metadata_cannot_be_boolean_coercions(field, value):
+    bodies = artifact_bodies()
+    if field == "version":
+        bodies["model.json"][field] = value
+    else:
+        bodies["model.json"]["learner"]["gradient_booster"]["model"][field] = value
+    body, files = model_body(bodies)
+    with pytest.raises(ModelDenied):
+        load_model(body, files)
+
+
+def test_executable_payload_disguised_as_json_never_triggers_canary(tmp_path):
+    canary = tmp_path / "MODEL_MUST_NOT_EXECUTE"
+    bodies = artifact_bodies()
+    bodies["model.json"] = f"__import__('pathlib').Path({str(canary)!r}).touch()"
+    body, files = model_body(bodies)
+    with pytest.raises(ModelDenied):
+        load_model(body, files)
+    assert not canary.exists()
+
+
+@pytest.mark.parametrize("value", ["1e-9999999", "1e9999999"])
+def test_native_numeric_extremes_deny_before_context_overflow_or_underflow(value):
+    with pytest.raises(ModelDenied):
+        _numeric(Decimal(value))
+    with pytest.raises(ModelDenied):
+        _parameter(value)

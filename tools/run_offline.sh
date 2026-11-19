@@ -50,6 +50,8 @@ docker run --rm --pull never --network none --read-only \
             > "$report/mutations.json"
         /opt/venv/bin/python -m tools.check_stage_a_registration \
             > "$report/registration.json"
+        /opt/venv/bin/python -m tools.check_stage_b_predictions \
+            > "$report/predictions.json"
         /opt/venv/bin/python -I tools/record_stage_a_completion.py --check \
             > "$report/stage-a-traceability.json"
         cat "$report/tests.txt"

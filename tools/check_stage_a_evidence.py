@@ -50,6 +50,7 @@ ALLOWED_IMPORTS = {
         "v3.offline.plugin_manifest",
         "v3.offline.calendar_completion",
         "v3.offline.intent_identity",
+        "v3.offline.fixture_policy_loader",
     },
     "v3/offline/macro_features.py": {
         "hashlib",
@@ -310,6 +311,20 @@ print(json.dumps(result, sort_keys=True, default=str, separators=(',',':')))
     ]
     if results[0] != results[1]:
         raise RuntimeError("Cross-process fixture replay was not byte-identical")
+    predictions = [
+        subprocess.check_output([sys.executable, "-m", "tools.check_stage_b_predictions"], cwd=ROOT)
+        for _ in range(2)
+    ]
+    if predictions[0] != predictions[1]:
+        raise RuntimeError("Cross-process dual-source predictions were not byte-identical")
+    prediction_report = json.loads(predictions[0])
+    if (
+        prediction_report["status"] != "PASS"
+        or prediction_report["core5_model_denials"] != 5
+        or prediction_report["signed_score_predictions"] != 2
+        or prediction_report["synthetic_reader_predictions"] != 1
+    ):
+        raise RuntimeError("Dual-source prediction witness shape mismatch")
     print(
         json.dumps(
             {
@@ -328,6 +343,8 @@ print(json.dumps(result, sort_keys=True, default=str, separators=(',',':')))
                 ),
                 "determinism_processes": 2,
                 "determinism_output_sha256": hashlib.sha256(results[0]).hexdigest(),
+                "prediction_determinism_processes": 2,
+                "prediction_determinism_output_sha256": hashlib.sha256(predictions[0]).hexdigest(),
             },
             indent=2,
         )

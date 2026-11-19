@@ -208,6 +208,7 @@ def test_all_five_instruments_event_window_boundary_is_strictly_before_release(
 def test_missing_date_only_stale_same_day_incomplete_and_positive_only_schedule_evidence():
     body, row = macro_body()
     body["events"] = [{"event_type": "FOMC", "scheduled_at": None}]
+    assert observe(body, row).event_proximity == "UNKNOWN"
     body["schedules"] = []
     assert observe(body, row).event_proximity == "UNKNOWN"
     original, row = macro_body()
@@ -264,3 +265,46 @@ def test_observation_mutations_cannot_change_existing_prediction_decision_or_ris
         assert not hasattr(changed, "gate") and not hasattr(changed, "size_multiplier")
     with pytest.raises(PredictionDenied):
         attach_observation(score, replace(bound, direction="BEARISH"))
+
+
+@pytest.mark.parametrize(
+    "field", ["published_at", "coverage_start", "coverage_end", "source_sha256"]
+)
+def test_missing_schedule_evidence_does_not_establish_no_event(field):
+    body, row = macro_body()
+    body["schedules"][0][field] = None
+    assert observe(body, row).event_proximity == "UNKNOWN"
+
+
+@pytest.mark.parametrize("field", ["close_at", "available_at", "vintage_at"])
+def test_missing_observation_timestamps_are_unknown_not_neutral(field):
+    body, row = macro_body()
+    body["series"]["USDJPY"][0][field] = None
+    assert observe(body, row).basket == "UNKNOWN"
+
+
+@pytest.mark.parametrize("field", ["events", "schedules", "series"])
+def test_absent_signed_macro_history_remains_explicitly_unknown(field):
+    body, row = macro_body()
+    body[field] = None
+    result = observe(body, row)
+    if field == "series":
+        assert result.basket == "UNKNOWN" and result.basket_reason == "MISSING_BASKET_HISTORY"
+    else:
+        assert result.event_proximity == "UNKNOWN"
+
+
+@pytest.mark.parametrize("calendar", [None, []])
+def test_missing_expected_calendar_cannot_prove_completed_basket_history(calendar):
+    body, row = macro_body()
+    body["expected_closes"] = calendar
+    result = observe(body, row)
+    assert result.basket == "UNKNOWN"
+    assert result.basket_reason == "EXPECTED_CLOSE_CALENDAR_UNAVAILABLE"
+
+
+def test_unverified_schedule_cannot_be_silently_superseded_by_duplicate():
+    body, row = macro_body()
+    body["schedules"].insert(0, body["schedules"][0] | {"published_at": None})
+    with pytest.raises(PredictionDenied):
+        observe(body, row)

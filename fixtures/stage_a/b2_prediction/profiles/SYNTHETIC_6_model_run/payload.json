@@ -1,0 +1,1 @@
+{"account_id":"SIMULATED_ACCOUNT","kind":"FIXTURE_PREDICTION_RUN_V1","run_id":"SYNTHETIC_RUN_001","runtime_profile":"G1_R","sources":[{"fingerprint":"bcfbb2d79e0c674d5c9984857f5981deb5e00ca480e62ae3b18d39ee9d38eebc","instrument":"SYNTHETIC_6","source_kind":"TRAINED_MODEL"}],"valid_from":"2027-03-14 12:00:05+00:00","valid_until":"2027-03-16 12:00:05+00:00"}

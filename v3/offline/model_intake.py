@@ -11,11 +11,13 @@ from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 
-from v3.offline.calendar_completion import parse_utc
+from v3.offline.calendar_completion import ClockDenied, parse_utc
+from v3.offline.fixture_policy_loader import FixtureDenied
 from v3.offline.intent_identity import Digest
 from v3.offline.offline_scenario_runner import (
     FeatureRow,
     PredictionDenied,
+    ScoreProvider,
     SourceKind,
     SourceScore,
     canonical,
@@ -95,7 +97,12 @@ def _array(value: Native) -> list[Native]:
 def _numeric(value: Native) -> Decimal:
     if type(value) is int and abs(value) <= 10**30:
         return Decimal(value)
-    if isinstance(value, Decimal) and value.is_finite() and abs(value) <= Decimal("1e30"):
+    if (
+        isinstance(value, Decimal)
+        and value.is_finite()
+        and value.copy_abs() <= Decimal("1e30")
+        and (value == 0 or value.copy_abs() >= Decimal("1e-30"))
+    ):
         return value
     raise ModelDenied("Finite bounded native JSON number required")
 
@@ -113,7 +120,12 @@ def _parameter(value: Native) -> Decimal:
         result = Decimal(value)
     except ArithmeticError as error:
         raise ModelDenied("Invalid native XGBoost parameter") from error
-    if not result.is_finite() or abs(result) > Decimal("1e30"):
+    if (
+        not result.is_finite()
+        or result.copy_abs() > Decimal("1e30")
+        or result != 0
+        and result.copy_abs() < Decimal("1e-30")
+    ):
         raise ModelDenied("Nonfinite/unbounded native XGBoost parameter")
     return result
 
@@ -554,7 +566,7 @@ def load_synthetic_model(
     )
     raw_trees = _array(forest["trees"])
     if (
-        model["version"] != [2, 0, 3]
+        tuple(_integer(v) for v in _array(model["version"])) != (2, 0, 3)
         or learner["attributes"] != {}
         or learner["feature_names"] != list(names)
         or learner["feature_types"] != ["float"] * len(names)
@@ -562,8 +574,9 @@ def load_synthetic_model(
         or not 1 <= len(raw_trees) <= 16
         or forest["gbtree_model_param"]
         != {"num_parallel_tree": "1", "num_trees": str(len(raw_trees))}
-        or forest["tree_info"] != [0] * len(raw_trees)
-        or forest["iteration_indptr"] != list(range(len(raw_trees) + 1))
+        or tuple(_integer(v) for v in _array(forest["tree_info"])) != (0,) * len(raw_trees)
+        or tuple(_integer(v) for v in _array(forest["iteration_indptr"]))
+        != tuple(range(len(raw_trees) + 1))
         or params["num_class"] != "0"
         or params["num_feature"] != str(len(names))
         or params["num_target"] != "1"
@@ -579,7 +592,7 @@ def load_synthetic_model(
     xs: tuple[Decimal, ...] = ()
     ys: tuple[Decimal, ...] = ()
     if "calibration.json" in parsed:
-        cal = _object(parsed["calibration.json"], {"kind", "x", "y"})
+        cal = _object(parsed["calibration.json"], {"kind", "x", "y", "side"})
         calibration = str(cal["kind"])
         xs, ys = (
             tuple(_numeric(v) for v in _array(cal["x"])),
@@ -587,6 +600,7 @@ def load_synthetic_model(
         )
         if (
             calibration not in ("PLATT", "ISOTONIC_STEP")
+            or cal["side"] != record["direction"]
             or not xs
             or len(xs) != len(ys)
             or calibration == "PLATT"
@@ -685,4 +699,50 @@ def unavailable_core5(instrument: str) -> ModelFailure:
         instrument,
         "NO_AUTHORITATIVE_PREDICTION",
         "CORE5_ARTIFACT_UNAVAILABLE_NOT_VERIFIED; NO_FALLBACK",
+    )
+
+
+def load_synthetic_model_packet(
+    model_bundle: tuple[bytes, bytes, bytes, bytes],
+    artifact_bundle: tuple[bytes, bytes, bytes, bytes],
+    plugins: PluginManifest,
+) -> SyntheticModel:
+    """Decode bounded signed transport, not discover files or introduce a new AF format.
+
+    Each named member remains exact AF-1..4 JSON bytes inside a signed JSON-string
+    packet. The existing no-follow three-file fixture intake can transport it
+    without opening arbitrary model filenames or permitting hidden directory members.
+    """
+    packet = signed_record(*artifact_bundle)
+    if set(packet) != {"kind", "files"} or packet["kind"] != "SIGNED_MODEL_ARTIFACT_PACKET_V1":
+        raise ModelDenied("Unapproved model artifact transport")
+    files = packet["files"]
+    if not isinstance(files, dict) or not 2 <= len(files) <= 4:
+        raise ModelDenied("Bounded explicit model artifact members required")
+    artifacts = []
+    for name, value in files.items():
+        if name not in FORMATS or not isinstance(value, str):
+            raise ModelDenied("Unapproved/hidden/executable model artifact member")
+        try:
+            artifacts.append((name, value.encode("utf-8")))
+        except UnicodeError as error:
+            raise ModelDenied("Invalid UTF-8 artifact member: " + name) from error
+    return load_synthetic_model(*model_bundle, tuple(artifacts), plugins)
+
+
+def synthetic_reader_provider(
+    model_bundle: tuple[bytes, bytes, bytes, bytes],
+    artifact_bundle: tuple[bytes, bytes, bytes, bytes],
+    plugins: PluginManifest,
+) -> ScoreProvider:
+    """Inject the sole reader so signature/file/load failures enter the common denial audit."""
+
+    def score(row: FeatureRow) -> SourceScore:
+        try:
+            return load_synthetic_model_packet(model_bundle, artifact_bundle, plugins).score(row)
+        except (FixtureDenied, ClockDenied) as error:
+            raise ModelDenied("Model fixture authentication/time denied: " + str(error)) from error
+
+    return ScoreProvider(
+        SourceKind.TRAINED_MODEL, hashlib.sha256(model_bundle[0]).hexdigest(), score
     )

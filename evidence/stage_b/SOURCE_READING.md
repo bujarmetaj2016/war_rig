@@ -62,3 +62,30 @@ hashes the exact original ten-file source closure (actual bytes, not old assumed
 hashes); B1's independent manifest pins the full current source/dependency closure.
 This preserves historical registrations without signing over new code or hiding
 new modules from whole-build coverage/import checks.
+
+## B2 integration scope
+
+The new `fixtures/stage_a/b2_prediction/` namespace contains independent signed
+snapshot/feature/manifest/artifact packets, intake policies and run declarations.
+The historical `stage_a` prefix is required by the accepted bounded filesystem
+loader; no accepted Stage A fixture was replaced. Model JSON is transported as
+exact signed text through that loader, never discovered or executed. Both
+source paths pass through the same dispatcher and confidence contract. Invalid
+model packet authentication enters a correlated denial audit, never a fallback.
+Five Core-5 runs explicitly declare unavailable models with a null fingerprint;
+no fictitious artifact hash stands in for missing evidence.
+
+The pure synthetic numeric profile rejects nonzero magnitudes below `1e-30`
+or above `1e30` before arithmetic, and rejects boolean numeric metadata.
+Calibration explicitly declares the same side as the model. Date-only event
+times cannot prove NO_EVENT; absent macro series, timestamps, schedules and
+calendars remain UNKNOWN. Duplicate schedule records are rejected even if an
+earlier record was unverified. These are bounded synthetic-reader mechanics,
+not an approved production-model numerical domain.
+
+`tools/check_stage_b_predictions.py` replays actual signed filesystem intake:
+five model denials, two separately labelled score-fixture predictions and one
+synthetic reader prediction, with immutable pre-outcome macro attachments.
+The evidence checker launches two independent processes and compares canonical
+bytes. V2 mappings are separate comparison-only observations, including Gold,
+FX and equity exceptions; they confer neither calibration nor sizing authority.

@@ -4,8 +4,8 @@
   "status": "STAGE_B_IN_PROGRESS",
   "current_stage": "B",
   "last_pass_stage": "A",
-  "last_pass_slice": "B1",
-  "last_commit": "e0ab86257658da75184b6f901c7cf01158450c63",
+  "last_pass_slice": "B2",
+  "last_commit": "78f1ac7715d4866d913eb3af04684e813732ec38",
   "last_commit_role": "BASE_OF_GATE_SOURCE_HASHES_BOUND_BY_ENCLOSING_CHECKPOINT",
   "historical_blocked_checkpoint_commit": "d6549b612b8415ecaa7101bf6e80b7061018199c",
   "checkpoint_form": "STAGE_B_SLICE_GATED",
@@ -164,24 +164,24 @@
     "G": "NOT_STARTED"
   },
   "tests_and_coverage": {
-    "status": "PASS_THROUGH_B1",
+    "status": "PASS_THROUGH_B2",
     "command": "sh tools/run_offline.sh",
     "exit_code": 0,
-    "tests_executed": 667,
+    "tests_executed": 712,
     "tests_failed": 0,
     "tests_skipped": 0,
-    "statements_total": 1634,
+    "statements_total": 1706,
     "statements_missing": 0,
-    "branches_total": 498,
+    "branches_total": 528,
     "branches_missing": 0,
     "branches_partial": 0,
     "excluded_executable_lines": 0,
     "coverage_scope": "ALL_CURRENT_V3_OFFLINE_PRODUCTION_MODULES_NOT_BUILD_EVIDENCE_TOOLS",
-    "coverage_artifact_path": "evidence/stage_b/b1/coverage.json",
-    "coverage_artifact_sha256": "c73be2fb84f14fb58b9fea4789ccbef97e351af9b197858b0f63d01fc68532d0",
+    "coverage_artifact_path": "evidence/stage_b/b2/coverage.json",
+    "coverage_artifact_sha256": "0ff8b894fe8e9aebb956649f5eea4959fa7c2c76fbfb4a8e5be4000a9fa68a69",
     "mutations_killed": 28,
     "mutations_survived": 0,
-    "mutation_report_path": "evidence/stage_b/b1/mutations.json",
+    "mutation_report_path": "evidence/stage_b/b2/mutations.json",
     "macro_trading_decision_noninterference_tests": "NOT_RUN_MACRO_IMPLEMENTATION_PENDING",
     "determinism_processes": 2,
     "determinism_output_sha256": "d38c75217e3330c155116cdd6cb9c2279048f072b26de213340e2c347196bb2b",
@@ -280,6 +280,11 @@
     "B1": {
       "status": "PASS",
       "gate_path": "evidence/stage_b/b1/GATE.json",
+      "source_commit_binding": "ENCLOSING_GATE_COMMIT"
+    },
+    "B2": {
+      "status": "PASS",
+      "gate_path": "evidence/stage_b/b2/GATE.json",
       "source_commit_binding": "ENCLOSING_GATE_COMMIT"
     }
   }

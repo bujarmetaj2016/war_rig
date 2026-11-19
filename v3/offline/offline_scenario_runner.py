@@ -267,7 +267,7 @@ class RunManifest:
     runtime_profile: str
     valid_from: datetime
     valid_until: datetime
-    sources: tuple[tuple[str, SourceKind, str], ...]
+    sources: tuple[tuple[str, SourceKind, str | None], ...]
     sha256: str
 
 
@@ -288,16 +288,16 @@ def load_run_manifest(payload: bytes, manifest: bytes, signature: bytes, key: by
     raw = item["sources"]
     if item["kind"] != "FIXTURE_PREDICTION_RUN_V1" or not isinstance(raw, list) or not raw:
         raise PredictionDenied("Explicit signed run sources required")
-    entries: list[tuple[str, SourceKind, str]] = []
+    entries: list[tuple[str, SourceKind, str | None]] = []
     for source in raw:
         entry = object_fields(source, {"instrument", "source_kind", "fingerprint"})
-        entries.append(
-            (
-                _identity(entry["instrument"]),
-                SourceKind(_text(entry["source_kind"])),
-                digest(entry["fingerprint"]),
-            )
+        kind = SourceKind(_text(entry["source_kind"]))
+        source_hash = (
+            None
+            if kind is SourceKind.TRAINED_MODEL and entry["fingerprint"] is None
+            else digest(entry["fingerprint"])
         )
+        entries.append((_identity(entry["instrument"]), kind, source_hash))
     if len({entry[0] for entry in entries}) != len(entries) or utc(item["valid_until"]) <= utc(
         item["valid_from"]
     ):
@@ -727,4 +727,74 @@ def prediction_reference(
         score.source_fingerprint,
         score.policy_sha256,
         score.run_manifest_sha256,
+    )
+
+
+@dataclass(frozen=True)
+class V2ConfidenceObservation:
+    """Pinned V2 comparison only; never a V3 direction, gate, calibration or sizing policy."""
+
+    instrument: str
+    raw_long_score: Decimal
+    climate: Decimal | None
+    reference_confidence: Decimal | None
+    reference_grade: str | None
+    reference_signal: str
+    telemetry_size_label: str
+    calibration_status: str = "NOT_PROVEN"
+    mode: str = "COMPUTE_AND_LOG_ONLY_V2_PARITY"
+
+
+def v2_confidence_observation(
+    instrument: str,
+    raw_long_score: Decimal,
+    climate: Decimal | None,
+) -> V2ConfidenceObservation:
+    """Observe pinned audit_entry:62-67 / live_inference:478-521, not activate their gates."""
+    if (
+        instrument not in {"XAUUSD", "EURUSD", "GBPUSD", "GER40", "US500"}
+        or not raw_long_score.is_finite()
+        or not 0 <= raw_long_score <= 1
+        or climate is not None
+        and (not climate.is_finite() or not 0 <= climate <= 100)
+    ):
+        raise PredictionDenied("Invalid V2 reference observation")
+    if instrument != "XAUUSD" and climate is None:
+        return V2ConfidenceObservation(
+            instrument, raw_long_score, climate, None, None, "UNKNOWN", "UNKNOWN"
+        )
+    probability = float(raw_long_score)
+    reference_signal = (
+        "BULLISH" if probability >= 0.55 else ("BEARISH" if probability <= 0.45 else "NEUTRAL")
+    )
+    gold = instrument == "XAUUSD"
+    # Binary64 and round(..., 3) intentionally reproduce the pinned V2 reference only.
+    climate_value = float(climate) if climate is not None else 0.0
+    adjusted = probability if gold else probability * (climate_value / 100)
+    confidence = round(adjusted, 3)
+    grade = (
+        "A"
+        if confidence >= 0.6
+        else "B"
+        if confidence >= 0.45
+        else "C"
+        if confidence >= 0.3
+        else "D"
+    )
+    label = "NEUTRAL"
+    if reference_signal != "NEUTRAL":
+        if gold or climate is not None and climate >= 60:
+            label = "FULL"
+        elif climate is not None and climate >= 40:
+            label = "HALF" if instrument in {"EURUSD", "GBPUSD"} else "FULL"
+        else:
+            reference_signal, label = "NEUTRAL", "SUPPRESS"
+    return V2ConfidenceObservation(
+        instrument,
+        raw_long_score,
+        climate,
+        Decimal(str(confidence)),
+        grade,
+        reference_signal,
+        label,
     )

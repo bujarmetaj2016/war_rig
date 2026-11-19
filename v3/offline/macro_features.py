@@ -76,11 +76,15 @@ def _basket(
 ) -> tuple[str, Decimal | None, Decimal | None, str]:
     if instrument not in ("EURUSD", "GBPUSD"):
         return "UNKNOWN", None, None, "NOT_ADOPTED_FOR_THIS_INSTRUMENT"
+    if series is None:
+        return "UNKNOWN", None, None, "MISSING_BASKET_HISTORY"
     if not isinstance(series, dict) or set(series) - set(PAIRS):
         raise PredictionDenied("Unapproved macro basket leg")
     legs = tuple(pair for pair in PAIRS if pair != instrument)
     if freshness is None:
         return "UNKNOWN", None, None, "FRESHNESS_POLICY_UNSELECTED"
+    if not expected_closes:
+        return "UNKNOWN", None, None, "EXPECTED_CLOSE_CALENDAR_UNAVAILABLE"
     histories: list[tuple[Decimal, ...]] = []
     for pair in legs:
         if pair not in series:
@@ -89,6 +93,8 @@ def _basket(
         closes = []
         for value in _list(series[pair]):
             record = object_fields(value, {"close_at", "available_at", "vintage_at", "value"})
+            if any(record[field] is None for field in ("close_at", "available_at", "vintage_at")):
+                return "UNKNOWN", None, None, "MISSING_OR_PIT_UNPROVEN:" + pair
             close, available, vintage = (
                 utc(record["close_at"]),
                 utc(record["available_at"]),
@@ -134,14 +140,28 @@ def _events(
     entry: datetime,
     freshness: int | None,
 ) -> tuple[str, str]:
+    if events is None or schedules is None:
+        return "UNKNOWN", "MISSING_PRE_ENTRY_EVENT_OR_SCHEDULE_EVIDENCE"
     verified = {}
+    seen = set()
     for value in _list(schedules):
         schedule = object_fields(
             value, {"event_type", "published_at", "coverage_start", "coverage_end", "source_sha256"}
         )
         kind = _identity(schedule["event_type"])
-        if kind not in EVENTS or kind in verified:
+        if kind not in EVENTS or kind in seen:
             raise PredictionDenied("Unapproved/duplicate event schedule")
+        seen.add(kind)
+        if any(
+            schedule[field] is None
+            for field in (
+                "published_at",
+                "coverage_start",
+                "coverage_end",
+                "source_sha256",
+            )
+        ):
+            continue
         digest(schedule["source_sha256"])
         published = utc(schedule["published_at"])
         start, end = utc(schedule["coverage_start"]), utc(schedule["coverage_end"])
@@ -154,12 +174,15 @@ def _events(
             and entry - published <= timedelta(seconds=freshness)
         ):
             verified[kind] = (start, end)
+    uncertain_timing = False
     for value in _list(events):
         event = object_fields(value, {"event_type", "scheduled_at"})
         kind = _identity(event["event_type"])
         if kind not in EVENTS:
             raise PredictionDenied("Unapproved macro event")
         scheduled = None if event["scheduled_at"] is None else utc(event["scheduled_at"])
+        if scheduled is None:
+            uncertain_timing = True
         if (
             kind in verified
             and scheduled is not None
@@ -167,8 +190,13 @@ def _events(
             and timedelta(0) < scheduled - entry <= timedelta(hours=24)
         ):
             return "EVENT_WINDOW", "PROVEN_PRE_ENTRY_OFFICIAL_SCHEDULE_FIXTURE"
-    if set(verified) == EVENTS and all(
-        start <= entry and end >= entry + timedelta(hours=24) for start, end in verified.values()
+    if (
+        not uncertain_timing
+        and set(verified) == EVENTS
+        and all(
+            start <= entry and end >= entry + timedelta(hours=24)
+            for start, end in verified.values()
+        )
     ):
         return "NO_EVENT", "COMPLETE_FIVE_SCHEDULE_PIT_COVERAGE"
     return "UNKNOWN", "INCOMPLETE_OR_STALE_PRE_ENTRY_SCHEDULE_COVERAGE"
@@ -217,7 +245,11 @@ def compute_macro_observation(
     )
     if freshness is not None and not 0 < freshness <= 31536000:
         raise PredictionDenied("Invalid signed macro freshness policy")
-    closes = tuple(utc(value) for value in _list(record["expected_closes"]))
+    closes = (
+        ()
+        if record["expected_closes"] is None
+        else tuple(utc(value) for value in _list(record["expected_closes"]))
+    )
     if any(left >= right for left, right in zip(closes, closes[1:], strict=False)):
         raise PredictionDenied("Duplicated/nonmonotonic expected daily calendar")
     basket, current, sigma, reason = _basket(

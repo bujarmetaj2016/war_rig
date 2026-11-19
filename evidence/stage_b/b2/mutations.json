@@ -1,0 +1,286 @@
+{
+  "mutations": [
+    {
+      "mutation": "signature_verification_removed",
+      "module": "v3/offline/fixture_policy_loader.py",
+      "original_sha256": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+      "test": "tests/v3/test_fixture_policy_loader.py::test_mutating_any_authenticated_input_denies[2]",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "payload_hash_check_removed",
+      "module": "v3/offline/fixture_policy_loader.py",
+      "original_sha256": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+      "test": "tests/v3/test_fixture_policy_loader.py::test_mutating_any_authenticated_input_denies[0]",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "fixture_domain_check_removed",
+      "module": "v3/offline/fixture_policy_loader.py",
+      "original_sha256": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+      "test": "tests/v3/test_fixture_policy_loader.py::test_signed_manifest_still_cannot_widen_scope_or_skip_bounds",
+      "exit_code": 1,
+      "assertion_failures": 2,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "expiry_boundary_widened",
+      "module": "v3/offline/fixture_policy_loader.py",
+      "original_sha256": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+      "test": "tests/v3/test_fixture_policy_loader.py::test_validity_is_half_open_and_never_uses_wall_time",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "duplicate_key_override_allowed",
+      "module": "v3/offline/fixture_policy_loader.py",
+      "original_sha256": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+      "test": "tests/v3/test_fixture_policy_loader.py::test_duplicate_key_cannot_override_an_otherwise_valid_signed_policy",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "payload_byte_bound_removed",
+      "module": "v3/offline/fixture_policy_loader.py",
+      "original_sha256": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+      "test": "tests/v3/test_fixture_policy_loader.py::test_signed_manifest_still_cannot_widen_scope_or_skip_bounds",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "signature_domain_separator_removed",
+      "module": "v3/offline/fixture_policy_loader.py",
+      "original_sha256": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+      "test": "tests/v3/test_fixture_policy_loader.py::test_signature_without_the_fixture_domain_is_not_accepted",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "replay_clock_rewind_allowed",
+      "module": "v3/offline/calendar_completion.py",
+      "original_sha256": "b474b5d4f037e934c0b42dc33ba093f3f445e71aa955e1271cb733e2d0101040",
+      "test": "tests/v3/test_calendar_completion.py::test_utc_clock_is_immutable_monotonic_and_replayable",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "forming_bar_allowed",
+      "module": "v3/offline/calendar_completion.py",
+      "original_sha256": "b474b5d4f037e934c0b42dc33ba093f3f445e71aa955e1271cb733e2d0101040",
+      "test": "tests/v3/test_completed_snapshots.py::test_forming_wrong_interval_or_prior_bar_cannot_substitute",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "post_decision_revision_allowed",
+      "module": "v3/offline/calendar_completion.py",
+      "original_sha256": "b474b5d4f037e934c0b42dc33ba093f3f445e71aa955e1271cb733e2d0101040",
+      "test": "tests/v3/test_completed_snapshots.py::test_post_decision_or_pre_completion_evidence_is_not_available",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "untrusted_event_clock_domain_allowed",
+      "module": "v3/offline/calendar_completion.py",
+      "original_sha256": "b474b5d4f037e934c0b42dc33ba093f3f445e71aa955e1271cb733e2d0101040",
+      "test": "tests/v3/test_completed_snapshots.py::test_invalid_clock_replay_or_calendar_evidence_returns_explicit_data_denial",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "closed_session_boundary_allowed",
+      "module": "v3/offline/calendar_completion.py",
+      "original_sha256": "b474b5d4f037e934c0b42dc33ba093f3f445e71aa955e1271cb733e2d0101040",
+      "test": "tests/v3/test_completed_snapshots.py::test_invalid_or_closed_session_cannot_be_fresh",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "t3_owner_floor_widened",
+      "module": "v3/offline/effective_policy.py",
+      "original_sha256": "14c07b2bfe9a3936842714a0c11b5d435f804dbc0553993a4ffe50f337df7fa9",
+      "test": "tests/v3/test_policy_foundations.py::test_any_t3_rr_below_signed_owner_floor_denies",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "t1_mandatory_checks_removed",
+      "module": "v3/offline/effective_policy.py",
+      "original_sha256": "14c07b2bfe9a3936842714a0c11b5d435f804dbc0553993a4ffe50f337df7fa9",
+      "test": "tests/v3/test_policy_foundations.py::test_t1_and_unselected_or_unsupported_t2_parameters_deny",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "fixture_leaf_symlink_followed",
+      "module": "v3/offline/fixture_policy_loader.py",
+      "original_sha256": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+      "test": "tests/v3/test_fixture_filesystem.py::test_even_authentic_bytes_cannot_be_followed_through_a_symlink",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "fixture_total_byte_limit_removed",
+      "module": "v3/offline/fixture_policy_loader.py",
+      "original_sha256": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+      "test": "tests/v3/test_fixture_filesystem.py::test_exact_inventory_file_and_total_limits_are_enforced[total_bytes]",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "plugin_network_capability_allowed",
+      "module": "v3/offline/plugin_manifest.py",
+      "original_sha256": "6271f00bf21f7da13c624d770f29f7d051547e43115c9050805041459f3cc460",
+      "test": "tests/v3/test_instrument_registration.py::test_capability_guard_is_independent_of_exact_source_build_integrity",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "registration_expected_version_removed",
+      "module": "v3/offline/contract_listing_registry.py",
+      "original_sha256": "aa4fd85cdd37e09e9615b7a9f57b917e01e193fbc89aa6b1f4bdc2301f5d15a1",
+      "test": "tests/v3/test_instrument_registration.py::test_expected_state_guard_is_independent_of_build_integrity",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "missing_listing_field_allowed",
+      "module": "v3/offline/contract_listing_registry.py",
+      "original_sha256": "aa4fd85cdd37e09e9615b7a9f57b917e01e193fbc89aa6b1f4bdc2301f5d15a1",
+      "test": "tests/v3/test_instrument_registration.py::test_missing_fee_evidence_cannot_use_an_assumed_definition_value",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "model_declared_bytes_ignored",
+      "module": "v3/offline/model_intake.py",
+      "original_sha256": "63d522b98deb1cd496d56cc6842fa83a5b5b902292019ce9e75a015d720e418e",
+      "test": "tests/v3/test_model_intake.py::test_declared_file_bytes_are_independent_of_correct_hashes",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "tree_split_reversed",
+      "module": "v3/offline/model_intake.py",
+      "original_sha256": "63d522b98deb1cd496d56cc6842fa83a5b5b902292019ce9e75a015d720e418e",
+      "test": "tests/v3/test_model_intake.py::test_full_path_hand_constants_signed_artifacts_determinism_and_source_separation",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "model_numeric_domain_removed",
+      "module": "v3/offline/model_intake.py",
+      "original_sha256": "63d522b98deb1cd496d56cc6842fa83a5b5b902292019ce9e75a015d720e418e",
+      "test": "tests/v3/test_model_intake.py::test_platt_and_logistic_numerics_are_pure_registered_constant_proofs",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "source_selection_guard_removed",
+      "module": "v3/offline/offline_scenario_runner.py",
+      "original_sha256": "f11c0dd934ded84fa6e168626850c461696a1f1151e5696687acd1160f55a996",
+      "test": "tests/v3/test_prediction_pipeline.py::test_unregistered_source_is_not_called_even_once",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "confidence_conservative_caps_removed",
+      "module": "v3/offline/offline_scenario_runner.py",
+      "original_sha256": "f11c0dd934ded84fa6e168626850c461696a1f1151e5696687acd1160f55a996",
+      "test": "tests/v3/test_prediction_pipeline.py::test_signed_pipeline_repeat_reload_source_labels_and_caps",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "own_currency_in_basket",
+      "module": "v3/offline/macro_features.py",
+      "original_sha256": "03aaf1798085bfabdd4173ce89c475668daf02d8f47006afcb01bfd7d28fc031",
+      "test": "tests/v3/test_macro_features.py::test_ex_own_currency_equal_weight_signs_and_sample_std",
+      "exit_code": 1,
+      "assertion_failures": 6,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "event_at_entry_not_before",
+      "module": "v3/offline/macro_features.py",
+      "original_sha256": "03aaf1798085bfabdd4173ce89c475668daf02d8f47006afcb01bfd7d28fc031",
+      "test": "tests/v3/test_macro_features.py::test_all_five_instruments_event_window_boundary_is_strictly_before_release",
+      "exit_code": 1,
+      "assertion_failures": 10,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "stale_macro_becomes_neutral",
+      "module": "v3/offline/macro_features.py",
+      "original_sha256": "03aaf1798085bfabdd4173ce89c475668daf02d8f47006afcb01bfd7d28fc031",
+      "test": "tests/v3/test_macro_features.py::test_unknown_is_not_a_neutral_or_success_fallback",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    },
+    {
+      "mutation": "macro_changes_prediction_grade",
+      "module": "v3/offline/macro_features.py",
+      "original_sha256": "03aaf1798085bfabdd4173ce89c475668daf02d8f47006afcb01bfd7d28fc031",
+      "test": "tests/v3/test_macro_features.py::test_observation_mutations_cannot_change_existing_prediction_decision_or_risk_caps",
+      "exit_code": 1,
+      "assertion_failures": 1,
+      "collection_errors": 0,
+      "status": "KILLED"
+    }
+  ],
+  "killed": 28,
+  "survived": 0
+}

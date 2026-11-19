@@ -22,6 +22,19 @@ def main():
     coverage = json.loads((source / "coverage.json").read_text())
     mutations = json.loads((source / "mutations.json").read_text())
     preflight = json.loads((source / "preflight.json").read_text())
+    if name != "b1":
+        prediction_bytes = (source / "predictions.json").read_bytes()
+        predictions = json.loads(prediction_bytes)
+        if (
+            predictions["status"] != "PASS"
+            or predictions["core5_model_denials"] != 5
+            or predictions["signed_score_predictions"] != 2
+            or predictions["synthetic_reader_predictions"] != 1
+            or checks["prediction_determinism_processes"] != 2
+            or checks["prediction_determinism_output_sha256"]
+            != hashlib.sha256(prediction_bytes).hexdigest()
+        ):
+            raise ValueError("Missing or mismatched independently replayed prediction proof")
     suites = list(ET.parse(source / "junit.xml").getroot().iter("testsuite"))
     totals = coverage["totals"]
     if (
