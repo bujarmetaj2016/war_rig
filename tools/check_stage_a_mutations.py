@@ -16,11 +16,15 @@ CLOCK = "v3/offline/calendar_completion.py"
 TIERS = "v3/offline/effective_policy.py"
 PLUGINS = "v3/offline/plugin_manifest.py"
 REGISTRY = "v3/offline/contract_listing_registry.py"
+PREDICTIONS = "v3/offline/offline_scenario_runner.py"
+MODELS = "v3/offline/model_intake.py"
+MACRO = "v3/offline/macro_features.py"
 
 
 def main() -> None:
     originals = {
-        name: (ROOT / name).read_bytes() for name in (LOADER, CLOCK, TIERS, PLUGINS, REGISTRY)
+        name: (ROOT / name).read_bytes()
+        for name in (LOADER, CLOCK, TIERS, PLUGINS, REGISTRY, PREDICTIONS, MODELS, MACRO)
     }
     mutations = [
         (
@@ -174,6 +178,75 @@ def main() -> None:
             "::test_missing_fee_evidence_cannot_use_an_assumed_definition_value",
         ),
     ]
+    mutations.extend(
+        [
+            (
+                "model_declared_bytes_ignored",
+                MODELS,
+                'len(raw) != _integer(file["bytes"])',
+                "False",
+                "tests/v3/test_model_intake.py::test_declared_file_bytes_are_independent_of_correct_hashes",
+            ),
+            (
+                "tree_split_reversed",
+                MODELS,
+                "value < self.conditions[node]",
+                "value > self.conditions[node]",
+                "tests/v3/test_model_intake.py::test_full_path_hand_constants_signed_artifacts_determinism_and_source_separation",
+            ),
+            (
+                "model_numeric_domain_removed",
+                MODELS,
+                "if abs(margin) > 100:",
+                "if False:",
+                "tests/v3/test_model_intake.py::test_platt_and_logistic_numerics_are_pure_registered_constant_proofs",
+            ),
+            (
+                "source_selection_guard_removed",
+                PREDICTIONS,
+                "if provider.kind != kind or provider.sha256 != source_hash:",
+                "if False:",
+                "tests/v3/test_prediction_pipeline.py::test_unregistered_source_is_not_called_even_once",
+            ),
+            (
+                "confidence_conservative_caps_removed",
+                PREDICTIONS,
+                "min(tier, policy.cap, data_quality, conservative_cap)",
+                "tier",
+                "tests/v3/test_prediction_pipeline.py::test_signed_pipeline_repeat_reload_source_labels_and_caps",
+            ),
+            (
+                "own_currency_in_basket",
+                MACRO,
+                "pair != instrument",
+                "True",
+                "tests/v3/test_macro_features.py::test_ex_own_currency_equal_weight_signs_and_sample_std",
+            ),
+            (
+                "event_at_entry_not_before",
+                MACRO,
+                "timedelta(0) < scheduled - entry",
+                "timedelta(days=-1) < scheduled - entry",
+                "tests/v3/test_macro_features.py::test_all_five_instruments_event_window_boundary_is_strictly_before_release",
+            ),
+            (
+                "stale_macro_becomes_neutral",
+                MACRO,
+                'return "UNKNOWN", None, None, "STALE_LEG:" + pair',
+                'return "NEUTRAL", None, None, "STALE_LEG:" + pair',
+                "tests/v3/test_macro_features.py::test_unknown_is_not_a_neutral_or_success_fallback",
+            ),
+            (
+                "macro_changes_prediction_grade",
+                MACRO,
+                "return ObservedPrediction(score, observation)",
+                "return ObservedPrediction("
+                'score.__class__(**(score.__dict__ | {"grade": "D"})), observation)',
+                "tests/v3/test_macro_features.py"
+                "::test_observation_mutations_cannot_change_existing_prediction_decision_or_risk_caps",
+            ),
+        ]
+    )
     results = []
     for name, module, before, after, selector in mutations:
         original = originals[module].decode()

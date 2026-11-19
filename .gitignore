@@ -26,6 +26,7 @@ __pycache__/
 .hypothesis/
 .stage-a-mutation-*/
 evidence/stage_a/runs/
+evidence/stage_b/runs/
 
 # Coverage artefacts
 .coverage

@@ -4,7 +4,12 @@ set -eu
 cd "$(dirname "$0")/.."
 root=$(pwd -P)
 image=$(cat evidence/preflight/PYTHON_IMAGE.txt)
-output="evidence/stage_a/runs/$(date -u +%Y%m%dT%H%M%SZ)-$$"
+stage=${1:-stage_a}
+case "$stage" in
+    stage_a|stage_b) ;;
+    *) printf '%s\n' "Expected stage_a or stage_b evidence scope" >&2; exit 1 ;;
+esac
+output="evidence/$stage/runs/$(date -u +%Y%m%dT%H%M%SZ)-$$"
 if [ "$image" != "python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b" ]; then
     printf '%s\n' "Pinned image changed; review and update the sandbox contract first." >&2
     exit 1

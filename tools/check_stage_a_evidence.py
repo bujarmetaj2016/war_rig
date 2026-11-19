@@ -19,8 +19,49 @@ REQUIRED = {
     "v3/offline/plugin_manifest.py",
     "v3/offline/instrument_definition.py",
     "v3/offline/contract_listing_registry.py",
+    "v3/offline/offline_scenario_runner.py",
+    "v3/offline/model_intake.py",
+    "v3/offline/macro_features.py",
 }
 ALLOWED_IMPORTS = {
+    "v3/offline/offline_scenario_runner.py": {
+        "hashlib",
+        "json",
+        "re",
+        "collections.abc",
+        "dataclasses",
+        "datetime",
+        "decimal",
+        "enum",
+        "v3.offline.calendar_completion",
+        "v3.offline.data_intake_schema",
+        "v3.offline.effective_policy",
+        "v3.offline.fixture_policy_loader",
+        "v3.offline.intent_identity",
+        "v3.offline.plugin_manifest",
+    },
+    "v3/offline/model_intake.py": {
+        "hashlib",
+        "json",
+        "dataclasses",
+        "datetime",
+        "decimal",
+        "v3.offline.offline_scenario_runner",
+        "v3.offline.plugin_manifest",
+        "v3.offline.calendar_completion",
+        "v3.offline.intent_identity",
+    },
+    "v3/offline/macro_features.py": {
+        "hashlib",
+        "dataclasses",
+        "datetime",
+        "decimal",
+        "statistics",
+        "v3.offline.calendar_completion",
+        "v3.offline.data_intake_schema",
+        "v3.offline.fixture_policy_loader",
+        "v3.offline.offline_scenario_runner",
+    },
     "v3/__init__.py": set(),
     "v3/offline/__init__.py": set(),
     "v3/offline/plugin_manifest.py": {
@@ -124,8 +165,10 @@ def normalized(path: Path) -> list[str]:
 
 def main() -> None:
     destination = (ROOT / sys.argv[1]).resolve()
-    if not destination.is_relative_to(ROOT / "evidence/stage_a"):
-        raise ValueError("Evidence output must remain inside evidence/stage_a")
+    if not any(
+        destination.is_relative_to(ROOT / f"evidence/{stage}") for stage in ("stage_a", "stage_b")
+    ):
+        raise ValueError("Evidence output must remain inside an approved stage directory")
     report = json.loads((destination / "coverage.json").read_text())
     modules = {str(path.relative_to(ROOT)) for path in (ROOT / "v3/offline").rglob("*.py")}
     if (
@@ -185,6 +228,13 @@ def main() -> None:
             if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
                 if node.func.id in {"eval", "exec", "open", "__import__"}:
                     raise RuntimeError(f"Forbidden dynamic/I/O V3 capability: {path}")
+            if (
+                isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Attribute)
+                and node.func.attr
+                in {"fit", "train", "refit", "partial_fit", "fit_transform", "calibrate"}
+            ):
+                raise RuntimeError(f"Forbidden training/calibration-fitting call: {path}")
         lines = normalized(path)
         windows = {tuple(lines[i : i + 12]) for i in range(len(lines) - 11)}
         for legacy in snapshot:

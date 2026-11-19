@@ -53,10 +53,32 @@ def hash_json(value):
     return hashlib.sha256(canonical(value)).hexdigest()
 
 
-def build_artifacts() -> tuple[BuildArtifact, ...]:
+STAGE_A_SOURCE_PATHS = (
+    "v3/__init__.py",
+    "v3/offline/__init__.py",
+    "v3/offline/calendar_completion.py",
+    "v3/offline/contract_listing_registry.py",
+    "v3/offline/data_intake_schema.py",
+    "v3/offline/effective_policy.py",
+    "v3/offline/fixture_policy_loader.py",
+    "v3/offline/instrument_definition.py",
+    "v3/offline/intent_identity.py",
+    "v3/offline/plugin_manifest.py",
+)
+
+
+def build_artifacts(
+    *,
+    source_paths: tuple[str, ...] = STAGE_A_SOURCE_PATHS,
+) -> tuple[BuildArtifact, ...]:
+    """Hash actual bytes for an explicit closure, not every future file in the repo.
+
+    Accepted A5 manifests bind the unchanged A6 source closure. New stage manifests
+    must explicitly pass the complete current inventory; no old signature is renewed.
+    """
     sources = {
         ".".join(path.relative_to(ROOT).with_suffix("").parts): path
-        for path in sorted((ROOT / "v3").rglob("*.py"))
+        for path in (ROOT / name for name in sorted(source_paths))
     }
     return tuple(
         BuildArtifact(

@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "recorded_date_utc": "2026-11-19",
-  "status": "STAGE_A_COMPLETE_FULL_SCOPE_NOT_READY",
+  "status": "STAGE_B_IN_PROGRESS",
   "current_stage": "B",
   "last_pass_stage": "A",
-  "last_pass_slice": "A6",
-  "last_commit": "1593a68bc2724995a78050855783aa9e7bdd83a8",
+  "last_pass_slice": "B1",
+  "last_commit": "e0ab86257658da75184b6f901c7cf01158450c63",
   "last_commit_role": "BASE_OF_GATE_SOURCE_HASHES_BOUND_BY_ENCLOSING_CHECKPOINT",
   "historical_blocked_checkpoint_commit": "d6549b612b8415ecaa7101bf6e80b7061018199c",
-  "checkpoint_form": "STAGE_A_FOUNDATIONS_COMPLETE_B_G_NOT_STARTED",
-  "resume_note": "Stage A is complete at the enclosing A6 checkpoint. Read Stage B governing clauses before implementation; full-package reading and B-G completion remain pending. No release, model, broker, promotion or trading authority is granted.",
+  "checkpoint_form": "STAGE_B_SLICE_GATED",
+  "resume_note": "Resume Stage B after the enclosing committed slice gate; no Stage C start until any arriving Stage A R2 finding is fixed.",
   "authority": {
     "offline_development_route": "OWNER_DIRECTED",
     "formal_governance_attestation": "NOT_VERIFIED",
@@ -70,7 +70,7 @@
     "entry_gate_adopted": false,
     "size_modifier_adopted": false,
     "additional_proposal_items_adopted": false,
-    "implementation_status": "NOT_IMPLEMENTED",
+    "implementation_status": "B1_COMPUTE_LOG_PIPELINE_ONLY_C_E_F_INTEGRATION_PENDING",
     "evidence_consumption": "READ_ONLY_IN_PLACE"
   },
   "execution_environment": {
@@ -156,7 +156,7 @@
   },
   "stages": {
     "A": "PASS",
-    "B": "NOT_STARTED",
+    "B": "IN_PROGRESS",
     "C": "NOT_STARTED",
     "D": "NOT_STARTED",
     "E": "NOT_STARTED",
@@ -164,24 +164,24 @@
     "G": "NOT_STARTED"
   },
   "tests_and_coverage": {
-    "status": "PASS_THROUGH_A6",
+    "status": "PASS_THROUGH_B1",
     "command": "sh tools/run_offline.sh",
     "exit_code": 0,
-    "tests_executed": 431,
+    "tests_executed": 667,
     "tests_failed": 0,
     "tests_skipped": 0,
-    "statements_total": 956,
+    "statements_total": 1634,
     "statements_missing": 0,
-    "branches_total": 268,
+    "branches_total": 498,
     "branches_missing": 0,
     "branches_partial": 0,
     "excluded_executable_lines": 0,
     "coverage_scope": "ALL_CURRENT_V3_OFFLINE_PRODUCTION_MODULES_NOT_BUILD_EVIDENCE_TOOLS",
-    "coverage_artifact_path": "evidence/stage_a/a6/coverage.json",
-    "coverage_artifact_sha256": "818388f661d82cc65eef3c7fb62dd21a10a660a29a72ce34ddb27444f9652341",
-    "mutations_killed": 19,
+    "coverage_artifact_path": "evidence/stage_b/b1/coverage.json",
+    "coverage_artifact_sha256": "c73be2fb84f14fb58b9fea4789ccbef97e351af9b197858b0f63d01fc68532d0",
+    "mutations_killed": 28,
     "mutations_survived": 0,
-    "mutation_report_path": "evidence/stage_a/a6/mutations.json",
+    "mutation_report_path": "evidence/stage_b/b1/mutations.json",
     "macro_trading_decision_noninterference_tests": "NOT_RUN_MACRO_IMPLEMENTATION_PENDING",
     "determinism_processes": 2,
     "determinism_output_sha256": "d38c75217e3330c155116cdd6cb9c2279048f072b26de213340e2c347196bb2b",
@@ -275,5 +275,12 @@
       "evidence_path": "evidence/stage_a/a1/preflight.json"
     }
   ],
-  "remaining_stage_a_work": []
+  "remaining_stage_a_work": [],
+  "stage_b_slices": {
+    "B1": {
+      "status": "PASS",
+      "gate_path": "evidence/stage_b/b1/GATE.json",
+      "source_commit_binding": "ENCLOSING_GATE_COMMIT"
+    }
+  }
 }
