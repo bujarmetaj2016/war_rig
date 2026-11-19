@@ -116,11 +116,30 @@ def main() -> None:
             "::test_invalid_clock_replay_or_calendar_evidence_returns_explicit_data_denial",
         ),
         (
-            "closed_session_boundary_allowed",
+            "session_closing_bar_wrongly_excluded",
             CLOCK,
-            "calendar.session_open <= replay.at < calendar.session_close",
-            "calendar.session_open <= replay.at <= calendar.session_close",
-            "tests/v3/test_completed_snapshots.py::test_invalid_or_closed_session_cannot_be_fresh",
+            "bar.end <= calendar.session_close",
+            "bar.end < calendar.session_close",
+            "tests/v3/test_completed_snapshots.py"
+            "::test_daily_bar_at_session_close_is_available_after_close_within_max_age",
+        ),
+        (
+            "r2_a01_decision_session_restriction_restored",
+            CLOCK,
+            "or not calendar.session_open <= bar.start",
+            "or not calendar.session_open <= replay.at < calendar.session_close\n"
+            "        or not calendar.session_open <= bar.start",
+            "tests/v3/test_completed_snapshots.py"
+            "::test_daily_bar_at_session_close_is_available_after_close_within_max_age",
+        ),
+        (
+            "r2_a01_feature_expiry_capped_at_session_close",
+            PREDICTIONS,
+            "context.valid_until,\n            snapshot.lineage.bar_end",
+            "context.valid_until,\n            snapshot.calendar.session_close,\n"
+            "            snapshot.lineage.bar_end",
+            "tests/v3/test_prediction_pipeline.py"
+            "::test_daily_features_and_prediction_remain_valid_after_close_until_data_max_age",
         ),
         (
             "t3_owner_floor_widened",

@@ -1,5 +1,33 @@
 # R2 checkpoint handoff - Stages A/B complete in offline scope
 
+## Current correction: R2-A-01
+
+The reported MAJOR session-close deadlock is fixed in the enclosing
+`stage_a/r2_a_01/GATE.json` checkpoint. Source clauses, exact interpretation and
+the EXT-01 versioning answer are in `stage_a/R2_A_01_DISPOSITION.md`.
+Session containment now applies to the source bar; completed-data decisions
+may follow close subject to publication/vintage and unchanged maximum age.
+The coupled Stage B feature-expiry cap at session close is also removed.
+
+The cumulative gate retains forming-bar denials and adds the daily 00:00-22:00Z
+case, stale/pre-close/publication denials, 23/25-hour DST windows, a persisted
+daily-interval registration with unchanged runtime/manifest bytes during
+onboarding, and an actual post-close feature/prediction path. Thirty mutants
+must be killed, including restorations of both erroneous session-close caps.
+Stage B is revalidated by the same full-package gate, not silently invalidated.
+
+Current build-bound fixture revisions are `a7/` and `b4_prediction/`; historical
+fixtures and all sealed A/B bundles remain unchanged. Normal reproduction is
+`sh tools/run_offline.sh stage_a`; no IDE debugger/port is involved.
+Implementation correction is not a claim of independent reviewer acceptance.
+The typed-denial and public-parser refactors remain open minor follow-ups.
+EXT-01 requires controlled successor definition versions for an existing
+instrument; the current registry's one-registration-per-instrument restriction
+is documented as an open minor, not misrepresented as compliant versioning.
+Stage C remains unstarted.
+
+## Stage B completion baseline (before the correction)
+
 The owner accepted Stage A at `e0ab862`. Stage B is complete under R3's
 explicit synthetic-reader exception, not real model eligibility, original-library
 parity, independent R2 approval, release readiness or trading authority.

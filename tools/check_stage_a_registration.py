@@ -6,7 +6,7 @@ from dataclasses import asdict
 from datetime import UTC, datetime
 from pathlib import Path
 
-from tools.create_stage_a_registration_fixtures import build_artifacts
+from tools.create_stage_a_registration_fixtures import REGISTRATION_NAMESPACE, build_artifacts
 from v3.offline.contract_listing_registry import (
     FixtureRegistrationRegistry,
     assess_fixture_listing,
@@ -34,6 +34,8 @@ ACCOUNT = SimulatedAccountId("SIMULATED_ACCOUNT")
 
 
 def raw_bundle(name):
+    if name.startswith("a5/"):
+        name = REGISTRATION_NAMESPACE + name.removeprefix("a5")
     folder = ROOT / "fixtures/stage_a" / name
     public = json.loads((ROOT / "evidence/preflight/DEV_FIXTURE_PUBLIC_KEY.json").read_text())
     key = bytes.fromhex(public["public_key_hex"])
@@ -91,7 +93,7 @@ def profile(instrument, plugins, inputs, policy):
 
 def inventory():
     paths = sorted((ROOT / "v3").rglob("*.py"))
-    paths += sorted((ROOT / "fixtures/stage_a/a5/plugins").iterdir())
+    paths += sorted((ROOT / "fixtures/stage_a" / REGISTRATION_NAMESPACE / "plugins").iterdir())
     return {
         str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest() for path in paths
     }
@@ -144,16 +146,25 @@ def registration_proof():
                 "event": asdict(event),
                 "data": "COMPLETED_FIXTURE_ONLY",
                 "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+                "interval_seconds": snapshot.calendar.interval_seconds,
+                "session_close": snapshot.calendar.session_close,
+                "decision_at": snapshot.clock.at,
             }
         )
     after = inventory()
     if len(outcomes) != 6 or outcomes[-1]["instrument"] != "SYNTHETIC_6" or before != after:
         raise ValueError("Sixth definition/fixture-only onboarding or byte-identity proof failed")
+    if (
+        outcomes[-1]["interval_seconds"] != 86400
+        or outcomes[-1]["decision_at"] <= outcomes[-1]["session_close"]
+    ):
+        raise ValueError("Daily configuration-only post-close registration proof failed")
     return {
         "status": "PASS",
         "initial_profiles": 5,
         "added_profiles": 1,
         "registered_profiles": 6,
+        "daily_post_close_profiles": 1,
         "runtime_source_and_plugin_manifest_bytes_changed": 0,
         "before_sha256": before,
         "after_sha256": after,

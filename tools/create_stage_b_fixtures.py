@@ -9,7 +9,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 ROOT = Path(__file__).resolve().parents[1]
-NAMESPACE = "b3_prediction"
+NAMESPACE = "b4_prediction"
 sys.path.insert(0, str(ROOT / "tests/v3"))
 
 # Independent test-fixture constants, not evaluator-generated reference outputs.

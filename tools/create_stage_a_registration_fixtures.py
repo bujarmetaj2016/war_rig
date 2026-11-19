@@ -15,6 +15,7 @@ from v3.offline.intent_identity import Digest
 from v3.offline.plugin_manifest import BuildArtifact, build_fingerprint
 
 ROOT = Path(__file__).resolve().parents[1]
+REGISTRATION_NAMESPACE = "a7"
 INSTRUMENTS = ("XAUUSD", "GER40", "US500", "EURUSD", "GBPUSD", "SYNTHETIC_6")
 INTERFACES = (
     ("SYNTHETIC_BARS", "SNAPSHOT_FIXTURE_V1", "data_intake_schema", "SIGNED_SYNTHETIC_DATA"),
@@ -26,12 +27,13 @@ INTERFACES = (
 
 
 def write_fixture(name, value, key, *, max_nodes=256):
-    write_signed(name, value, key, max_nodes=max_nodes)
+    current_name = REGISTRATION_NAMESPACE + name.removeprefix("a5")
+    write_signed(current_name, value, key, max_nodes=max_nodes)
     write_signed(
-        "a5/intake/" + name.replace("/", "_"),
+        REGISTRATION_NAMESPACE + "/intake/" + name.replace("/", "_"),
         {
             "kind": "FIXTURE_INTAKE_POLICY_V1",
-            "relative_directory": "stage_a/" + name,
+            "relative_directory": "stage_a/" + current_name,
             "max_path_depth": 4,
             "max_files": 3,
             "max_file_bytes": 65536,
@@ -96,7 +98,9 @@ def build_artifacts(
     )
 
 
-def definition_body(instrument, inputs_hash, criteria_hash, plugins_hash, policy_hash):
+def definition_body(
+    instrument, inputs_hash, criteria_hash, plugins_hash, policy_hash, *, interval_seconds=300
+):
     unit = {
         "dimension": "REFERENCE_POINT",
         "currency": "USD",
@@ -128,7 +132,7 @@ def definition_body(instrument, inputs_hash, criteria_hash, plugins_hash, policy
             "data_source_id": "SYNTHETIC_BARS",
             "data_source_version": "1.0.0",
             "price_instrument_id": instrument,
-            "intervals": [300],
+            "intervals": [interval_seconds],
             "completion_rule_id": "COMPLETED",
             "calendar_rule_id": "CALENDAR",
             "timezone": "Europe/London",
@@ -235,6 +239,8 @@ def listing_body(instrument):
 
 
 def main():
+    if (ROOT / "fixtures/stage_a" / REGISTRATION_NAMESPACE).exists():
+        raise ValueError("Refusing to overwrite an existing registration fixture revision")
     key = serialization.load_pem_private_key(
         (ROOT / "keys/dev_fixture_signing.key").read_bytes(), password=None
     )
@@ -305,6 +311,7 @@ def main():
             hashlib.sha256(criteria.encode()).hexdigest(),
             hash_json(plugins),
             policy_hash,
+            interval_seconds=86400 if instrument == "SYNTHETIC_6" else 300,
         )
         write_fixture(
             "a5/definitions/" + instrument,
@@ -324,6 +331,14 @@ def main():
                 "source_event_id": "BAR_" + instrument,
             }
         )
+        if instrument == "SYNTHETIC_6":
+            snapshot.update(
+                session_open="2027-03-14T12:00:00Z",
+                session_close="2027-03-15T12:00:00Z",
+                bar_start="2027-03-14T12:00:00Z",
+                interval_seconds=86400,
+            )
+            snapshot["bar"]["start"] = snapshot["bar_start"]
         write_fixture("a5/snapshots/" + instrument, snapshot, key)
         listing = listing_body(instrument)
         write_fixture("a5/listings/" + instrument, listing, key, max_nodes=1024)

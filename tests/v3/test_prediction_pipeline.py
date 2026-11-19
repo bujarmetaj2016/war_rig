@@ -6,6 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 
 import pytest
+from test_completed_snapshots import daily_record
 from test_completed_snapshots import record as snapshot_record
 from test_fixture_policy_loader import signed
 
@@ -114,11 +115,16 @@ def load_policy(value=None):
 
 
 def feature_bundle(
-    *, values=("6",), names=("x",), schema_sha256="2" * 64, instrument="SYNTHETIC_6"
+    *,
+    values=("6",),
+    names=("x",),
+    schema_sha256="2" * 64,
+    instrument="SYNTHETIC_6",
+    snapshot_value=None,
 ):
     policy = load_policy()
     vector = {"names": list(names), "dtypes": ["DECIMAL"] * len(names), "values": list(values)}
-    original = snapshot_record()
+    original = snapshot_record() if snapshot_value is None else copy.deepcopy(snapshot_value)
     original.update(
         policy_sha256=policy.sha256,
         feature_schema_sha256=schema_sha256,
@@ -231,6 +237,34 @@ def test_signed_pipeline_repeat_reload_source_labels_and_caps():
         run.sources = ()
     with pytest.raises(FrozenInstanceError):
         first.grade = "D"
+
+
+def test_daily_features_and_prediction_remain_valid_after_close_until_data_max_age():
+    body, snapshot, context, policy = feature_bundle(snapshot_value=daily_record())
+    row = load_feature_row(*signed(policy=body), snapshot, context)
+    assert row.available_at > snapshot.calendar.session_close
+    assert row.expires_at == row.bar_end + timedelta(seconds=600)
+    table = load_score_table(*signed(policy=score_body(row)))
+    source = table.score(row)
+    run = load_run_manifest(*signed(policy=run_body(row, source)))
+    result = signal(row, source, run, policy)
+    assert result.created_at == row.available_at and result.grade == "A"
+    capped_context = replace(context, valid_until=row.available_at + timedelta(seconds=1))
+    capped_body = body | {"context_sha256": capped_context.sha256}
+    capped = load_feature_row(*signed(policy=capped_body), snapshot, capped_context)
+    assert capped.expires_at == capped_context.valid_until
+    denied = evaluate_prediction(
+        table,
+        row,
+        run,
+        policy,
+        row.expires_at + timedelta(microseconds=1),
+        runtime_profile="G1_R",
+        data_quality=Decimal("0.8"),
+        climate=None,
+        conservative_cap=Decimal("0.15"),
+    )
+    assert denied.score is None and denied.audit.status == "NOT_PROVEN"
 
 
 @pytest.mark.parametrize("value", ["-1", "0", "0.0001", "123", "-0.2"])

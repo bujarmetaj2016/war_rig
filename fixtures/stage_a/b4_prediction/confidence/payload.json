@@ -1,0 +1,1 @@
+{"bands":[{"grade":"A","threshold":"0.6","tier":"0.4"},{"grade":"B","threshold":"0.45","tier":"0.3"},{"grade":"C","threshold":"0.3","tier":"0.2"},{"grade":"D","threshold":"0","tier":"0"}],"cap":"0.5","kind":"FIXTURE_CONFIDENCE_POLICY_V1"}

@@ -166,7 +166,7 @@ def test_oversized_signed_time_quantities_deny_instead_of_overflowing(field):
         ("max_age_seconds", -1),
         ("max_publication_delay_seconds", -1),
         ("session_open", "2027-03-15T13:00:00Z"),
-        ("session_close", "2027-03-15T12:00:05Z"),
+        ("session_close", "2027-03-15T11:59:59Z"),
     ],
 )
 def test_invalid_or_closed_session_cannot_be_fresh(field, value):
@@ -224,6 +224,84 @@ def test_exact_age_and_publication_boundaries_are_inclusive_not_mtime_based():
 def test_future_completed_bar_is_still_denied():
     value = record()
     value["clock"]["at"] = "2027-03-15T11:59:59Z"
+    assert assess(value).verdict is DataVerdict.INVALID_DENY
+
+
+def daily_record(
+    start="2027-03-15T00:00:00Z",
+    end="2027-03-15T22:00:00Z",
+    local_close="2027-03-15T22:00:00+0000",
+    age=300,
+):
+    value = record()
+    opened, closed = datetime.fromisoformat(start), datetime.fromisoformat(end)
+    value.update(
+        session_open=start,
+        session_close=end,
+        expected_close=end,
+        expected_local_close=local_close,
+        bar_start=start,
+        bar_end=end,
+        interval_seconds=int((closed - opened).total_seconds()),
+        max_age_seconds=600,
+    )
+    value["bar"].update(
+        start=start,
+        end=end,
+        published_at=end,
+        observed_at=end,
+        vintage_available_at=end,
+        revision_available_at=end,
+    )
+    value["clock"]["at"] = (closed + timedelta(seconds=age)).isoformat()
+    return value
+
+
+@pytest.mark.parametrize("age", [0, 1, 300, 600])
+def test_daily_bar_at_session_close_is_available_after_close_within_max_age(age):
+    result = assess(daily_record(age=age))
+    assert result.verdict is DataVerdict.COMPLETED_FIXTURE_ONLY
+    assert result.reason == "ALL_REQUIRED_FIXTURE_DATA_PROVEN"
+    assert not hasattr(result, "entry_permit")
+
+
+def test_daily_bar_denies_before_close_and_when_stale_or_still_forming():
+    before = assess(daily_record(age=-1))
+    assert before.verdict is DataVerdict.INVALID_DENY
+    assert before.reason == "FORMING_WRONG_BAR_OR_DST_ALIGNMENT"
+    stale = assess(daily_record(age=601))
+    assert stale.verdict is DataVerdict.UNKNOWN_DENY
+    assert stale.reason == "UNAVAILABLE_STALE_OR_LATE_PUBLICATION"
+    forming = daily_record()
+    forming["bar"]["complete"] = False
+    assert assess(forming).verdict is DataVerdict.INVALID_DENY
+
+
+@pytest.mark.parametrize(
+    "field", ["published_at", "observed_at", "vintage_available_at", "revision_available_at"]
+)
+def test_post_close_decision_still_requires_each_publication_and_vintage(field):
+    value = daily_record()
+    value["bar"][field] = "2027-03-15T22:05:01Z"
+    assert assess(value).verdict is DataVerdict.UNKNOWN_DENY
+
+
+@pytest.mark.parametrize(
+    "start,end,local_close,seconds",
+    [
+        ("2027-03-28T00:00:00Z", "2027-03-28T23:00:00Z", "2027-03-29T00:00:00+0100", 82800),
+        ("2027-10-30T23:00:00Z", "2027-11-01T00:00:00Z", "2027-11-01T00:00:00+0000", 90000),
+    ],
+)
+def test_daily_post_close_dst_uses_signed_local_close_and_actual_utc_duration(
+    start, end, local_close, seconds
+):
+    value = daily_record(start, end, local_close)
+    assert value["interval_seconds"] == seconds
+    assert assess(value).verdict is DataVerdict.COMPLETED_FIXTURE_ONLY
+    value["expected_local_close"] = local_close[:-5] + (
+        "+0000" if local_close.endswith("+0100") else "+0100"
+    )
     assert assess(value).verdict is DataVerdict.INVALID_DENY
 
 

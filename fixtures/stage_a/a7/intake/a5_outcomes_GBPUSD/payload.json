@@ -1,0 +1,1 @@
+{"account_id":"SIMULATED_ACCOUNT","kind":"FIXTURE_INTAKE_POLICY_V1","max_file_bytes":65536,"max_files":3,"max_path_depth":4,"max_total_bytes":70000,"relative_directory":"stage_a/a7/outcomes/GBPUSD","run_id":"SYNTHETIC_RUN_001","valid_from":"2027-01-01T00:00:00Z","valid_until":"2028-01-01T00:00:00Z"}

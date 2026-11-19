@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "recorded_date_utc": "2026-11-19",
-  "status": "STAGE_B_COMPLETE_FULL_SCOPE_NOT_READY",
+  "status": "STAGE_A_R2_A01_FIXED_STAGE_B_REVALIDATED_FULL_SCOPE_NOT_READY",
   "current_stage": "C",
   "last_pass_stage": "B",
-  "last_pass_slice": "B3",
-  "last_commit": "2194c344efb219a4b752dd1ab1cf577b45a10b35",
+  "last_pass_slice": "A7_R2_A_01",
+  "last_commit": "13502438c0e2c2280217f81c0c67299c42d84af5",
   "last_commit_role": "BASE_OF_GATE_SOURCE_HASHES_BOUND_BY_ENCLOSING_CHECKPOINT",
   "historical_blocked_checkpoint_commit": "d6549b612b8415ecaa7101bf6e80b7061018199c",
-  "checkpoint_form": "STAGE_B_SYNTHETIC_OFFLINE_COMPLETE",
-  "resume_note": "Resume C only after fixing any arriving Stage A R2 findings. No real model eligibility, release, broker or trading authority.",
+  "checkpoint_form": "STAGE_A_REVIEW_CORRECTION_CUMULATIVE_A_B_PASS",
+  "resume_note": "R2-A-01 fixed and Stage B revalidated. Stage C is not started. Minor typed-denial/parser/versioned-registration work remains tracked; no independent reviewer acceptance or model/trading authority is asserted.",
   "authority": {
     "offline_development_route": "OWNER_DIRECTED",
     "formal_governance_attestation": "NOT_VERIFIED",
@@ -106,7 +106,7 @@
     "historical_inspection_sha256": "b76b8a9da6c3caecfdec91118ead26d0825120672ece327b89273b1a8b536b9f",
     "historical_source_verification_path": "evidence/preflight/SOURCE_VERIFICATION_20261118.json",
     "historical_source_verification_sha256": "e4752d29a393eb5052fec684c16cac98355b2ad8afae063d308f8de24bfa17fd",
-    "source_verification_path": "evidence/stage_b/b3/preflight.json",
+    "source_verification_path": "evidence/stage_a/r2_a_01/preflight.json",
     "source_verification_sha256": "e954d7e2b7872accb06611f11ea9940fdbb68dfbd6d061e5e29d8a89b1e8c9bd",
     "a1_manifest_path": "evidence/stage_a/a1/MANIFEST.sha256",
     "a1_manifest_sha256": "2a4649f3c1cca2de2ce6c06d949e321b83db365703f5e385cf2fb9f36c0829e2",
@@ -142,7 +142,7 @@
     "historical_source_count_gate_manifest": "evidence/stage_a/source_conflict/MANIFEST.sha256",
     "historical_source_count_gate_manifest_sha256": "4ae8562b4b5cc7f2152924c8d822efe151d2e17cf3a047a3d0f9aba4fe56066f",
     "r2_handoff_path": "evidence/REVIEWER_R2_HANDOFF.md",
-    "r2_handoff_status": "STAGE_A_B_COMPLETE_FULL_SCOPE_NOT_READY_FOR_ACCEPTANCE",
+    "r2_handoff_status": "R2_A01_IMPLEMENTATION_FIXED_A_B_REVALIDATED_MINOR_FOLLOWUPS_OPEN",
     "a3_manifest_path": "evidence/stage_a/a3/MANIFEST.sha256",
     "a3_manifest_sha256": "5ba5a2c61bcd6a72d0fb63d7b04343900b36169a09187293d738e91e5192eeae",
     "a4_manifest_path": "evidence/stage_a/a4/MANIFEST.sha256",
@@ -154,7 +154,8 @@
     "stage_a_completion_path": "evidence/stage_a/STAGE_A_COMPLETION.csv",
     "stage_a_completion_sha256": "9472e4280719a7ec03332190607dd4023b54d58325aa1d003ff08ee032757566",
     "stage_b_completion_path": "evidence/stage_b/STAGE_B_COMPLETION.csv",
-    "stage_b_completion_sha256": "55523613b17a5d25f01c573e2e7ef464ca643ae35a4efa6aa4ea3f864b2754d2"
+    "stage_b_completion_sha256": "55523613b17a5d25f01c573e2e7ef464ca643ae35a4efa6aa4ea3f864b2754d2",
+    "current_correction_gate": "evidence/stage_a/r2_a_01/GATE.json"
   },
   "stages": {
     "A": "PASS",
@@ -166,10 +167,10 @@
     "G": "NOT_STARTED"
   },
   "tests_and_coverage": {
-    "status": "PASS_THROUGH_B3",
-    "command": "sh tools/run_offline.sh stage_b",
+    "status": "PASS_A7_R2_A01_AND_STAGE_B_REVALIDATION",
+    "command": "sh tools/run_offline.sh stage_a --seal-r2-a-01",
     "exit_code": 0,
-    "tests_executed": 717,
+    "tests_executed": 730,
     "tests_failed": 0,
     "tests_skipped": 0,
     "statements_total": 1713,
@@ -179,20 +180,20 @@
     "branches_partial": 0,
     "excluded_executable_lines": 0,
     "coverage_scope": "ALL_CURRENT_V3_OFFLINE_PRODUCTION_MODULES_NOT_BUILD_EVIDENCE_TOOLS",
-    "coverage_artifact_path": "evidence/stage_b/b3/coverage.json",
-    "coverage_artifact_sha256": "c500739e96b0b04f1649fdc4953ba8a8285f9dd1b1cfdafb9dd86fba57782cc6",
-    "mutations_killed": 28,
+    "coverage_artifact_path": "evidence/stage_a/r2_a_01/coverage.json",
+    "coverage_artifact_sha256": "fcfb42f6f6fe9a7d3eff21bb44fb04fdc4a7145d0a5f7efe5d2932a01a3a0c1a",
+    "mutations_killed": 30,
     "mutations_survived": 0,
-    "mutation_report_path": "evidence/stage_b/b3/mutations.json",
+    "mutation_report_path": "evidence/stage_a/r2_a_01/mutations.json",
     "macro_trading_decision_noninterference_tests": "CURRENT_PIPELINE_PASS_C_E_F_NOT_YET_BUILT",
     "determinism_processes": 2,
-    "determinism_output_sha256": "e4fa273c10c655326d756010355a3bc80fa5eacc7ba67248d563ac6cf6c933a1",
+    "determinism_output_sha256": "bf574760facdbab0f7d2fa9e9f88661f7a561922442471292364e7ac327d35d9",
     "v2_snapshot_source_files_compared": 279,
     "v2_identical_byte_matches": 0,
     "v2_normalized_12_line_matches": 0,
     "lint_and_strict_types": "PASS",
     "optional_third_party_mutation_and_vulnerability_tools": "NOT_RUN",
-    "prediction_determinism_output_sha256": "dbe39e10e6d48ddc010e4225124f4b50d54fc0fa4b5b83a6cccbe2301551df47"
+    "prediction_determinism_output_sha256": "d6ca7bb4498dce06a59c519de571cc63234f68c12f57b094c8cf4466fdad894b"
   },
   "stage_a_slices": {
     "A1": {
@@ -254,6 +255,11 @@
       "gate_path": "evidence/stage_a/a6/GATE.json",
       "source_commit_binding": "ENCLOSING_GATE_COMMIT",
       "title": "Complete Stage A foundations and source-clause traceability"
+    },
+    "A7_R2_A_01": {
+      "status": "PASS",
+      "gate_path": "evidence/stage_a/r2_a_01/GATE.json",
+      "source_commit_binding": "ENCLOSING_GATE_COMMIT"
     }
   },
   "open_blockers": [],
@@ -303,5 +309,18 @@
     "MSB-14": "No real registration; owner records and real conversion unavailable.",
     "MSB-15": "Current whole-build import gate passes; EXT-04 strategy integration belongs to C.",
     "MSB-16": "Source/audit references proved; order/position/outcome records belong to D/F."
+  },
+  "review_findings": {
+    "R2-A-01": {
+      "severity": "MAJOR",
+      "status": "IMPLEMENTATION_FIXED",
+      "reviewer_acceptance": "NOT_ASSERTED",
+      "evidence": "evidence/stage_a/r2_a_01/GATE.json"
+    },
+    "minor_followups": [
+      "Typed denial reasons",
+      "Public shared parsing module",
+      "Controlled successor definition versions for an existing instrument (EXT 3.3)"
+    ]
   }
 }

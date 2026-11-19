@@ -1,0 +1,240 @@
+{
+  "added_profiles": 1,
+  "after_sha256": {
+    "fixtures/stage_a/a7/plugins/manifest.json": "f9f6b75b6863fdd96e8e98a62c0f66c54e7d5ae7a0d2c5901ceb5f501eea158c",
+    "fixtures/stage_a/a7/plugins/manifest.sig": "5e0ffe82eca434cbbeb18b58cb07e877271c3498003031bde87964c7e0862b83",
+    "fixtures/stage_a/a7/plugins/payload.json": "228334f28a2422be2820d27a40e0a934d10b0cd62436c15a3050247de8add3fd",
+    "v3/__init__.py": "9f173486bc106f30cef6de90dd3bf7175e99853e6d99e62a01b20cf03deedb3d",
+    "v3/offline/__init__.py": "8fa3adeaee35f07022156a5f0efbe70f701f8b196eb8ba8b3b0f1f82488dfd71",
+    "v3/offline/calendar_completion.py": "af638634e76f8020290d38ccecf8d35d0e594fe3cb581e5ba5646dfa78601ae9",
+    "v3/offline/contract_listing_registry.py": "aa4fd85cdd37e09e9615b7a9f57b917e01e193fbc89aa6b1f4bdc2301f5d15a1",
+    "v3/offline/data_intake_schema.py": "77b00138224291754537ca1d80c62296f14ab1b05288c54afcd04d546302e042",
+    "v3/offline/effective_policy.py": "14c07b2bfe9a3936842714a0c11b5d435f804dbc0553993a4ffe50f337df7fa9",
+    "v3/offline/fixture_policy_loader.py": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+    "v3/offline/instrument_definition.py": "a2a97ecbb3526a8e62840a287bfd38edf475f05bc25e9d1b92146d65fc759055",
+    "v3/offline/intent_identity.py": "4fd8c1e5c611629ba483da95e2a5be5e365f453233ec4f0fe2dabb2b14e26737",
+    "v3/offline/macro_features.py": "03aaf1798085bfabdd4173ce89c475668daf02d8f47006afcb01bfd7d28fc031",
+    "v3/offline/model_intake.py": "63d522b98deb1cd496d56cc6842fa83a5b5b902292019ce9e75a015d720e418e",
+    "v3/offline/offline_scenario_runner.py": "1c49df2b7d1968633b79878bd35848c49dfe70dc499d5598369aa775ee2c1648",
+    "v3/offline/plugin_manifest.py": "6271f00bf21f7da13c624d770f29f7d051547e43115c9050805041459f3cc460"
+  },
+  "before_sha256": {
+    "fixtures/stage_a/a7/plugins/manifest.json": "f9f6b75b6863fdd96e8e98a62c0f66c54e7d5ae7a0d2c5901ceb5f501eea158c",
+    "fixtures/stage_a/a7/plugins/manifest.sig": "5e0ffe82eca434cbbeb18b58cb07e877271c3498003031bde87964c7e0862b83",
+    "fixtures/stage_a/a7/plugins/payload.json": "228334f28a2422be2820d27a40e0a934d10b0cd62436c15a3050247de8add3fd",
+    "v3/__init__.py": "9f173486bc106f30cef6de90dd3bf7175e99853e6d99e62a01b20cf03deedb3d",
+    "v3/offline/__init__.py": "8fa3adeaee35f07022156a5f0efbe70f701f8b196eb8ba8b3b0f1f82488dfd71",
+    "v3/offline/calendar_completion.py": "af638634e76f8020290d38ccecf8d35d0e594fe3cb581e5ba5646dfa78601ae9",
+    "v3/offline/contract_listing_registry.py": "aa4fd85cdd37e09e9615b7a9f57b917e01e193fbc89aa6b1f4bdc2301f5d15a1",
+    "v3/offline/data_intake_schema.py": "77b00138224291754537ca1d80c62296f14ab1b05288c54afcd04d546302e042",
+    "v3/offline/effective_policy.py": "14c07b2bfe9a3936842714a0c11b5d435f804dbc0553993a4ffe50f337df7fa9",
+    "v3/offline/fixture_policy_loader.py": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+    "v3/offline/instrument_definition.py": "a2a97ecbb3526a8e62840a287bfd38edf475f05bc25e9d1b92146d65fc759055",
+    "v3/offline/intent_identity.py": "4fd8c1e5c611629ba483da95e2a5be5e365f453233ec4f0fe2dabb2b14e26737",
+    "v3/offline/macro_features.py": "03aaf1798085bfabdd4173ce89c475668daf02d8f47006afcb01bfd7d28fc031",
+    "v3/offline/model_intake.py": "63d522b98deb1cd496d56cc6842fa83a5b5b902292019ce9e75a015d720e418e",
+    "v3/offline/offline_scenario_runner.py": "1c49df2b7d1968633b79878bd35848c49dfe70dc499d5598369aa775ee2c1648",
+    "v3/offline/plugin_manifest.py": "6271f00bf21f7da13c624d770f29f7d051547e43115c9050805041459f3cc460"
+  },
+  "daily_post_close_profiles": 1,
+  "initial_profiles": 5,
+  "profiles": [
+    {
+      "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+      "data": "COMPLETED_FIXTURE_ONLY",
+      "decision_at": "2027-03-15 12:00:05+00:00",
+      "definition": "db8b85404ed253090b516ec73bc317f38b8b4b4265487b1f24c107d02831ffc2",
+      "event": {
+        "command_sha256": {
+          "value": "4981299024fb9cb3d32ab0fad2918627aca5f6e8c16c2e8318256faa568c7c00"
+        },
+        "definition_sha256": {
+          "value": "db8b85404ed253090b516ec73bc317f38b8b4b4265487b1f24c107d02831ffc2"
+        },
+        "event_id": {
+          "value": "REGISTER_XAUUSD"
+        },
+        "event_sha256": {
+          "value": "ef51bc32eec9f6490d8256c057c062f1b99f7354a90b0acb312934ceee43ed5c"
+        },
+        "instrument": {
+          "value": "XAUUSD"
+        },
+        "previous_sha256": {
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "version": 1
+      },
+      "instrument": "XAUUSD",
+      "interval_seconds": 300,
+      "listing": "3ed628b96c67d3cdd24223be8aa11a6d8896cd079a8475d5bccc0674c5adf508",
+      "outcome": "c49835a204d4cc0df2bb85a1a0423209239410cdc773a2e4458e7ab573299e25",
+      "session_close": "2027-03-15 17:00:00+00:00"
+    },
+    {
+      "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+      "data": "COMPLETED_FIXTURE_ONLY",
+      "decision_at": "2027-03-15 12:00:05+00:00",
+      "definition": "02b34926e667ac699416babf96c69922c44316aeb0465d222a47a932f3f4ffca",
+      "event": {
+        "command_sha256": {
+          "value": "92dd2c44220d5b1190fee5a8268a596ec799e369d2c6b296eacbcfa4380d9f6f"
+        },
+        "definition_sha256": {
+          "value": "02b34926e667ac699416babf96c69922c44316aeb0465d222a47a932f3f4ffca"
+        },
+        "event_id": {
+          "value": "REGISTER_GER40"
+        },
+        "event_sha256": {
+          "value": "00066ee729c6f1f17a0511e3d43f4efe5b59b9220a43f86383a4e209d27283e8"
+        },
+        "instrument": {
+          "value": "GER40"
+        },
+        "previous_sha256": {
+          "value": "ef51bc32eec9f6490d8256c057c062f1b99f7354a90b0acb312934ceee43ed5c"
+        },
+        "version": 2
+      },
+      "instrument": "GER40",
+      "interval_seconds": 300,
+      "listing": "4df5bb003a31b4be69f8abd75fb30a063eab96fcb94c3ed568ea64854c4b10e1",
+      "outcome": "e6477875674ab897d377cbaa108657b3780e26abc9e7f28f1c7ae4a619fc7cc6",
+      "session_close": "2027-03-15 17:00:00+00:00"
+    },
+    {
+      "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+      "data": "COMPLETED_FIXTURE_ONLY",
+      "decision_at": "2027-03-15 12:00:05+00:00",
+      "definition": "107fda2d0882c1e4190d5dc07e4b490309b9f80019db36140ddbb7e65f3c21cd",
+      "event": {
+        "command_sha256": {
+          "value": "75cc14eff8bee4a1cc40e86343e528cd6553302933bfb3513d43da453ebeed45"
+        },
+        "definition_sha256": {
+          "value": "107fda2d0882c1e4190d5dc07e4b490309b9f80019db36140ddbb7e65f3c21cd"
+        },
+        "event_id": {
+          "value": "REGISTER_US500"
+        },
+        "event_sha256": {
+          "value": "167a2a4268b25549e08b61f0350c1936914fb35c351cc5d1d54d6284705be214"
+        },
+        "instrument": {
+          "value": "US500"
+        },
+        "previous_sha256": {
+          "value": "00066ee729c6f1f17a0511e3d43f4efe5b59b9220a43f86383a4e209d27283e8"
+        },
+        "version": 3
+      },
+      "instrument": "US500",
+      "interval_seconds": 300,
+      "listing": "c3f500bd46c8be62fd5dcaae27a5894d14851655216112a83a5b082c994cb28c",
+      "outcome": "2355e72cf2af5d644b874945a8fdd317fe6ca514fae1a9f529656f9d9bc2f616",
+      "session_close": "2027-03-15 17:00:00+00:00"
+    },
+    {
+      "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+      "data": "COMPLETED_FIXTURE_ONLY",
+      "decision_at": "2027-03-15 12:00:05+00:00",
+      "definition": "c510ca85aadf84060836a3a2926bc62557df595d6985557cbf2db5a3d97b1541",
+      "event": {
+        "command_sha256": {
+          "value": "7acacdc17fb806e3578107fbba0eb4d0dabc8c3b00a5ea894c7997c55c3fd6ab"
+        },
+        "definition_sha256": {
+          "value": "c510ca85aadf84060836a3a2926bc62557df595d6985557cbf2db5a3d97b1541"
+        },
+        "event_id": {
+          "value": "REGISTER_EURUSD"
+        },
+        "event_sha256": {
+          "value": "3c991d3ebb58416e8b1a030c7dd6b164249e604c4cdd5570e1e192e8bdbeb32c"
+        },
+        "instrument": {
+          "value": "EURUSD"
+        },
+        "previous_sha256": {
+          "value": "167a2a4268b25549e08b61f0350c1936914fb35c351cc5d1d54d6284705be214"
+        },
+        "version": 4
+      },
+      "instrument": "EURUSD",
+      "interval_seconds": 300,
+      "listing": "4a75f7e15ce793a0f69e2728ca7ac1471cbd8af368dabce6282a11a172a5e280",
+      "outcome": "ca70349f19eeb14656444dd788a13dce015138a4c36b3a6c504f551e86c518e0",
+      "session_close": "2027-03-15 17:00:00+00:00"
+    },
+    {
+      "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+      "data": "COMPLETED_FIXTURE_ONLY",
+      "decision_at": "2027-03-15 12:00:05+00:00",
+      "definition": "309acab75cbb910c1ddad4edd9bd1e929cf763e1d23ab91b0f85a87542bca21f",
+      "event": {
+        "command_sha256": {
+          "value": "765cd4e4d25580e004c17fab119c3497abda3c5899c0edcd0db5cb80a0f79112"
+        },
+        "definition_sha256": {
+          "value": "309acab75cbb910c1ddad4edd9bd1e929cf763e1d23ab91b0f85a87542bca21f"
+        },
+        "event_id": {
+          "value": "REGISTER_GBPUSD"
+        },
+        "event_sha256": {
+          "value": "3eec3addf5a330c2f1657f5a7439578f595e80dd24a8d4a00b25020362aebede"
+        },
+        "instrument": {
+          "value": "GBPUSD"
+        },
+        "previous_sha256": {
+          "value": "3c991d3ebb58416e8b1a030c7dd6b164249e604c4cdd5570e1e192e8bdbeb32c"
+        },
+        "version": 5
+      },
+      "instrument": "GBPUSD",
+      "interval_seconds": 300,
+      "listing": "ef3b03a702993e8d3457301c3a6688751215690db7c023da2c2c4fecb6b0157c",
+      "outcome": "1ffc3496e2eb537ba5a7569d7382abfa5c0d8ee072ff73f93d21891a205f986c",
+      "session_close": "2027-03-15 17:00:00+00:00"
+    },
+    {
+      "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+      "data": "COMPLETED_FIXTURE_ONLY",
+      "decision_at": "2027-03-15 12:00:05+00:00",
+      "definition": "3436f8e5974e99b8a6e1d65e399aafbd47580a6afcaa9eea152e76db59c80778",
+      "event": {
+        "command_sha256": {
+          "value": "2436272ffcc6c2efbcaf858407f8045dbd0c82a7082a25f075324576e8d158c2"
+        },
+        "definition_sha256": {
+          "value": "3436f8e5974e99b8a6e1d65e399aafbd47580a6afcaa9eea152e76db59c80778"
+        },
+        "event_id": {
+          "value": "REGISTER_SYNTHETIC_6"
+        },
+        "event_sha256": {
+          "value": "78d8fe5b692e04bb203c03922a9db47201ae50c384d81aef20d8eddd6fb8f69d"
+        },
+        "instrument": {
+          "value": "SYNTHETIC_6"
+        },
+        "previous_sha256": {
+          "value": "3eec3addf5a330c2f1657f5a7439578f595e80dd24a8d4a00b25020362aebede"
+        },
+        "version": 6
+      },
+      "instrument": "SYNTHETIC_6",
+      "interval_seconds": 86400,
+      "listing": "850fc2ead4674430485ae9388611613bd6217375e67452aec02ac114ea2010d4",
+      "outcome": "5c1486a3d8dac730e849447c4ccd8aa948de5b827e2d2862c768ff6f01ae2987",
+      "session_close": "2027-03-15 12:00:00+00:00"
+    }
+  ],
+  "registered_profiles": 6,
+  "registry_event_count": 6,
+  "registry_scope": "PROCESS_LOCAL_SCHEMA_FOUNDATIONS_NOT_OPERATIONAL_AUTHORITY",
+  "runtime_source_and_plugin_manifest_bytes_changed": 0,
+  "status": "PASS"
+}

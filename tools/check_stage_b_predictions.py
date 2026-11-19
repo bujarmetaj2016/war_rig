@@ -35,7 +35,7 @@ from v3.offline.offline_scenario_runner import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
-FIXTURES = ROOT / "fixtures/stage_a/b3_prediction"
+FIXTURES = ROOT / "fixtures/stage_a/b4_prediction"
 
 
 def raw(name):

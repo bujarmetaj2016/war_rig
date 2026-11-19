@@ -1,5 +1,12 @@
 # R3 outstanding work - after offline Stages A/B
 
+R2-A-01's MAJOR session-close deadlock is corrected, including the coupled
+Stage B feature-expiry cap. The current executed A/B revalidation is
+`stage_a/r2_a_01/`; governing V5 clauses and remaining minor typed-denial,
+public-parser and successor-definition-version work are documented in
+`stage_a/R2_A_01_DISPOSITION.md`. No reviewer acceptance is self-asserted.
+These minor follow-ups are not silently closed by the focused MAJOR fix.
+
 Stage A was accepted at `e0ab862`. Stage B's offline synthetic scope is complete;
 the current evidence is `stage_b/b3/` and `stage_b/STAGE_B_COMPLETION.csv`.
 This supersedes historical statements below that Stage B and macro computation

@@ -223,7 +223,6 @@ def assess_snapshot(
         or calendar.max_age_seconds > timedelta.max.days * 86400
         or calendar.max_publication_delay_seconds < 0
         or calendar.max_publication_delay_seconds > timedelta.max.days * 86400
-        or not calendar.session_open <= replay.at < calendar.session_close
         or not calendar.session_open <= bar.start < bar.end <= calendar.session_close
     ):
         return result(DataVerdict.INVALID_DENY, "INVALID_OR_CLOSED_SESSION")

@@ -89,6 +89,17 @@ def test_sixth_instrument_requires_no_source_or_plugin_manifest_change():
     assert all(row["data"] == "COMPLETED_FIXTURE_ONLY" for row in proof["profiles"])
 
 
+def test_daily_interval_instrument_registers_by_configuration_only_after_close():
+    proof = registration_proof()
+    daily = proof["profiles"][-1]
+    assert daily["instrument"] == "SYNTHETIC_6" and daily["interval_seconds"] == 86400
+    assert daily["decision_at"] > daily["session_close"]
+    assert proof["daily_post_close_profiles"] == 1
+    assert daily["data"] == "COMPLETED_FIXTURE_ONLY"
+    assert proof["before_sha256"] == proof["after_sha256"]
+    assert daily["authority"] == "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL"
+
+
 def test_definition_is_full_closed_immutable_and_digest_excludes_only_its_own_field(ready):
     _, plugins, _, policy, _, _, definition = ready
     body = json.loads(definition.canonical)

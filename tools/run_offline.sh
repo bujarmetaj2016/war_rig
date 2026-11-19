@@ -5,10 +5,16 @@ cd "$(dirname "$0")/.."
 root=$(pwd -P)
 image=$(cat evidence/preflight/PYTHON_IMAGE.txt)
 stage=${1:-stage_a}
+prepare=${2:-}
 case "$stage" in
     stage_a|stage_b) ;;
     *) printf '%s\n' "Expected stage_a or stage_b evidence scope" >&2; exit 1 ;;
 esac
+case "$prepare" in
+    ""|--prepare-r2-a-01|--seal-r2-a-01) ;;
+    *) printf '%s\n' "Unknown fixture preparation request" >&2; exit 1 ;;
+esac
+base_commit=$(git rev-parse HEAD)
 output="evidence/$stage/runs/$(date -u +%Y%m%dT%H%M%SZ)-$$"
 if [ "$image" != "python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b" ]; then
     printf '%s\n' "Pinned image changed; review and update the sandbox contract first." >&2
@@ -23,6 +29,8 @@ docker run --rm --pull never --network none --read-only \
     --mount "type=bind,src=$root/reference,dst=/repo/reference,readonly" \
     --workdir /repo --env HOME=/tmp --env PIP_DISABLE_PIP_VERSION_CHECK=1 \
     --env "OFFLINE_EVIDENCE_DIR=$output" \
+    --env "OFFLINE_PREPARE=$prepare" \
+    --env "OFFLINE_BASE_COMMIT=$base_commit" \
     "$image" /bin/sh -eu -c '
         report="$OFFLINE_EVIDENCE_DIR"
         mkdir -p "$report"
@@ -32,6 +40,16 @@ docker run --rm --pull never --network none --read-only \
             -r requirements-dev.lock > "$report/install.txt" 2>&1
         /opt/venv/bin/pip check
         /opt/venv/bin/pip freeze --all > "$report/installed.txt"
+        if [ "$OFFLINE_PREPARE" = "--seal-r2-a-01" ]; then
+            /opt/venv/bin/ruff check --fix --select I tools
+            /opt/venv/bin/ruff format tools
+        fi
+        if [ "$OFFLINE_PREPARE" = "--prepare-r2-a-01" ]; then
+            /opt/venv/bin/ruff check --fix --select I v3 tests/v3 tools
+            /opt/venv/bin/ruff format v3 tests/v3 tools
+            /opt/venv/bin/python -m tools.create_stage_a_registration_fixtures
+            /opt/venv/bin/python -m tools.create_stage_b_fixtures
+        fi
         /opt/venv/bin/ruff check v3 tests/v3 tools > "$report/lint.txt"
         /opt/venv/bin/ruff format --check v3 tests/v3 tools >> "$report/lint.txt"
         /opt/venv/bin/python -m mypy --strict v3 > "$report/types.txt"
@@ -67,6 +85,10 @@ docker run --rm --pull never --network none --read-only \
                     "BLOCKED: source-count/cardinality gate failed; runtime results above are separate." >&2
                 exit "$status"
             }
+        if [ "$OFFLINE_PREPARE" = "--seal-r2-a-01" ]; then
+            /opt/venv/bin/python -m tools.record_stage_a_review_fix \
+                "$report" "$OFFLINE_BASE_COMMIT" > /dev/null
+        fi
     ' || {
         status=$?
         printf 'Evidence: %s\nRunner exit code: %s\n' "$output" "$status" >&2

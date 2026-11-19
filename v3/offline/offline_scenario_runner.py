@@ -252,7 +252,6 @@ def load_feature_row(
         utc(item["available_at"]),
         min(
             context.valid_until,
-            snapshot.calendar.session_close,
             snapshot.lineage.bar_end + timedelta(seconds=max_age),
         ),
         context,

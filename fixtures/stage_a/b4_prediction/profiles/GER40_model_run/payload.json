@@ -1,0 +1,1 @@
+{"account_id":"SIMULATED_ACCOUNT","kind":"FIXTURE_PREDICTION_RUN_V1","run_id":"SYNTHETIC_RUN_001","runtime_profile":"G1_R","sources":[{"fingerprint":null,"instrument":"GER40","source_kind":"TRAINED_MODEL"}],"valid_from":"2027-03-14 12:00:05+00:00","valid_until":"2027-03-16 12:00:05+00:00"}
