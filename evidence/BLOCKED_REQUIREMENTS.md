@@ -1,4 +1,4 @@
-# R3 outstanding work - after Stage A / A2
+# R3 outstanding work - after completed Stage A
 
 ## Resolved environment and source blockers
 
@@ -10,8 +10,8 @@ Installation inside the exact pinned network-none container succeeds and all
 six active hostile egress probes are denied. These are no longer blockers.
 See `stage_a/a1/preflight.json`, `install.txt` and `REPORT.md`.
 
-No current input/environment failure prevents continuing independent Stage A
-work. This does not make the entire Stage A or full implementation complete.
+No current input/environment or source-count failure blocks the completed
+Stage A foundations. B-G and full-scope readiness are not complete.
 
 ## Resolved: prior BLOCKED_SOURCE_CONFLICT (R3 section 4)
 
@@ -23,6 +23,8 @@ ID/pair match. No per-ID provenance classification is inferred. All 84 rows
 cite the amendment and re-derivation; the universe remains 627. Current evidence:
 `stage_a/amendment_1/checks.json`. The historical failure below is retained,
 not asserted as a current blocker. No V5 or R3 bytes were changed.
+
+### Historical source-conflict narrative (superseded by Amendment 1)
 
 The preserved V5 member
 `SOURCE_PINS_UNMODIFIED/STAGE_D03_REVIEW_BYTES/02_NEGATIVE_GRAPH_COMPLEMENT_59_SOURCE_PRESERVED.json`
@@ -54,21 +56,24 @@ requested Stage A completion, so A3-A5 are not claimed complete or silently
 continued before that report. A controlled disposition of the 59-versus-84
 requirement is needed; no source or acceptance threshold is self-amended.
 
-## Incomplete Stage A requirements
+## Completed Stage A boundaries
 
-- Full technical reading of the verified V5 package, full requirement-universe
-  extraction/traceability completion are not satisfied. The actual extracted
-  universe is recorded, but the count conflict above prevents its final gate.
+- All 27 Stage A foundation requirements pass with exact source member/clause,
+  runtime/test and executed evidence mappings in `stage_a/STAGE_A_COMPLETION.csv`.
+  The final fresh gate is `stage_a/a6/`: 431 tests, 956/956 statements,
+  268/268 branch destinations, zero exclusions and 19 killed safety mutants.
+- The universe and trace each have 627 unique rows. Three entire own-ID
+  oracles are implemented/tested; 19 are partial and 605 are unimplemented.
+  The remaining 624 final dispositions are honestly pending B-G work.
 - A1-A2 authenticate signed synthetic snapshots and distinguish completed,
   forming, absent, failed and expected-stale inputs; publication/observation/
   vintage/revision/freshness/source alignment and signed IANA/DST/session checks
   are implemented. Their PASS verdict is fixture-data-only, not entry permission.
-- Instrument definitions, dated listings, evidence graph, registration /
-  plug-in manifests and the complete sixth-instrument onboarding proof remain.
 - A5 passes full closed family-schema validation, exact plug-in/build binding,
   separate per-field listing and forward-only outcome evidence, process-local
   authenticated configuration registration and sixth-profile onboarding with
-  zero changed source/plug-in-manifest bytes. Final Stage A traceability remains.
+  zero changed source/plug-in-manifest bytes. These are generic synthetic
+  schema profiles, not implementation of real Core-5 strategy roles.
 - A4 passes signed, bounded no-follow filesystem intake, including links, FIFO,
   hidden/unlisted files and explicit I/O faults.
 - A3 implements distinct typed identity/run/replay records, exact source units
@@ -79,9 +84,10 @@ requirement is needed; no source or acceptance threshold is self-amended.
   source decisions stay unavailable; the current loader cannot express a
   broker permit, entry flag, risk fraction or real owner-policy load.
 
-The Stage A clauses were read and cited before A2 in
+The Stage A governing clauses were read and cited before implementation in
 `stage_a/STAGE_A_REQUIREMENTS.csv` and `stage_a/SOURCE_READING.md`.
-Whole-package reading is not inferred from that scoped reading record.
+Whole-package reading remains incomplete and must precede the relevant B-G
+implementation; it is not inferred from the scoped Stage A reading record.
 
 ## Unstarted downstream work
 

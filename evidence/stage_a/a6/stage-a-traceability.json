@@ -1,0 +1,20 @@
+{
+  "stage_a_rows": 27,
+  "stage_a_implemented_tested": 27,
+  "universe_rows": 627,
+  "traceability_rows": 627,
+  "global_final_status_counts": {
+    "PENDING": 624,
+    "IMPLEMENTED_TESTED": 3
+  },
+  "global_implementation_state_counts": {
+    "NOT_IMPLEMENTED": 605,
+    "IMPLEMENTED": 3,
+    "PARTIALLY_IMPLEMENTED": 19
+  },
+  "negative_amendment_citations": 84,
+  "negative_class_rows": 84,
+  "source_count_gate": "PASS",
+  "full_B_G_completion": "NOT_CLAIMED",
+  "completion_csv_sha256": "9472e4280719a7ec03332190607dd4023b54d58325aa1d003ff08ee032757566"
+}

@@ -1,4 +1,58 @@
-# R2 checkpoint handoff - Stage A / A1-A2 only
+# R2 checkpoint handoff - Stage A complete, full scope unfinished
+
+Stage A foundations pass at the enclosing A6 checkpoint. This is not
+READY_FOR_R2_REVIEW for the full R3 deliverable, independent human governance
+attestation, release readiness, model approval or trading/broker authority.
+
+| Slice | Commit | Executed tests | Statements | Branch destinations |
+|---|---|---:|---:|---:|
+| A1 signed identity and clock | `83a4e05` | 77 | 175/175 | 70/70 |
+| A2 calendar/completed data | `b63d882` | 152 | 363/363 | 110/110 |
+| Amendment 1 exact source gate | `d24d2de` | Four amended checks PASS | Metadata only | Metadata only |
+| A3 typed context and tiers | `65e6cc3` | 200 | 569/569 | 162/162 |
+| A4 filesystem intake | `3b0b2f3` | 256 | 668/668 | 196/196 |
+| A5 family/plug-in/listing registration | `1593a68` | 431 | 956/956 | 268/268 |
+| A6 final source-clause traceability | Enclosing checkpoint | 431 | 956/956 | 268/268 |
+
+Locate the exact A6 commit with
+`git log -1 --format=%H -- evidence/stage_a/a6/GATE.json`.
+The source-base commit in each gate is explicitly not a fabricated
+self-referential commit ID; exact runtime source hashes bind the executed code.
+
+Reproduce from the repository root with **`sh tools/run_offline.sh` only**.
+Restore the separately supplied `reference/` and `wheelhouse/` inputs first.
+The command uses the exact pinned image, offline hash-enforced installation,
+six actual hostile egress probes before V3 imports, the whole suite, exact
+coverage counters, Ruff/strict mypy, source/import isolation, 19 killed mutants,
+two-process deterministic replay, six-profile registration and both
+source-count and Stage A traceability gates. No private signing key is needed
+to verify the committed fixtures. Never run V3 code/tests on the host.
+
+The current 27-row member/clause/runtime/test/evidence mapping is
+`stage_a/STAGE_A_COMPLETION.csv`. Its pre-A2 reading snapshot remains at
+`stage_a/STAGE_A_REQUIREMENTS.csv`. The 627-row global trace has three completed
+own-ID oracles, 19 partial and 605 unimplemented: 624 final dispositions
+remain pending. None is silently labelled an approval blocker or tested pass.
+The exact 59/25 aggregate fields, 84 IDs, 38 guarded/84 denied pairs and
+ID/pair bijection pass under owner Amendment 1; all 84 NEG rows cite it.
+
+Review the strict definition fields, immutable input-to-family/listing-to-output
+graph, exact plug-in source/dependency/build hashes, signed no-follow filesystem
+bounds and negative tests in `test_instrument_registration.py`. Challenge the
+sixth-profile witness in `stage_a/a6/registration.json`: all runtime and
+plug-in-manifest bytes stay unchanged. These are generic fixture schema
+profiles, not completed Core-5 strategy implementations. Registration is
+serialized process-local schema state, not the later durable operational
+ledger, a broker certificate, a research approval or a DEMO/LIVE transition.
+Unselected real policies still grant nothing.
+
+Stages B-G, whole-package reading, trained-model intake, strategies, risk,
+execution, durable ledger/audit, promotion lifecycles, comparison and adopted
+compute-and-log-only macro integration remain unfinished. The scoped Stage A
+source-reading record is not a claim that every V5 member was read in full.
+Past A1-A5 and source-conflict bundles remain unchanged.
+
+## Historical A1-A2 handoff (superseded; retained for review history)
 
 Current source-count gate: **PASS under owner Amendment 1 (`9cd873d`)**.
 The four exact checks pass, the 627 unique IDs are unchanged, and all 84 NEG rows
@@ -49,7 +103,7 @@ Each Stage A requirement has a V5 member/clause citation in
 all-stage traceability, risk/entry/trade lifecycle and adopted macro logging
 remain unfinished; do not infer their completion from this handoff.
 
-## Source-count hard gate after A2
+### Historical source-count hard gate after A2
 
 A2's validated source/evidence commit is
 `b63d8822bc137fa0434763edda26a2846a1d04f5`.

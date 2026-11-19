@@ -30,3 +30,16 @@ disposition; old eight-unit-only prose is not a new exclusion. Unselected real
 economics, direction/risk/protection policies and six operational deadlines stay
 unselected. Signed synthetic policies can demonstrate offline mechanics only.
 Synthetic event clocks cannot attest a real broker or alert-delivery event.
+
+Before A5 implementation, EXT section 3.2's complete typed field table and
+section 3.3's independently authenticated expected-state registration boundary
+were re-read, including dated-listing economics, prohibited family fields and
+input/output ordering. Section 5.4's exact acceptance oracles were read before
+assigning final global dispositions. Only V3EXT-001, V3EXT-004 and V3EXT-006
+are claimed as fully passed own-ID oracles; cross-references do not turn later
+ledger, model, roll or authority duties into completed Stage A work.
+
+`STAGE_A_COMPLETION.csv` is the current 27-row executed mapping, retaining
+every original member/clause citation and the explicitly historical pre-A2
+state column. SA-27 additionally cites owner Amendment 1 point 2(a-d).
+All 84 global NEG rows retain the amendment and mechanical graph evidence.

@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 import shutil
+import subprocess
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -37,6 +38,11 @@ def main() -> None:
         )
     ):
         raise ValueError("A failed/incomplete gate cannot be recorded as PASS")
+    if name == "a6":
+        completion = subprocess.check_output(
+            [sys.executable, "-I", "tools/record_stage_a_completion.py", "--check"], cwd=ROOT
+        )
+        (source / "stage-a-traceability.json").write_bytes(completion)
     target = ROOT / "evidence/stage_a" / name
     if target.exists():
         for path in target.iterdir():
@@ -55,7 +61,7 @@ def main() -> None:
         "slice": name.upper(),
         "title": title,
         "decision": "PASS",
-        "overall_stage_a": "IN_PROGRESS",
+        "overall_stage_a": "PASS" if name == "a6" else "IN_PROGRESS",
         "source_commit_before_gate": base_commit,
         "source_sha256": checks["source_sha256"],
         "command": "sh tools/run_offline.sh",
@@ -72,11 +78,19 @@ def main() -> None:
         "r2_handoff": "evidence/REVIEWER_R2_HANDOFF.md",
         "authority": "SYNTHETIC_OFFLINE_ONLY_NO_IG_NO_TRADING_AUTHORITY",
     }
+    if name == "a6":
+        record["stage_a_completion_csv_sha256"] = hashlib.sha256(
+            (ROOT / "evidence/stage_a/STAGE_A_COMPLETION.csv").read_bytes()
+        ).hexdigest()
     (target / "GATE.json").write_text(json.dumps(record, indent=2) + "\n")
     (target / "REPORT.md").write_text(
         f"# Stage A / {name.upper()} - {title}\n\n"
-        "Decision: PASS for this slice only. Overall Stage A: IN_PROGRESS.\n"
-        "Source reading and exact V5 member/clause mapping are recorded in "
+        + (
+            "Decision: PASS. Stage A foundations complete; B-G remain NOT_STARTED.\n"
+            if name == "a6"
+            else "Decision: PASS for this slice only. Overall Stage A: IN_PROGRESS.\n"
+        )
+        + "Source reading and exact V5 member/clause mapping are recorded in "
         "`../SOURCE_READING.md` and `../STAGE_A_REQUIREMENTS.csv`.\n\n"
         "| Gate | Actual result |\n|---|---|\n"
         f"| Whole available V3 suite | {test_count} passed; 0 failed/skipped |\n"

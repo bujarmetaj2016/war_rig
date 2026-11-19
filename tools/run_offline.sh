@@ -45,6 +45,8 @@ docker run --rm --pull never --network none --read-only \
             > "$report/mutations.json"
         /opt/venv/bin/python -m tools.check_stage_a_registration \
             > "$report/registration.json"
+        /opt/venv/bin/python -I tools/record_stage_a_completion.py --check \
+            > "$report/stage-a-traceability.json"
         cat "$report/tests.txt"
         cat "$report/lint.txt" "$report/types.txt"
         printf "%s\n" "Exact counters, independence, replay and mutation checks: PASS"

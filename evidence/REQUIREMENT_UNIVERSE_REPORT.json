@@ -1191,7 +1191,7 @@
       "status": "BLOCKED_TRACE_STATUS_VOCABULARY_CONFLICT",
       "source": "prompts/War_Rig_V3_OWNER_DIRECTED_OFFLINE_START_MASTER_IDE_PROMPT_R3_20261116.md §4",
       "explanation": "The five final statuses have no honest pending value. Pending rows retain empty final_status and explicit implementation_state. They are not approval blockers, final dispositions, or TEST_PASS.",
-      "pending_count": 627
+      "pending_count": 624
     }
   ],
   "graph_verification": {
@@ -2531,10 +2531,13 @@
     "runtime_transition_authority": false
   },
   "implementation_state_counts": {
-    "NOT_IMPLEMENTED": 627
+    "IMPLEMENTED": 3,
+    "NOT_IMPLEMENTED": 605,
+    "PARTIALLY_IMPLEMENTED": 19
   },
   "final_status_counts": {
-    "PENDING_NO_FINAL_STATUS": 627
+    "IMPLEMENTED_TESTED": 3,
+    "PENDING_NO_FINAL_STATUS": 624
   },
   "pending_ids": [
     "ATC-C01",
@@ -3016,12 +3019,9 @@
     "TC-INIT-08",
     "TC-INIT-09",
     "TC-INIT-10",
-    "V3EXT-001",
     "V3EXT-002",
     "V3EXT-003",
-    "V3EXT-004",
     "V3EXT-005",
-    "V3EXT-006",
     "V3EXT-007",
     "V3EXT-008",
     "V3EXT-009",
@@ -3179,7 +3179,7 @@
       "rows": 627
     },
     "evidence/traceability.csv": {
-      "sha256": "a4c69c053a6619791f670f0fb52e6ace552d84304527cee7a88c6860fd7eb447",
+      "sha256": "2550b2fa6535e0b106643e88509a542ef543e190c327315ea24a3e36875226a7",
       "rows": 627
     }
   },

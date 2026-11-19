@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "coverage": {
+    "covered_lines": 956,
+    "num_statements": 956,
+    "percent_covered": 100.0,
+    "percent_covered_display": "100.00",
+    "missing_lines": 0,
+    "excluded_lines": 0,
+    "percent_statements_covered": 100.0,
+    "percent_statements_covered_display": "100.00",
+    "num_branches": 268,
+    "num_partial_branches": 0,
+    "covered_branches": 268,
+    "missing_branches": 0,
+    "percent_branches_covered": 100.0,
+    "percent_branches_covered_display": "100.00"
+  },
+  "required_modules": [
+    "v3/offline/__init__.py",
+    "v3/offline/calendar_completion.py",
+    "v3/offline/contract_listing_registry.py",
+    "v3/offline/data_intake_schema.py",
+    "v3/offline/effective_policy.py",
+    "v3/offline/fixture_policy_loader.py",
+    "v3/offline/instrument_definition.py",
+    "v3/offline/intent_identity.py",
+    "v3/offline/plugin_manifest.py"
+  ],
+  "source_sha256": {
+    "v3/__init__.py": "9f173486bc106f30cef6de90dd3bf7175e99853e6d99e62a01b20cf03deedb3d",
+    "v3/offline/__init__.py": "8fa3adeaee35f07022156a5f0efbe70f701f8b196eb8ba8b3b0f1f82488dfd71",
+    "v3/offline/calendar_completion.py": "b474b5d4f037e934c0b42dc33ba093f3f445e71aa955e1271cb733e2d0101040",
+    "v3/offline/contract_listing_registry.py": "aa4fd85cdd37e09e9615b7a9f57b917e01e193fbc89aa6b1f4bdc2301f5d15a1",
+    "v3/offline/data_intake_schema.py": "77b00138224291754537ca1d80c62296f14ab1b05288c54afcd04d546302e042",
+    "v3/offline/effective_policy.py": "14c07b2bfe9a3936842714a0c11b5d435f804dbc0553993a4ffe50f337df7fa9",
+    "v3/offline/fixture_policy_loader.py": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+    "v3/offline/instrument_definition.py": "a2a97ecbb3526a8e62840a287bfd38edf475f05bc25e9d1b92146d65fc759055",
+    "v3/offline/intent_identity.py": "4fd8c1e5c611629ba483da95e2a5be5e365f453233ec4f0fe2dabb2b14e26737",
+    "v3/offline/plugin_manifest.py": "6271f00bf21f7da13c624d770f29f7d051547e43115c9050805041459f3cc460"
+  },
+  "forbidden_import_and_direct_io_scan": "PASS",
+  "first_party_import_allowlist": "PASS",
+  "v2_snapshot_files_compared": 279,
+  "identical_byte_matches": 0,
+  "normalized_12_line_matches": [],
+  "normalization": "strip and collapse whitespace; omit blank/full-line comments",
+  "finite_recall_caution": "These source comparisons do not prove absence of V2 reuse",
+  "determinism_processes": 2,
+  "determinism_output_sha256": "d38c75217e3330c155116cdd6cb9c2279048f072b26de213340e2c347196bb2b"
+}

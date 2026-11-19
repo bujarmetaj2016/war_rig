@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "recorded_date_utc": "2026-11-18",
-  "status": "IN_PROGRESS",
-  "current_stage": "A",
-  "last_pass_stage": null,
-  "last_pass_slice": "A5",
-  "last_commit": "3b0b2f3ee64766475f096b50963f1a630ce59354",
+  "recorded_date_utc": "2026-11-19",
+  "status": "STAGE_A_COMPLETE_FULL_SCOPE_NOT_READY",
+  "current_stage": "B",
+  "last_pass_stage": "A",
+  "last_pass_slice": "A6",
+  "last_commit": "1593a68bc2724995a78050855783aa9e7bdd83a8",
   "last_commit_role": "BASE_OF_GATE_SOURCE_HASHES_BOUND_BY_ENCLOSING_CHECKPOINT",
   "historical_blocked_checkpoint_commit": "d6549b612b8415ecaa7101bf6e80b7061018199c",
-  "checkpoint_form": "COMMITTED_A2_GATE_WITH_FOLLOWUP_SOURCE_CONFLICT_RECORD",
-  "resume_note": "Resume after the enclosing committed slice gate; source SHA inventory binds the tested runtime. Stage A is not complete until its final traceability gate.",
+  "checkpoint_form": "STAGE_A_FOUNDATIONS_COMPLETE_B_G_NOT_STARTED",
+  "resume_note": "Stage A is complete at the enclosing A6 checkpoint. Read Stage B governing clauses before implementation; full-package reading and B-G completion remain pending. No release, model, broker, promotion or trading authority is granted.",
   "authority": {
     "offline_development_route": "OWNER_DIRECTED",
     "formal_governance_attestation": "NOT_VERIFIED",
@@ -74,7 +74,7 @@
     "evidence_consumption": "READ_ONLY_IN_PLACE"
   },
   "execution_environment": {
-    "status": "PASS_FOR_A1_A2_OFFLINE_EXECUTION",
+    "status": "PASS_FOR_STAGE_A_OFFLINE_EXECUTION",
     "pinned_image_file": "evidence/preflight/PYTHON_IMAGE.txt",
     "pinned_image_file_sha256": "46ac1a7a3411ab200b2184dc9e0b5e484c97c177e7568582aaf1fc4b750848fb",
     "pinned_image": "python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b",
@@ -89,7 +89,7 @@
     "active_network_interfaces": [
       "lo"
     ],
-    "full_runtime_safety_suite": "A1_A2_CHECKS_PASS_FULL_STAGE_G_SCOPE_PENDING",
+    "full_runtime_safety_suite": "STAGE_A_PASS_FULL_STAGE_G_SCOPE_PENDING",
     "requirements_input_sha256": "6a1ffd92d4d95d765560acb87a46e21bc7c8a82bec5476f48c48dae8fe7ab531",
     "dependency_lock_sha256": "6db111bb0a2ed79f9f7d2002d4b44a1cde5e62ce0e53c321be967f4839048b15",
     "wheelhouse_manifest_sha256": "d93c3cc5ebaf4e43d34d85556967c212a8179549407e22cbcd5aef904bbbe850",
@@ -106,7 +106,7 @@
     "historical_inspection_sha256": "b76b8a9da6c3caecfdec91118ead26d0825120672ece327b89273b1a8b536b9f",
     "historical_source_verification_path": "evidence/preflight/SOURCE_VERIFICATION_20261118.json",
     "historical_source_verification_sha256": "e4752d29a393eb5052fec684c16cac98355b2ad8afae063d308f8de24bfa17fd",
-    "source_verification_path": "evidence/stage_a/a2/preflight.json",
+    "source_verification_path": "evidence/stage_a/a6/preflight.json",
     "source_verification_sha256": "e954d7e2b7872accb06611f11ea9940fdbb68dfbd6d061e5e29d8a89b1e8c9bd",
     "a1_manifest_path": "evidence/stage_a/a1/MANIFEST.sha256",
     "a1_manifest_sha256": "2a4649f3c1cca2de2ce6c06d949e321b83db365703f5e385cf2fb9f36c0829e2",
@@ -121,22 +121,17 @@
     "parity_status": "PARTIAL_MACRO_SUMMARIES_ONLY",
     "parity_rows": 12,
     "requirement_universe_sha256": "cb377af05606ce35ab588d050efbadc2db125cd19ee4139d61fd7fe0f60f9092",
-    "traceability_status": "SOURCE_COUNT_PASS_UNCHANGED_627_IDS_IMPLEMENTATION_MAPPINGS_PENDING",
+    "traceability_status": "STAGE_A_27_OF_27_PASS_GLOBAL_B_G_MAPPINGS_PENDING",
     "requirement_universe_path": "evidence/requirement_universe.csv",
     "traceability_path": "evidence/traceability.csv",
     "requirement_universe_report": "evidence/REQUIREMENT_UNIVERSE_REPORT.json",
-    "requirement_universe_report_sha256": "0a2c1f95334cebe5c6e6b8a741224c6c36bda8c2e5647b580414d193a1931264",
-    "traceability_sha256": "a4c69c053a6619791f670f0fb52e6ace552d84304527cee7a88c6860fd7eb447",
+    "requirement_universe_report_sha256": "8f4f79671490c1d1d2511e8fcc44f7f36999dba7d8d4cbaeee484dc594e14459",
+    "traceability_sha256": "2550b2fa6535e0b106643e88509a542ef543e190c327315ea24a3e36875226a7",
     "traceability_rows": 627,
     "traceability_totals": {
-      "IMPLEMENTED_TESTED": 0,
-      "DENIED_BY_POLICY_TESTED": 0,
-      "OUT_OF_G1_SCOPE": 0,
-      "BLOCKED_MISSING_APPROVAL": 0,
-      "NOT_APPLICABLE_WITH_SIGNED_PROOF": 0,
-      "PENDING_IMPLEMENTATION_NO_FINAL_STATUS": 627,
-      "source_count_conflicts": 0,
-      "note": "These are whole-contract mappings; passed partial A1-A2 primitives are not promoted to full component/oracle completion."
+      "PENDING": 624,
+      "IMPLEMENTED_TESTED": 3,
+      "source_count_conflicts": 0
     },
     "source_count_gate_evidence": "evidence/stage_a/amendment_1/checks.json",
     "source_count_gate_runner_exit_code": 0,
@@ -147,16 +142,20 @@
     "historical_source_count_gate_manifest": "evidence/stage_a/source_conflict/MANIFEST.sha256",
     "historical_source_count_gate_manifest_sha256": "4ae8562b4b5cc7f2152924c8d822efe151d2e17cf3a047a3d0f9aba4fe56066f",
     "r2_handoff_path": "evidence/REVIEWER_R2_HANDOFF.md",
-    "r2_handoff_status": "PARTIAL_A1_A2_CHECKPOINTS_ONLY_FULL_SCOPE_NOT_READY",
+    "r2_handoff_status": "STAGE_A_COMPLETE_FULL_SCOPE_NOT_READY_FOR_ACCEPTANCE",
     "a3_manifest_path": "evidence/stage_a/a3/MANIFEST.sha256",
     "a3_manifest_sha256": "5ba5a2c61bcd6a72d0fb63d7b04343900b36169a09187293d738e91e5192eeae",
     "a4_manifest_path": "evidence/stage_a/a4/MANIFEST.sha256",
     "a4_manifest_sha256": "f7740b4333cdc50ba1e2c1a52e411ae9ce3fdb7d82b6bad95b3e5f21c4d60e43",
     "a5_manifest_path": "evidence/stage_a/a5/MANIFEST.sha256",
-    "a5_manifest_sha256": "942b0f0232e1f95fb2ee4dba510a82c6f7404aa1b580565a32e137f713fd3a34"
+    "a5_manifest_sha256": "942b0f0232e1f95fb2ee4dba510a82c6f7404aa1b580565a32e137f713fd3a34",
+    "a6_manifest_path": "evidence/stage_a/a6/MANIFEST.sha256",
+    "a6_manifest_sha256": "0df6baccbd20bdd73144b80dcd2d5d2fbc8258cc2fb0f64ff030c3f26093a890",
+    "stage_a_completion_path": "evidence/stage_a/STAGE_A_COMPLETION.csv",
+    "stage_a_completion_sha256": "9472e4280719a7ec03332190607dd4023b54d58325aa1d003ff08ee032757566"
   },
   "stages": {
-    "A": "IN_PROGRESS",
+    "A": "PASS",
     "B": "NOT_STARTED",
     "C": "NOT_STARTED",
     "D": "NOT_STARTED",
@@ -165,7 +164,7 @@
     "G": "NOT_STARTED"
   },
   "tests_and_coverage": {
-    "status": "PASS_THROUGH_A5",
+    "status": "PASS_THROUGH_A6",
     "command": "sh tools/run_offline.sh",
     "exit_code": 0,
     "tests_executed": 431,
@@ -178,11 +177,11 @@
     "branches_partial": 0,
     "excluded_executable_lines": 0,
     "coverage_scope": "ALL_CURRENT_V3_OFFLINE_PRODUCTION_MODULES_NOT_BUILD_EVIDENCE_TOOLS",
-    "coverage_artifact_path": "evidence/stage_a/a5/coverage.json",
-    "coverage_artifact_sha256": "b864924737051b21726b7c4d3489d700610e0db8cdd6b08c7a5028bac0f6e462",
+    "coverage_artifact_path": "evidence/stage_a/a6/coverage.json",
+    "coverage_artifact_sha256": "818388f661d82cc65eef3c7fb62dd21a10a660a29a72ce34ddb27444f9652341",
     "mutations_killed": 19,
     "mutations_survived": 0,
-    "mutation_report_path": "evidence/stage_a/a5/mutations.json",
+    "mutation_report_path": "evidence/stage_a/a6/mutations.json",
     "macro_trading_decision_noninterference_tests": "NOT_RUN_MACRO_IMPLEMENTATION_PENDING",
     "determinism_processes": 2,
     "determinism_output_sha256": "d38c75217e3330c155116cdd6cb9c2279048f072b26de213340e2c347196bb2b",
@@ -246,6 +245,12 @@
       "gate_path": "evidence/stage_a/a5/GATE.json",
       "source_commit_binding": "ENCLOSING_GATE_COMMIT",
       "title": "Immutable instrument families, exact plug-ins, listing evidence DAG and sixth config-only profile"
+    },
+    "A6": {
+      "status": "PASS",
+      "gate_path": "evidence/stage_a/a6/GATE.json",
+      "source_commit_binding": "ENCLOSING_GATE_COMMIT",
+      "title": "Complete Stage A foundations and source-clause traceability"
     }
   },
   "open_blockers": [],
@@ -270,12 +275,5 @@
       "evidence_path": "evidence/stage_a/a1/preflight.json"
     }
   ],
-  "remaining_stage_a_work": [
-    "FULL_VERIFIED_CONTRACT_READING_AND_REQUIREMENT_UNIVERSE_EXTRACTION",
-    "INSTRUMENT_LISTING_PLUGIN_MANIFEST_AND_INPUT_EVIDENCE_GRAPH",
-    "SOURCE_ACCOUNT_INSTRUMENT_POLICY_EVENT_IDENTITY_BINDING",
-    "T1_T2_T3_POLICY_PRECEDENCE",
-    "RESOURCE_BOUNDED_SYMLINK_SAFE_FILESYSTEM_FIXTURE_INTAKE",
-    "INTEGRATED_SIGNED_SNAPSHOTS_AND_SIXTH_INSTRUMENT_ONBOARDING"
-  ]
+  "remaining_stage_a_work": []
 }
