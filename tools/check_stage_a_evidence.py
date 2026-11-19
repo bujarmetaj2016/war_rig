@@ -16,10 +16,48 @@ REQUIRED = {
     "v3/offline/effective_policy.py",
     "v3/offline/intent_identity.py",
     "v3/offline/fixture_policy_loader.py",
+    "v3/offline/plugin_manifest.py",
+    "v3/offline/instrument_definition.py",
+    "v3/offline/contract_listing_registry.py",
 }
 ALLOWED_IMPORTS = {
     "v3/__init__.py": set(),
     "v3/offline/__init__.py": set(),
+    "v3/offline/plugin_manifest.py": {
+        "hashlib",
+        "json",
+        "dataclasses",
+        "v3.offline.data_intake_schema",
+        "v3.offline.effective_policy",
+        "v3.offline.fixture_policy_loader",
+        "v3.offline.intent_identity",
+    },
+    "v3/offline/instrument_definition.py": {
+        "hashlib",
+        "json",
+        "re",
+        "dataclasses",
+        "datetime",
+        "v3.offline.calendar_completion",
+        "v3.offline.data_intake_schema",
+        "v3.offline.effective_policy",
+        "v3.offline.fixture_policy_loader",
+        "v3.offline.intent_identity",
+        "v3.offline.plugin_manifest",
+    },
+    "v3/offline/contract_listing_registry.py": {
+        "hashlib",
+        "json",
+        "dataclasses",
+        "datetime",
+        "threading",
+        "v3.offline.calendar_completion",
+        "v3.offline.data_intake_schema",
+        "v3.offline.effective_policy",
+        "v3.offline.fixture_policy_loader",
+        "v3.offline.instrument_definition",
+        "v3.offline.intent_identity",
+    },
     "v3/offline/calendar_completion.py": {
         "dataclasses",
         "datetime",
@@ -208,6 +246,8 @@ intake = load_intake_policy(
 disk = read_fixture_directory(intake, bytes.fromhex(public['public_key_hex']),
                               context.run, context.account, snapshot.clock.at)
 result['filesystem_payload_sha256'] = disk.payload_sha256
+from tools.check_stage_a_registration import registration_proof
+result['registration'] = registration_proof()
 print(json.dumps(result, sort_keys=True, default=str, separators=(',',':')))
 """
     results = [

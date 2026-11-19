@@ -15,7 +15,9 @@ def canonical(value: object) -> bytes:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()
 
 
-def write_fixture(name: str, value: object, key: Ed25519PrivateKey) -> None:
+def write_fixture(
+    name: str, value: object, key: Ed25519PrivateKey, *, max_nodes: int = 256
+) -> None:
     target = ROOT / "fixtures/stage_a" / name
     target.mkdir(parents=True, exist_ok=True)
     payload = canonical(value)
@@ -26,7 +28,7 @@ def write_fixture(name: str, value: object, key: Ed25519PrivateKey) -> None:
             "payload_sha256": hashlib.sha256(payload).hexdigest(),
             "max_bytes": 65536,
             "max_depth": 8,
-            "max_nodes": 256,
+            "max_nodes": max_nodes,
         }
     )
     (target / "payload.json").write_bytes(payload)

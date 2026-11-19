@@ -1,0 +1,26 @@
+........................................................................ [ 16%]
+........................................................................ [ 33%]
+........................................................................ [ 50%]
+........................................................................ [ 66%]
+........................................................................ [ 83%]
+.......................................................................  [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.16-final-0 _______________
+
+Name                                      Stmts   Miss Branch BrPart    Cover   Missing
+---------------------------------------------------------------------------------------
+v3/offline/__init__.py                        0      0      0      0  100.00%
+v3/offline/calendar_completion.py           136      0     22      0  100.00%
+v3/offline/contract_listing_registry.py     122      0     34      0  100.00%
+v3/offline/data_intake_schema.py             65      0     22      0  100.00%
+v3/offline/effective_policy.py              116      0     30      0  100.00%
+v3/offline/fixture_policy_loader.py         261      0    100      0  100.00%
+v3/offline/instrument_definition.py         107      0     22      0  100.00%
+v3/offline/intent_identity.py                90      0     22      0  100.00%
+v3/offline/plugin_manifest.py                59      0     16      0  100.00%
+---------------------------------------------------------------------------------------
+TOTAL                                       956      0    268      0  100.00%
+Coverage XML written to file evidence/stage_a/runs/20261119T000140Z-82307/coverage-report.xml
+Coverage JSON written to file evidence/stage_a/runs/20261119T000140Z-82307/coverage.json
+Required test coverage of 100% reached. Total coverage: 100.00%
+431 passed in 8.30s

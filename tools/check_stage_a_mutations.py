@@ -14,10 +14,14 @@ ROOT = Path(__file__).resolve().parents[1]
 LOADER = "v3/offline/fixture_policy_loader.py"
 CLOCK = "v3/offline/calendar_completion.py"
 TIERS = "v3/offline/effective_policy.py"
+PLUGINS = "v3/offline/plugin_manifest.py"
+REGISTRY = "v3/offline/contract_listing_registry.py"
 
 
 def main() -> None:
-    originals = {name: (ROOT / name).read_bytes() for name in (LOADER, CLOCK, TIERS)}
+    originals = {
+        name: (ROOT / name).read_bytes() for name in (LOADER, CLOCK, TIERS, PLUGINS, REGISTRY)
+    }
     mutations = [
         (
             "signature_verification_removed",
@@ -145,6 +149,30 @@ def main() -> None:
             "tests/v3/test_fixture_filesystem.py"
             "::test_exact_inventory_file_and_total_limits_are_enforced[total_bytes]",
         ),
+        (
+            "plugin_network_capability_allowed",
+            PLUGINS,
+            'or set(_strings(item["capabilities"])) != {_INTERFACES[interface][1]}',
+            "or False",
+            "tests/v3/test_instrument_registration.py"
+            "::test_capability_guard_is_independent_of_exact_source_build_integrity",
+        ),
+        (
+            "registration_expected_version_removed",
+            REGISTRY,
+            "expected != len(self._events)",
+            "False",
+            "tests/v3/test_instrument_registration.py"
+            "::test_expected_state_guard_is_independent_of_build_integrity",
+        ),
+        (
+            "missing_listing_field_allowed",
+            REGISTRY,
+            "if names != ECONOMICS_FIELDS:",
+            "if False:",
+            "tests/v3/test_instrument_registration.py"
+            "::test_missing_fee_evidence_cannot_use_an_assumed_definition_value",
+        ),
     ]
     results = []
     for name, module, before, after, selector in mutations:
@@ -153,7 +181,7 @@ def main() -> None:
             raise ValueError(f"Mutation anchor is no longer unique: {name}")
         with tempfile.TemporaryDirectory(prefix=".stage-a-mutation-", dir=ROOT) as directory:
             copy = Path(directory)
-            for tree in ("v3", "tests/v3", "fixtures/stage_a"):
+            for tree in ("v3", "tests/v3", "fixtures/stage_a", "tools"):
                 shutil.copytree(
                     ROOT / tree, copy / tree, ignore=shutil.ignore_patterns("__pycache__")
                 )
