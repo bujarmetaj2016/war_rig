@@ -39,6 +39,11 @@ V2 was read as text only:
 | `reference/v2_snapshot/backtest_ml/audit_entry.py:62-67` | `84e774c10ae043f425c65055bc9f91f6db4d70ec077c7f42b7a72c441fb2241e` | A/B/C/D thresholds 0.60/0.45/0.30; fixture/reference only |
 | `reference/v2_snapshot/backtest_ml/live_inference.py:478-521` | `8a298149c23ec23cd2dee63349834bd09e7e59c13bd533fb39a5e126795e4601` | Gold probability-only; FX/equity climate/size-label exceptions; comparison only |
 
+The same pinned `live_inference.py:107-150` was also read as text: `_live_prob`
+constructs the scaler/classifier, calls fit/fit_transform at line 144, predicts
+and retains no frozen artifact in this function. This confirms MS-B section 13
+E2 for the supplied copy only, not a live-host inventory or global absence proof.
+
 ## B1 evidence limits
 
 The reader proof is a hand-authored three-node numeric XGBoost-2.0.3-shaped
@@ -89,3 +94,20 @@ synthetic reader prediction, with immutable pre-outcome macro attachments.
 The evidence checker launches two independent processes and compares canonical
 bytes. V2 mappings are separate comparison-only observations, including Gold,
 FX and equity exceptions; they confer neither calibration nor sizing authority.
+
+## B3 completion boundary
+
+The current full-build signed fixtures are in a separate `b3_prediction`
+namespace because the authenticated signed-score provider changed the build
+fingerprint. The B2 namespace and gate remain immutable historical evidence.
+Both signature failures and model-file failures now have common correlated
+denial witnesses. The static scan also rejects training symbols and
+`allow_pickle`, not only direct fitting calls.
+
+All 19 Stage-B decomposition rows have explicit member/clause/runtime/test
+mappings. Fourteen MS-B mechanical oracles have executed final dispositions.
+MSB-08,13,14,15,16 remain globally partial: synthetic scope is not real serving,
+canonical intent is not a durable intent ledger, no real registration occurred,
+EXT-04 does not exist until C, and actual downstream order/position/outcome
+lineage awaits D/F. These limits are preserved in global traceability and stage
+state, not hidden behind the scoped Stage B PASS.

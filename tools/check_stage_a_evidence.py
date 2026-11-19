@@ -164,6 +164,55 @@ def normalized(path: Path) -> list[str]:
     ]
 
 
+def input_integrity():
+    state = json.loads((ROOT / "evidence/STAGE_STATE.json").read_text())
+    manifests = (
+        ("evidence/macro/MANIFEST.sha256", ROOT, state["macro_research"]["manifest_sha256"], 482),
+        ("reference/MANIFEST.sha256", ROOT, state["reference_manifest"]["sha256"], 374),
+        (
+            "wheelhouse/SHA256SUMS",
+            ROOT / "wheelhouse",
+            state["execution_environment"]["wheelhouse_manifest_sha256"],
+            19,
+        ),
+    )
+    results = {}
+    for name, base, expected, count in manifests:
+        raw = (ROOT / name).read_bytes()
+        if hashlib.sha256(raw).hexdigest() != expected:
+            raise RuntimeError("Pinned input manifest changed: " + name)
+        entries = [line for line in raw.decode().splitlines() if line and not line.startswith("#")]
+        seen = set()
+        for line in entries:
+            digest, relative = line.split("  ", 1)
+            path = (base / relative).resolve()
+            if (
+                not path.is_relative_to(base)
+                or path in seen
+                or hashlib.sha256(path.read_bytes()).hexdigest() != digest
+            ):
+                raise RuntimeError("Input checksum/path/duplicate mismatch: " + relative)
+            seen.add(path)
+        if len(entries) != count:
+            raise RuntimeError("Input manifest cardinality changed: " + name)
+        results[name] = {"sha256": expected, "verified_entries": count, "status": "PASS"}
+    for name, expected in (
+        (
+            state["owner_directed_start_record"]["path"],
+            state["owner_directed_start_record"]["sha256"],
+        ),
+        (state["controlling_prompt"]["path"], state["controlling_prompt"]["sha256"]),
+        ("requirements-dev.lock", state["execution_environment"]["dependency_lock_sha256"]),
+        (
+            state["macro_research"]["owner_decision_path"],
+            state["macro_research"]["owner_decision_sha256"],
+        ),
+    ):
+        if hashlib.sha256((ROOT / name).read_bytes()).hexdigest() != expected:
+            raise RuntimeError("Pinned authority/dependency input changed: " + name)
+    return results
+
+
 def main() -> None:
     destination = (ROOT / sys.argv[1]).resolve()
     if not any(
@@ -171,6 +220,7 @@ def main() -> None:
     ):
         raise ValueError("Evidence output must remain inside an approved stage directory")
     report = json.loads((destination / "coverage.json").read_text())
+    inputs = input_integrity()
     modules = {str(path.relative_to(ROOT)) for path in (ROOT / "v3/offline").rglob("*.py")}
     if (
         modules != REQUIRED
@@ -236,6 +286,26 @@ def main() -> None:
                 in {"fit", "train", "refit", "partial_fit", "fit_transform", "calibrate"}
             ):
                 raise RuntimeError(f"Forbidden training/calibration-fitting call: {path}")
+            prohibited = {
+                "fit",
+                "train",
+                "refit",
+                "partial_fit",
+                "fit_transform",
+                "calibrate",
+                "allow_pickle",
+            }
+            if (
+                isinstance(node, ast.Name)
+                and node.id in prohibited
+                or isinstance(node, ast.Attribute)
+                and node.attr in prohibited
+                or isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+                and node.name in prohibited
+                or isinstance(node, ast.keyword)
+                and node.arg in prohibited
+            ):
+                raise RuntimeError(f"Forbidden training/deserialization symbol: {path}")
         lines = normalized(path)
         windows = {tuple(lines[i : i + 12]) for i in range(len(lines) - 11)}
         for legacy in snapshot:
@@ -329,6 +399,7 @@ print(json.dumps(result, sort_keys=True, default=str, separators=(',',':')))
         json.dumps(
             {
                 "status": "PASS",
+                "input_integrity": inputs,
                 "coverage": report["totals"],
                 "required_modules": sorted(REQUIRED),
                 "source_sha256": source_hashes,

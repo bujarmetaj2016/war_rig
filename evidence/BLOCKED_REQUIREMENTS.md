@@ -1,4 +1,21 @@
-# R3 outstanding work - after completed Stage A
+# R3 outstanding work - after offline Stages A/B
+
+Stage A was accepted at `e0ab862`. Stage B's offline synthetic scope is complete;
+the current evidence is `stage_b/b3/` and `stage_b/STAGE_B_COMPLETION.csv`.
+This supersedes historical statements below that Stage B and macro computation
+are unstarted. There is no current environment/source blocker.
+
+All real Core-5 model artifacts remain UNAVAILABLE/NOT_VERIFIED and yield
+NO_AUTHORITATIVE_PREDICTION. The sole strict JSON reader is proven only on
+signed hand-authored constants; real registration, owner serving authorization,
+original-library parity and production calibration are not fabricated.
+MSB-08,13,14,15,16 retain explicit global partial dispositions.
+
+The adopted baskets/event telemetry and current-pipeline no-effect checks pass.
+Entry/size/TP/SL/trailing, durable ledger/dashboard noninterference remain
+C/E/F integrations, not missing owner approvals. C-G, the full P0 inventory,
+paired comparison programme and whole-package reading remain unfinished.
+Any arriving Stage A R2 findings must be fixed before C starts.
 
 ## Resolved environment and source blockers
 

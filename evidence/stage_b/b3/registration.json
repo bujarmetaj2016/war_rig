@@ -1,0 +1,221 @@
+{
+  "added_profiles": 1,
+  "after_sha256": {
+    "fixtures/stage_a/a5/plugins/manifest.json": "4f32a547784193229a9ba64edd84ced141274f0d89ac5d13ad09c8f7fb54a7ba",
+    "fixtures/stage_a/a5/plugins/manifest.sig": "400984d22b6c469f94db2e54bbc0d181bb2d043aa748ce5502dac1ed0310b083",
+    "fixtures/stage_a/a5/plugins/payload.json": "f5c7286a4e079e361b488fc09b3d7d53533b6ebf31b5c347040cd939cd333282",
+    "v3/__init__.py": "9f173486bc106f30cef6de90dd3bf7175e99853e6d99e62a01b20cf03deedb3d",
+    "v3/offline/__init__.py": "8fa3adeaee35f07022156a5f0efbe70f701f8b196eb8ba8b3b0f1f82488dfd71",
+    "v3/offline/calendar_completion.py": "b474b5d4f037e934c0b42dc33ba093f3f445e71aa955e1271cb733e2d0101040",
+    "v3/offline/contract_listing_registry.py": "aa4fd85cdd37e09e9615b7a9f57b917e01e193fbc89aa6b1f4bdc2301f5d15a1",
+    "v3/offline/data_intake_schema.py": "77b00138224291754537ca1d80c62296f14ab1b05288c54afcd04d546302e042",
+    "v3/offline/effective_policy.py": "14c07b2bfe9a3936842714a0c11b5d435f804dbc0553993a4ffe50f337df7fa9",
+    "v3/offline/fixture_policy_loader.py": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+    "v3/offline/instrument_definition.py": "a2a97ecbb3526a8e62840a287bfd38edf475f05bc25e9d1b92146d65fc759055",
+    "v3/offline/intent_identity.py": "4fd8c1e5c611629ba483da95e2a5be5e365f453233ec4f0fe2dabb2b14e26737",
+    "v3/offline/macro_features.py": "03aaf1798085bfabdd4173ce89c475668daf02d8f47006afcb01bfd7d28fc031",
+    "v3/offline/model_intake.py": "63d522b98deb1cd496d56cc6842fa83a5b5b902292019ce9e75a015d720e418e",
+    "v3/offline/offline_scenario_runner.py": "cac9d13854b61746e1bc9f468c100902ce15c0fb8bffe8f7b85d4389b06dd669",
+    "v3/offline/plugin_manifest.py": "6271f00bf21f7da13c624d770f29f7d051547e43115c9050805041459f3cc460"
+  },
+  "before_sha256": {
+    "fixtures/stage_a/a5/plugins/manifest.json": "4f32a547784193229a9ba64edd84ced141274f0d89ac5d13ad09c8f7fb54a7ba",
+    "fixtures/stage_a/a5/plugins/manifest.sig": "400984d22b6c469f94db2e54bbc0d181bb2d043aa748ce5502dac1ed0310b083",
+    "fixtures/stage_a/a5/plugins/payload.json": "f5c7286a4e079e361b488fc09b3d7d53533b6ebf31b5c347040cd939cd333282",
+    "v3/__init__.py": "9f173486bc106f30cef6de90dd3bf7175e99853e6d99e62a01b20cf03deedb3d",
+    "v3/offline/__init__.py": "8fa3adeaee35f07022156a5f0efbe70f701f8b196eb8ba8b3b0f1f82488dfd71",
+    "v3/offline/calendar_completion.py": "b474b5d4f037e934c0b42dc33ba093f3f445e71aa955e1271cb733e2d0101040",
+    "v3/offline/contract_listing_registry.py": "aa4fd85cdd37e09e9615b7a9f57b917e01e193fbc89aa6b1f4bdc2301f5d15a1",
+    "v3/offline/data_intake_schema.py": "77b00138224291754537ca1d80c62296f14ab1b05288c54afcd04d546302e042",
+    "v3/offline/effective_policy.py": "14c07b2bfe9a3936842714a0c11b5d435f804dbc0553993a4ffe50f337df7fa9",
+    "v3/offline/fixture_policy_loader.py": "fd9741c6c3b9ba0654331e7c9a49582b64e1decaa8a6a314c2d0a5e7cdef229f",
+    "v3/offline/instrument_definition.py": "a2a97ecbb3526a8e62840a287bfd38edf475f05bc25e9d1b92146d65fc759055",
+    "v3/offline/intent_identity.py": "4fd8c1e5c611629ba483da95e2a5be5e365f453233ec4f0fe2dabb2b14e26737",
+    "v3/offline/macro_features.py": "03aaf1798085bfabdd4173ce89c475668daf02d8f47006afcb01bfd7d28fc031",
+    "v3/offline/model_intake.py": "63d522b98deb1cd496d56cc6842fa83a5b5b902292019ce9e75a015d720e418e",
+    "v3/offline/offline_scenario_runner.py": "cac9d13854b61746e1bc9f468c100902ce15c0fb8bffe8f7b85d4389b06dd669",
+    "v3/offline/plugin_manifest.py": "6271f00bf21f7da13c624d770f29f7d051547e43115c9050805041459f3cc460"
+  },
+  "initial_profiles": 5,
+  "profiles": [
+    {
+      "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+      "data": "COMPLETED_FIXTURE_ONLY",
+      "definition": "29bc00959217b6e937d1868a2c4332dd4e7fe8253df2b67a2a6674548b3bd3bc",
+      "event": {
+        "command_sha256": {
+          "value": "af7c173a25cd4682279fdfc5e752f1be854d9df879e76d63657a5325ad53e517"
+        },
+        "definition_sha256": {
+          "value": "29bc00959217b6e937d1868a2c4332dd4e7fe8253df2b67a2a6674548b3bd3bc"
+        },
+        "event_id": {
+          "value": "REGISTER_XAUUSD"
+        },
+        "event_sha256": {
+          "value": "9fc407438762a8e678f52d21a9698b1e510f811fcabac6b4d863a49288008759"
+        },
+        "instrument": {
+          "value": "XAUUSD"
+        },
+        "previous_sha256": {
+          "value": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "version": 1
+      },
+      "instrument": "XAUUSD",
+      "listing": "3ed628b96c67d3cdd24223be8aa11a6d8896cd079a8475d5bccc0674c5adf508",
+      "outcome": "8032b7358d9aa042ad47328c6b6873688d927411a850a6cfa8af1ca67d21d30f"
+    },
+    {
+      "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+      "data": "COMPLETED_FIXTURE_ONLY",
+      "definition": "a15d3ac84e695ab86a29890c6600ba4bc25dc6b7de21ade0f07511f0f4e94368",
+      "event": {
+        "command_sha256": {
+          "value": "98e1a5bcfbd41b2e9826c798ab7d59209bce633a8f2194cc0aa70d71e9028765"
+        },
+        "definition_sha256": {
+          "value": "a15d3ac84e695ab86a29890c6600ba4bc25dc6b7de21ade0f07511f0f4e94368"
+        },
+        "event_id": {
+          "value": "REGISTER_GER40"
+        },
+        "event_sha256": {
+          "value": "69fc139e9d95637b970884bbc34a97ec599274d25146f5a6d4909f035b07eb73"
+        },
+        "instrument": {
+          "value": "GER40"
+        },
+        "previous_sha256": {
+          "value": "9fc407438762a8e678f52d21a9698b1e510f811fcabac6b4d863a49288008759"
+        },
+        "version": 2
+      },
+      "instrument": "GER40",
+      "listing": "4df5bb003a31b4be69f8abd75fb30a063eab96fcb94c3ed568ea64854c4b10e1",
+      "outcome": "58bac2a8e1511c2e60623563a94566a5d746a0f849fb9c4ff626a5639e82bc27"
+    },
+    {
+      "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+      "data": "COMPLETED_FIXTURE_ONLY",
+      "definition": "3fbfb654cd33dfb2d0e6c3ed57b137c9b2020c9cebf0dfcbba534f69dfd1811f",
+      "event": {
+        "command_sha256": {
+          "value": "9dc3f3ae33478e8e579f0bf65d52dd815bd04c218a0dfea61e7476d0d0428f82"
+        },
+        "definition_sha256": {
+          "value": "3fbfb654cd33dfb2d0e6c3ed57b137c9b2020c9cebf0dfcbba534f69dfd1811f"
+        },
+        "event_id": {
+          "value": "REGISTER_US500"
+        },
+        "event_sha256": {
+          "value": "5102eab373d4030a969c26d7f0f12e85626242f2d4ef619d9bd305c1e81eb05c"
+        },
+        "instrument": {
+          "value": "US500"
+        },
+        "previous_sha256": {
+          "value": "69fc139e9d95637b970884bbc34a97ec599274d25146f5a6d4909f035b07eb73"
+        },
+        "version": 3
+      },
+      "instrument": "US500",
+      "listing": "c3f500bd46c8be62fd5dcaae27a5894d14851655216112a83a5b082c994cb28c",
+      "outcome": "384dbd3a7451da8a61cec34eeae14b35a96d3f5d03b0c553374a7e2d885cfb20"
+    },
+    {
+      "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+      "data": "COMPLETED_FIXTURE_ONLY",
+      "definition": "7841f9b60c83734e027e326a0f8ef834f6ea7d598167bff737866fd981ea4ca2",
+      "event": {
+        "command_sha256": {
+          "value": "564e4d32cffa802f065c6a27cfd0ddc9844712cf761710a12f02fde1cfa88a05"
+        },
+        "definition_sha256": {
+          "value": "7841f9b60c83734e027e326a0f8ef834f6ea7d598167bff737866fd981ea4ca2"
+        },
+        "event_id": {
+          "value": "REGISTER_EURUSD"
+        },
+        "event_sha256": {
+          "value": "9c171afb7ed2453ca2c8246b75ed8eea8e0f8d83d34e5594cb1bab7a51c032bf"
+        },
+        "instrument": {
+          "value": "EURUSD"
+        },
+        "previous_sha256": {
+          "value": "5102eab373d4030a969c26d7f0f12e85626242f2d4ef619d9bd305c1e81eb05c"
+        },
+        "version": 4
+      },
+      "instrument": "EURUSD",
+      "listing": "4a75f7e15ce793a0f69e2728ca7ac1471cbd8af368dabce6282a11a172a5e280",
+      "outcome": "4a48abc69f3b2a614a28029539c6d8797b61a2983dc0bc3ba9263ffd295ec4ee"
+    },
+    {
+      "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+      "data": "COMPLETED_FIXTURE_ONLY",
+      "definition": "4d4b0b5e8a0cd2aa82b215cb8386e9f9195b379a65fb3e613d8408763edb624f",
+      "event": {
+        "command_sha256": {
+          "value": "46d9cd3d740c277172ecfa32c123947ff84a127b16bcd88df42e3a4bc9f05868"
+        },
+        "definition_sha256": {
+          "value": "4d4b0b5e8a0cd2aa82b215cb8386e9f9195b379a65fb3e613d8408763edb624f"
+        },
+        "event_id": {
+          "value": "REGISTER_GBPUSD"
+        },
+        "event_sha256": {
+          "value": "dfe7f66b726c7a8b0d9d02c2e09ddb9862465bf93fd33956961e943b35e1cf0a"
+        },
+        "instrument": {
+          "value": "GBPUSD"
+        },
+        "previous_sha256": {
+          "value": "9c171afb7ed2453ca2c8246b75ed8eea8e0f8d83d34e5594cb1bab7a51c032bf"
+        },
+        "version": 5
+      },
+      "instrument": "GBPUSD",
+      "listing": "ef3b03a702993e8d3457301c3a6688751215690db7c023da2c2c4fecb6b0157c",
+      "outcome": "fe4d7ee472b4478fab3d7234ee66f78915a1435a255448aeaadcd1d4843cab02"
+    },
+    {
+      "authority": "NO_ENTRY_NO_BROKER_NO_MODEL_APPROVAL",
+      "data": "COMPLETED_FIXTURE_ONLY",
+      "definition": "0161ffc56cf9ceae130b20bd393ff1c998314e870f2054b8edb35c353c75ce49",
+      "event": {
+        "command_sha256": {
+          "value": "48b2cd13066776812786caa20e1ee3c3afdb44431d1eb39d4916b11a34645a10"
+        },
+        "definition_sha256": {
+          "value": "0161ffc56cf9ceae130b20bd393ff1c998314e870f2054b8edb35c353c75ce49"
+        },
+        "event_id": {
+          "value": "REGISTER_SYNTHETIC_6"
+        },
+        "event_sha256": {
+          "value": "bd9f47b20148e636393c00d039a1489a1dfaa504d8e7166c9726225cfb8ceac9"
+        },
+        "instrument": {
+          "value": "SYNTHETIC_6"
+        },
+        "previous_sha256": {
+          "value": "dfe7f66b726c7a8b0d9d02c2e09ddb9862465bf93fd33956961e943b35e1cf0a"
+        },
+        "version": 6
+      },
+      "instrument": "SYNTHETIC_6",
+      "listing": "850fc2ead4674430485ae9388611613bd6217375e67452aec02ac114ea2010d4",
+      "outcome": "3c74d4dbde3c43a5e4073cd5285e0b68044dc633de6fda8e19aa61e6903d4a92"
+    }
+  ],
+  "registered_profiles": 6,
+  "registry_event_count": 6,
+  "registry_scope": "PROCESS_LOCAL_SCHEMA_FOUNDATIONS_NOT_OPERATIONAL_AUTHORITY",
+  "runtime_source_and_plugin_manifest_bytes_changed": 0,
+  "status": "PASS"
+}

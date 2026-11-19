@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "recorded_date_utc": "2026-11-19",
-  "status": "STAGE_B_IN_PROGRESS",
-  "current_stage": "B",
-  "last_pass_stage": "A",
-  "last_pass_slice": "B2",
-  "last_commit": "78f1ac7715d4866d913eb3af04684e813732ec38",
+  "status": "STAGE_B_COMPLETE_FULL_SCOPE_NOT_READY",
+  "current_stage": "C",
+  "last_pass_stage": "B",
+  "last_pass_slice": "B3",
+  "last_commit": "2194c344efb219a4b752dd1ab1cf577b45a10b35",
   "last_commit_role": "BASE_OF_GATE_SOURCE_HASHES_BOUND_BY_ENCLOSING_CHECKPOINT",
   "historical_blocked_checkpoint_commit": "d6549b612b8415ecaa7101bf6e80b7061018199c",
-  "checkpoint_form": "STAGE_B_SLICE_GATED",
-  "resume_note": "Resume Stage B after the enclosing committed slice gate; no Stage C start until any arriving Stage A R2 finding is fixed.",
+  "checkpoint_form": "STAGE_B_SYNTHETIC_OFFLINE_COMPLETE",
+  "resume_note": "Resume C only after fixing any arriving Stage A R2 findings. No real model eligibility, release, broker or trading authority.",
   "authority": {
     "offline_development_route": "OWNER_DIRECTED",
     "formal_governance_attestation": "NOT_VERIFIED",
@@ -70,11 +70,11 @@
     "entry_gate_adopted": false,
     "size_modifier_adopted": false,
     "additional_proposal_items_adopted": false,
-    "implementation_status": "B1_COMPUTE_LOG_PIPELINE_ONLY_C_E_F_INTEGRATION_PENDING",
+    "implementation_status": "COMPUTE_LOG_PIPELINE_TESTED_C_E_F_INTEGRATION_PENDING",
     "evidence_consumption": "READ_ONLY_IN_PLACE"
   },
   "execution_environment": {
-    "status": "PASS_FOR_STAGE_A_OFFLINE_EXECUTION",
+    "status": "PASS_FOR_STAGE_A_B_OFFLINE_EXECUTION",
     "pinned_image_file": "evidence/preflight/PYTHON_IMAGE.txt",
     "pinned_image_file_sha256": "46ac1a7a3411ab200b2184dc9e0b5e484c97c177e7568582aaf1fc4b750848fb",
     "pinned_image": "python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b",
@@ -89,7 +89,7 @@
     "active_network_interfaces": [
       "lo"
     ],
-    "full_runtime_safety_suite": "STAGE_A_PASS_FULL_STAGE_G_SCOPE_PENDING",
+    "full_runtime_safety_suite": "STAGE_A_B_PASS_FULL_STAGE_G_SCOPE_PENDING",
     "requirements_input_sha256": "6a1ffd92d4d95d765560acb87a46e21bc7c8a82bec5476f48c48dae8fe7ab531",
     "dependency_lock_sha256": "6db111bb0a2ed79f9f7d2002d4b44a1cde5e62ce0e53c321be967f4839048b15",
     "wheelhouse_manifest_sha256": "d93c3cc5ebaf4e43d34d85556967c212a8179549407e22cbcd5aef904bbbe850",
@@ -106,7 +106,7 @@
     "historical_inspection_sha256": "b76b8a9da6c3caecfdec91118ead26d0825120672ece327b89273b1a8b536b9f",
     "historical_source_verification_path": "evidence/preflight/SOURCE_VERIFICATION_20261118.json",
     "historical_source_verification_sha256": "e4752d29a393eb5052fec684c16cac98355b2ad8afae063d308f8de24bfa17fd",
-    "source_verification_path": "evidence/stage_a/a6/preflight.json",
+    "source_verification_path": "evidence/stage_b/b3/preflight.json",
     "source_verification_sha256": "e954d7e2b7872accb06611f11ea9940fdbb68dfbd6d061e5e29d8a89b1e8c9bd",
     "a1_manifest_path": "evidence/stage_a/a1/MANIFEST.sha256",
     "a1_manifest_sha256": "2a4649f3c1cca2de2ce6c06d949e321b83db365703f5e385cf2fb9f36c0829e2",
@@ -118,19 +118,19 @@
     "stage_a_source_reading": "evidence/stage_a/SOURCE_READING.md",
     "historical_blocked_authority_sha256": "53f37c69cd870df237ec8fe8c9d83e4860823ceca3a8cbc9ce63c5831a12d589",
     "parity_path": "evidence/V2_V3_CAPABILITY_PARITY.csv",
-    "parity_status": "PARTIAL_MACRO_SUMMARIES_ONLY",
-    "parity_rows": 12,
+    "parity_status": "MACRO_AND_PREDICTION_CONFIDENCE_SCOPES_ONLY",
+    "parity_rows": 22,
     "requirement_universe_sha256": "cb377af05606ce35ab588d050efbadc2db125cd19ee4139d61fd7fe0f60f9092",
-    "traceability_status": "STAGE_A_27_OF_27_PASS_GLOBAL_B_G_MAPPINGS_PENDING",
+    "traceability_status": "A_27_B_19_SCOPED_PASS_GLOBAL_C_G_AND_REAL_MODEL_ORACLES_PENDING",
     "requirement_universe_path": "evidence/requirement_universe.csv",
     "traceability_path": "evidence/traceability.csv",
     "requirement_universe_report": "evidence/REQUIREMENT_UNIVERSE_REPORT.json",
-    "requirement_universe_report_sha256": "8f4f79671490c1d1d2511e8fcc44f7f36999dba7d8d4cbaeee484dc594e14459",
-    "traceability_sha256": "2550b2fa6535e0b106643e88509a542ef543e190c327315ea24a3e36875226a7",
+    "requirement_universe_report_sha256": "ab040d30a3a9dd1756866ddd36b2ae9f5c80800a864d7a81bc5b8951544e7003",
+    "traceability_sha256": "37faf1254665cab708d6fc77ebbe47350d1b639c9c25268b7cb1d428249ba191",
     "traceability_rows": 627,
     "traceability_totals": {
-      "PENDING": 624,
-      "IMPLEMENTED_TESTED": 3,
+      "PENDING": 610,
+      "IMPLEMENTED_TESTED": 17,
       "source_count_conflicts": 0
     },
     "source_count_gate_evidence": "evidence/stage_a/amendment_1/checks.json",
@@ -142,7 +142,7 @@
     "historical_source_count_gate_manifest": "evidence/stage_a/source_conflict/MANIFEST.sha256",
     "historical_source_count_gate_manifest_sha256": "4ae8562b4b5cc7f2152924c8d822efe151d2e17cf3a047a3d0f9aba4fe56066f",
     "r2_handoff_path": "evidence/REVIEWER_R2_HANDOFF.md",
-    "r2_handoff_status": "STAGE_A_COMPLETE_FULL_SCOPE_NOT_READY_FOR_ACCEPTANCE",
+    "r2_handoff_status": "STAGE_A_B_COMPLETE_FULL_SCOPE_NOT_READY_FOR_ACCEPTANCE",
     "a3_manifest_path": "evidence/stage_a/a3/MANIFEST.sha256",
     "a3_manifest_sha256": "5ba5a2c61bcd6a72d0fb63d7b04343900b36169a09187293d738e91e5192eeae",
     "a4_manifest_path": "evidence/stage_a/a4/MANIFEST.sha256",
@@ -152,11 +152,13 @@
     "a6_manifest_path": "evidence/stage_a/a6/MANIFEST.sha256",
     "a6_manifest_sha256": "0df6baccbd20bdd73144b80dcd2d5d2fbc8258cc2fb0f64ff030c3f26093a890",
     "stage_a_completion_path": "evidence/stage_a/STAGE_A_COMPLETION.csv",
-    "stage_a_completion_sha256": "9472e4280719a7ec03332190607dd4023b54d58325aa1d003ff08ee032757566"
+    "stage_a_completion_sha256": "9472e4280719a7ec03332190607dd4023b54d58325aa1d003ff08ee032757566",
+    "stage_b_completion_path": "evidence/stage_b/STAGE_B_COMPLETION.csv",
+    "stage_b_completion_sha256": "55523613b17a5d25f01c573e2e7ef464ca643ae35a4efa6aa4ea3f864b2754d2"
   },
   "stages": {
     "A": "PASS",
-    "B": "IN_PROGRESS",
+    "B": "PASS",
     "C": "NOT_STARTED",
     "D": "NOT_STARTED",
     "E": "NOT_STARTED",
@@ -164,32 +166,33 @@
     "G": "NOT_STARTED"
   },
   "tests_and_coverage": {
-    "status": "PASS_THROUGH_B2",
-    "command": "sh tools/run_offline.sh",
+    "status": "PASS_THROUGH_B3",
+    "command": "sh tools/run_offline.sh stage_b",
     "exit_code": 0,
-    "tests_executed": 712,
+    "tests_executed": 717,
     "tests_failed": 0,
     "tests_skipped": 0,
-    "statements_total": 1706,
+    "statements_total": 1713,
     "statements_missing": 0,
     "branches_total": 528,
     "branches_missing": 0,
     "branches_partial": 0,
     "excluded_executable_lines": 0,
     "coverage_scope": "ALL_CURRENT_V3_OFFLINE_PRODUCTION_MODULES_NOT_BUILD_EVIDENCE_TOOLS",
-    "coverage_artifact_path": "evidence/stage_b/b2/coverage.json",
-    "coverage_artifact_sha256": "0ff8b894fe8e9aebb956649f5eea4959fa7c2c76fbfb4a8e5be4000a9fa68a69",
+    "coverage_artifact_path": "evidence/stage_b/b3/coverage.json",
+    "coverage_artifact_sha256": "c500739e96b0b04f1649fdc4953ba8a8285f9dd1b1cfdafb9dd86fba57782cc6",
     "mutations_killed": 28,
     "mutations_survived": 0,
-    "mutation_report_path": "evidence/stage_b/b2/mutations.json",
-    "macro_trading_decision_noninterference_tests": "NOT_RUN_MACRO_IMPLEMENTATION_PENDING",
+    "mutation_report_path": "evidence/stage_b/b3/mutations.json",
+    "macro_trading_decision_noninterference_tests": "CURRENT_PIPELINE_PASS_C_E_F_NOT_YET_BUILT",
     "determinism_processes": 2,
-    "determinism_output_sha256": "d38c75217e3330c155116cdd6cb9c2279048f072b26de213340e2c347196bb2b",
+    "determinism_output_sha256": "e4fa273c10c655326d756010355a3bc80fa5eacc7ba67248d563ac6cf6c933a1",
     "v2_snapshot_source_files_compared": 279,
     "v2_identical_byte_matches": 0,
     "v2_normalized_12_line_matches": 0,
     "lint_and_strict_types": "PASS",
-    "optional_third_party_mutation_and_vulnerability_tools": "NOT_RUN"
+    "optional_third_party_mutation_and_vulnerability_tools": "NOT_RUN",
+    "prediction_determinism_output_sha256": "dbe39e10e6d48ddc010e4225124f4b50d54fc0fa4b5b83a6cccbe2301551df47"
   },
   "stage_a_slices": {
     "A1": {
@@ -286,6 +289,19 @@
       "status": "PASS",
       "gate_path": "evidence/stage_b/b2/GATE.json",
       "source_commit_binding": "ENCLOSING_GATE_COMMIT"
+    },
+    "B3": {
+      "status": "PASS",
+      "gate_path": "evidence/stage_b/b3/GATE.json",
+      "source_commit_binding": "ENCLOSING_GATE_COMMIT"
     }
+  },
+  "remaining_stage_b_work": [],
+  "stage_b_limits": {
+    "MSB-08": "Synthetic scope/state/profile/expiry denials only; real owner serving unavailable.",
+    "MSB-13": "Canonical event intent identity proved; durable no-second-intent gate belongs to D.",
+    "MSB-14": "No real registration; owner records and real conversion unavailable.",
+    "MSB-15": "Current whole-build import gate passes; EXT-04 strategy integration belongs to C.",
+    "MSB-16": "Source/audit references proved; order/position/outcome records belong to D/F."
   }
 }

@@ -1,4 +1,50 @@
-# R2 checkpoint handoff - Stage A complete, full scope unfinished
+# R2 checkpoint handoff - Stages A/B complete in offline scope
+
+The owner accepted Stage A at `e0ab862`. Stage B is complete under R3's
+explicit synthetic-reader exception, not real model eligibility, original-library
+parity, independent R2 approval, release readiness or trading authority.
+
+| Slice | Commit | Scope |
+|---|---|---|
+| B1 | `78f1ac7` | Dual-source contracts, sole numeric JSON reader, adopted observational macros |
+| B2 | `2194c34` | Signed filesystem replay, five model denials, V2 confidence observations |
+| B3 | Enclosing checkpoint | Audited test-score intake and final source-owned traceability |
+
+Find B3 with `git log -1 --format=%H -- evidence/stage_b/b3/GATE.json`.
+Reproduce with **`sh tools/run_offline.sh stage_b`**, never by running V3 on
+the host. The pinned image, offline hash-enforced installation, six actual
+egress probes and current whole-package coverage/import gates remain mandatory.
+Exact executed counters, 28 functional mutants and independent byte-identical
+two-process prediction replay are sealed under `stage_b/b3/`.
+
+Challenge the hand-derived full-path vectors and native JSON bounds in
+`test_model_intake.py`, source fixation and immutable confidence caps in
+`test_prediction_pipeline.py`, and actual signed filesystem replay plus
+correlated failure audits in `test_prediction_integration.py`.
+The development fixture signer is NOT an owner authorizer. No synthetic set
+reaches VALIDATED/SERVING. All five real model runs explicitly deny without
+source substitution. Separate reports carry the exact required source labels.
+
+`stage_b/STAGE_B_COMPLETION.csv` maps all 19 scoped requirements to V5
+member/clause, implementation, tests and evidence. Global traceability remains
+627 rows: 17 complete, 26 partial and 584 unimplemented. MSB-08,13,14,15,16
+remain partial for real serving/registration and later C/D/F integrations.
+All 84 NEG amendment citations remain intact. No later-stage oracle is
+silently certified by the Stage B scope gate.
+
+EURUSD/GBPUSD baskets and all-five event proximity are COMPUTE_AND_LOG_ONLY.
+Missing/stale/date-only evidence cannot invent neutral/no-event classifications.
+Current prediction bytes, direction, grade and cap are unaffected, including
+mutation witnesses. Actual entry/size/TP/SL/trailing, durable ledger and dashboard
+noninterference must be re-proved when C/E/F implement those surfaces.
+V2 mappings and climate exceptions are separate comparison-only observations;
+full feature-transform parity, real calibration and performance remain unproved.
+
+No Stage A R2 finding has been supplied during this work. Any arriving finding
+must be fixed **before Stage C starts**. C-G and full-package reading remain
+unfinished. Stage A and the B1/B2 bundles remain immutable.
+
+## Historical Stage A completion handoff
 
 Stage A foundations pass at the enclosing A6 checkpoint. This is not
 READY_FOR_R2_REVIEW for the full R3 deliverable, independent human governance

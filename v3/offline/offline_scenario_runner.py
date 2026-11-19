@@ -24,6 +24,7 @@ from v3.offline.calendar_completion import (
 from v3.offline.data_intake_schema import digest, object_fields, utc
 from v3.offline.effective_policy import _strings
 from v3.offline.fixture_policy_loader import (
+    FixtureDenied,
     JsonValue,
     _identity,
     _parse,
@@ -603,6 +604,20 @@ class ScoreProvider:
     kind: SourceKind
     sha256: str
     score: Callable[[FeatureRow], SourceScore]
+
+
+def signed_score_provider(
+    bundle: tuple[bytes, bytes, bytes, bytes], plugins: PluginManifest
+) -> ScoreProvider:
+    """Inject authenticated test scores; failed intake produces an audited NOT_PROVEN."""
+
+    def score(row: FeatureRow) -> SourceScore:
+        try:
+            return load_score_table(*bundle, plugins).score(row)
+        except FixtureDenied as error:
+            raise PredictionDenied("NOT_PROVEN: " + str(error)) from error
+
+    return ScoreProvider(SourceKind.SIGNED_TEST_SCORE, hashlib.sha256(bundle[0]).hexdigest(), score)
 
 
 @dataclass(frozen=True)

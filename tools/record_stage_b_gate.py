@@ -35,6 +35,19 @@ def main():
             != hashlib.sha256(prediction_bytes).hexdigest()
         ):
             raise ValueError("Missing or mismatched independently replayed prediction proof")
+    if name == "b3":
+        trace = json.loads((source / "stage-b-traceability.json").read_text())
+        if (
+            trace["stage_b_rows"] != 19
+            or trace["stage_b_scoped_pass"] != 19
+            or trace["traceability_rows"] != 627
+            or trace["source_count_gate"] != "PASS"
+            or trace["completion_csv_sha256"]
+            != hashlib.sha256(
+                (ROOT / "evidence/stage_b/STAGE_B_COMPLETION.csv").read_bytes()
+            ).hexdigest()
+        ):
+            raise ValueError("Stage B completion scope or final mapping changed")
     suites = list(ET.parse(source / "junit.xml").getroot().iter("testsuite"))
     totals = coverage["totals"]
     if (
@@ -70,10 +83,14 @@ def main():
     gate = {
         "slice": name.upper(),
         "decision": "PASS",
-        "stage_b": "IN_PROGRESS",
+        "stage_b": "PASS_OFFLINE_SYNTHETIC_SCOPE" if name == "b3" else "IN_PROGRESS",
         "source_commit_before_gate": base_commit,
         "source_sha256": checks["source_sha256"],
         "command": "sh tools/run_offline.sh stage_b",
+        "dependency_lock_sha256": hashlib.sha256(
+            (ROOT / "requirements-dev.lock").read_bytes()
+        ).hexdigest(),
+        "python_image": (ROOT / "evidence/preflight/PYTHON_IMAGE.txt").read_text().strip(),
         "runner_exit_code": 0,
         "tests": count,
         "coverage": totals,

@@ -1,0 +1,26 @@
+{
+  "decision": "PASS_OFFLINE_SYNTHETIC_SCOPE",
+  "stage_b_rows": 19,
+  "stage_b_scoped_pass": 19,
+  "msb_mechanical_oracles_pass": 14,
+  "msb_partial_not_final_pass": {
+    "MSB-08": "Synthetic scope/state/profile/expiry denials only; real owner serving unavailable.",
+    "MSB-13": "Canonical event intent identity proved; durable no-second-intent gate belongs to D.",
+    "MSB-14": "No real registration; owner records and real conversion unavailable.",
+    "MSB-15": "Current whole-build import gate passes; EXT-04 strategy integration belongs to C.",
+    "MSB-16": "Source/audit references proved; order/position/outcome records belong to D/F."
+  },
+  "traceability_rows": 627,
+  "global_final_status_counts": {
+    "PENDING": 610,
+    "IMPLEMENTED_TESTED": 17
+  },
+  "global_implementation_state_counts": {
+    "NOT_IMPLEMENTED": 584,
+    "PARTIALLY_IMPLEMENTED": 26,
+    "IMPLEMENTED": 17
+  },
+  "source_count_gate": "PASS",
+  "full_C_G_completion": "NOT_CLAIMED",
+  "completion_csv_sha256": "55523613b17a5d25f01c573e2e7ef464ca643ae35a4efa6aa4ea3f864b2754d2"
+}

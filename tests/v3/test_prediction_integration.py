@@ -12,6 +12,7 @@ from test_prediction_pipeline import (
     pipeline,
     prediction_plugins,
     run_body,
+    score_body,
     signal,
 )
 
@@ -24,6 +25,7 @@ from v3.offline.offline_scenario_runner import (
     SourceKind,
     evaluate_prediction,
     load_run_manifest,
+    signed_score_provider,
     v2_confidence_observation,
 )
 
@@ -235,3 +237,58 @@ def test_persistent_signed_packets_replay_both_sources_and_missing_models_withou
     assert len(reports["SIGNED_TEST_SCORE"]) == 2 and len(reports["TRAINED_MODEL"]) == 1
     assert reports["TRAINED_MODEL"][0]["instrument"] == "SYNTHETIC_6"
     assert all(row["role"] == "COMPUTE_AND_LOG_ONLY" for row in report["macro_observations"])
+
+
+def test_signed_source_authentication_failures_are_not_proven_audits_without_model_fallback():
+    row, _, run, policy = pipeline()
+    bundle = signed(policy=score_body(row))
+    for candidate in (
+        bundle,
+        (bundle[0], bundle[1], b"\0" * 64, bundle[3]),
+        (bundle[0] + b" ", bundle[1], bundle[2], bundle[3]),
+    ):
+        provider = signed_score_provider(candidate, prediction_plugins())
+        declared = replace(
+            run, sources=((row.context.instrument.value, provider.kind, provider.sha256),)
+        )
+        result = evaluate_prediction(
+            provider,
+            row,
+            declared,
+            policy,
+            row.available_at,
+            runtime_profile="G1_R",
+            data_quality=Decimal("0.8"),
+            climate=None,
+            conservative_cap=Decimal("0.15"),
+        )
+        if candidate is bundle:
+            assert result.score is not None
+        else:
+            assert result.score is None and result.audit.status == "NOT_PROVEN"
+            assert "NOT_PROVEN" in result.audit.reason
+            assert result.audit.prediction_id is None
+
+
+@pytest.mark.parametrize(
+    "filename", ["model.json", "schema.json", "scaler.json", "calibration.json"]
+)
+def test_each_bad_model_file_is_named_in_correlated_audit_and_never_yields_a_score(filename):
+    bundle, files = model_fixture()
+    model = load_synthetic_model_packet(bundle, packet_bundle(files), prediction_plugins())
+    row = load_feature(schema_sha256=model.schema_sha256)
+    run = load_run_manifest(*signed(policy=run_body(row, model.score(row))))
+    corrupted = tuple((name, raw + b" " if name == filename else raw) for name, raw in files)
+    result = evaluate_prediction(
+        synthetic_reader_provider(bundle, packet_bundle(corrupted), prediction_plugins()),
+        row,
+        run,
+        load_policy(),
+        row.available_at,
+        runtime_profile="G1_R",
+        data_quality=Decimal("0.8"),
+        climate=None,
+        conservative_cap=Decimal("0.15"),
+    )
+    assert result.score is None and result.audit.status == "NO_AUTHORITATIVE_PREDICTION"
+    assert filename in result.audit.reason and result.audit.prediction_id is None

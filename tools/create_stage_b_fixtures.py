@@ -9,6 +9,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 ROOT = Path(__file__).resolve().parents[1]
+NAMESPACE = "b3_prediction"
 sys.path.insert(0, str(ROOT / "tests/v3"))
 
 # Independent test-fixture constants, not evaluator-generated reference outputs.
@@ -25,7 +26,7 @@ from v3.offline.offline_scenario_runner import SourceKind, canonical  # noqa: E4
 
 
 def write(name, value, key, *, intake=True):
-    folder = ROOT / "fixtures/stage_a/b2_prediction" / name
+    folder = ROOT / "fixtures/stage_a" / NAMESPACE / name
     folder.mkdir(parents=True, exist_ok=True)
     if any(folder.iterdir()):
         raise ValueError("Refusing to overwrite an existing signed Stage B fixture")
@@ -48,7 +49,7 @@ def write(name, value, key, *, intake=True):
     if intake:
         policy = {
             "kind": "FIXTURE_INTAKE_POLICY_V1",
-            "relative_directory": "stage_a/b2_prediction/" + name,
+            "relative_directory": "stage_a/" + NAMESPACE + "/" + name,
             "max_path_depth": 4,
             "max_files": 3,
             "max_file_bytes": 1048576,

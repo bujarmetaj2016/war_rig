@@ -1,0 +1,1 @@
+{"artifacts":"EXACTLY_REPRODUCED","gate":"SOURCE_COUNTS","pending_blocks_requested_gate":false,"pending_count":610,"runtime_stages_blocked":false,"source_conflicts":[],"status":"PASS","traceability_rows":627,"traceability_status":"PENDING_TRACEABILITY","universe_rows":627}

@@ -1191,7 +1191,7 @@
       "status": "BLOCKED_TRACE_STATUS_VOCABULARY_CONFLICT",
       "source": "prompts/War_Rig_V3_OWNER_DIRECTED_OFFLINE_START_MASTER_IDE_PROMPT_R3_20261116.md §4",
       "explanation": "The five final statuses have no honest pending value. Pending rows retain empty final_status and explicit implementation_state. They are not approval blockers, final dispositions, or TEST_PASS.",
-      "pending_count": 624
+      "pending_count": 610
     }
   ],
   "graph_verification": {
@@ -2531,13 +2531,13 @@
     "runtime_transition_authority": false
   },
   "implementation_state_counts": {
-    "IMPLEMENTED": 3,
-    "NOT_IMPLEMENTED": 605,
-    "PARTIALLY_IMPLEMENTED": 19
+    "IMPLEMENTED": 17,
+    "NOT_IMPLEMENTED": 584,
+    "PARTIALLY_IMPLEMENTED": 26
   },
   "final_status_counts": {
-    "IMPLEMENTED_TESTED": 3,
-    "PENDING_NO_FINAL_STATUS": 624
+    "IMPLEMENTED_TESTED": 17,
+    "PENDING_NO_FINAL_STATUS": 610
   },
   "pending_ids": [
     "ATC-C01",
@@ -2784,25 +2784,11 @@
     "MODULE:PositionProtectionMonitor",
     "MODULE:SourceSnapshotLoader",
     "MODULE:StopBreakerControls",
-    "MSB-01",
-    "MSB-02",
-    "MSB-03",
-    "MSB-04",
-    "MSB-05",
-    "MSB-06",
-    "MSB-07",
     "MSB-08",
-    "MSB-09",
-    "MSB-10",
-    "MSB-11",
-    "MSB-12",
     "MSB-13",
     "MSB-14",
     "MSB-15",
     "MSB-16",
-    "MSB-17",
-    "MSB-18",
-    "MSB-19",
     "OC-D02-01",
     "OC-D02-02",
     "OC-D02-03",
@@ -3179,7 +3165,7 @@
       "rows": 627
     },
     "evidence/traceability.csv": {
-      "sha256": "2550b2fa6535e0b106643e88509a542ef543e190c327315ea24a3e36875226a7",
+      "sha256": "37faf1254665cab708d6fc77ebbe47350d1b639c9c25268b7cb1d428249ba191",
       "rows": 627
     }
   },

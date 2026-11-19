@@ -1,4 +1,4 @@
-"""Replay signed B2 packets through real bounded intake and both pure prediction sources."""
+"""Replay signed current-build packets through bounded intake and both prediction sources."""
 
 import hashlib
 import json
@@ -30,12 +30,12 @@ from v3.offline.offline_scenario_runner import (
     load_feature_row,
     load_prediction_plugins,
     load_run_manifest,
-    load_score_table,
+    signed_score_provider,
     v2_confidence_observation,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
-FIXTURES = ROOT / "fixtures/stage_a/b2_prediction"
+FIXTURES = ROOT / "fixtures/stage_a/b3_prediction"
 
 
 def raw(name):
@@ -108,7 +108,7 @@ def prediction_proof():
         elif result.score is not None or result.audit.status != "NO_AUTHORITATIVE_PREDICTION":
             raise ValueError("Real Core-5 model source did not deny")
         if instrument in ("EURUSD", "GBPUSD"):
-            table = load_score_table(*bundle(prefix + "_scores"), plugins)
+            table = signed_score_provider(bundle(prefix + "_scores"), plugins)
             run = load_run_manifest(*bundle(prefix + "_score_run"))
             valid = evaluate_prediction(
                 ScoreProvider(table.kind, table.sha256, table.score),
